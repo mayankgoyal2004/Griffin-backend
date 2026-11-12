@@ -1,0 +1,24 @@
+import { z } from "zod";
+
+export const loginSchema = z.object({
+  email: z.string().email("Invalid email address format").trim(),
+  password: z.string().min(1, "Password is required"),
+  rememberMe: z.boolean().optional(),
+});
+
+export const registerSchema = z.object({
+  email: z.string().email("Invalid email address format").trim(),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  fullName: z.string().min(2, "Full name must be at least 2 characters").trim(),
+  role: z.enum(["ADMIN", "EDITOR", "USER"]).optional(),
+  phone: z.string().optional(),
+});
+
+export const updateProfileSchema = z.object({
+  fullName: z.string().min(2).optional(),
+  phone: z.string().optional(),
+  avatar: z.string().url().optional(),
+  currentPassword: z.string().optional(),
+  newPassword: z.string().min(6).optional(),
+});
+
