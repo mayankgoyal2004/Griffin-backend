@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1725">
+<meta name="description" content="Griffin Construction — trusted residential, commercial and industrial construction, built on strength, precision and trust.">
+<title>Griffin Construction | Built on Strength & Trust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+ --navy:#0b1725;--navy2:#12243a;--navy3:#1b3048;--gold:#f3a51f;--gold2:#ffc15a;
+ --cream:#f7f3ec;--paper:#fffdf9;--ink:#101a28;--muted:#657080;--line:rgba(16,26,40,.13);
+ --serif:"Playfair Display",Georgia,serif;--sans:"DM Sans",Arial,sans-serif;
+ --shadow:0 18px 50px rgba(9,22,37,.15);
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);overflow-x:hidden}
+a{color:inherit;text-decoration:none}img{display:block;max-width:100%}button{font:inherit}
+.container{width:min(1240px,calc(100% - 64px));margin:auto}
+.gold{color:var(--gold)}.serif{font-family:var(--serif)}
+.progress{height:3px;position:fixed;z-index:1000;left:0;top:0;width:0;background:var(--gold)}
+/* Header */
+.site-header{position:absolute;top:0;left:0;width:100%;z-index:100;color:#fff;transition:background .3s,box-shadow .3s}
+.site-header.sticky{position:fixed;background:rgba(9,22,36,.94);backdrop-filter:blur(16px);box-shadow:0 8px 28px #0003}
+.nav{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:11px;min-width:230px}
+.brand-mark{width:48px;height:48px;color:var(--gold);filter:drop-shadow(0 2px 8px #f3a51f33)}
+.brand-name{font:700 25px/1 var(--serif);letter-spacing:.07em}
+.brand-sub{display:block;font-size:9px;letter-spacing:.23em;margin-top:5px;color:#c6cbd2}
+.nav-links{display:flex;align-items:center;gap:31px;font-size:12px;font-weight:600}
+.nav-links a{position:relative;color:#e8edf2;transition:color .2s}
+.nav-links a:after{content:"";position:absolute;left:0;bottom:-10px;width:0;height:2px;background:var(--gold);transition:width .25s}
+.nav-links a:hover,.nav-links a.active{color:#fff}.nav-links a:hover:after,.nav-links a.active:after{width:100%}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--gold);border-radius:5px;padding:13px 19px;background:var(--gold);color:#101b29;font-size:11px;font-weight:800;transition:.25s;cursor:pointer}
+.btn:hover{background:var(--gold2);transform:translateY(-3px);box-shadow:0 12px 25px #f3a51f35}
+.btn-outline{background:transparent;color:#fff;border-color:#ffffff88}.btn-outline:hover{background:#ffffff14;color:#fff;border-color:var(--gold)}
+.nav-call{padding:11px 15px;background:transparent;color:white;border:1px solid var(--gold);border-radius:5px;font-size:11px;font-weight:700;white-space:nowrap}
+.nav-call b{color:var(--gold);margin-right:6px}
+.menu-btn{display:none;border:0;background:none;color:#fff;font-size:28px}
+/* Hero */
+.hero{height:690px;min-height:650px;position:relative;isolation:isolate;overflow:hidden;background:#0c1a2a;color:white;display:flex;align-items:center}
+.hero:before{content:"";position:absolute;inset:0;z-index:-2;background:
+ linear-gradient(90deg,rgba(8,18,30,.98) 0%,rgba(8,18,30,.86) 30%,rgba(8,18,30,.12) 68%,rgba(8,18,30,.08) 100%),
+ linear-gradient(0deg,rgba(8,18,30,.45),transparent 48%),
+ url("https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=2200&q=88") center 52%/cover}
+.hero:after{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 72% 48%,transparent 0 25%,#09152322 60%,#09152366 100%)}
+.hero-art{position:absolute;z-index:-1;right:-2%;top:45px;width:min(68%,850px);height:600px;object-fit:contain;object-position:center right;mix-blend-mode:screen;opacity:.94;filter:drop-shadow(0 20px 32px #0006);pointer-events:none}
+.hero-content{padding-top:52px;position:relative;z-index:2;max-width:600px}
+.kicker{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;color:#f4c06a}
+.kicker:after{content:"";height:1px;width:62px;background:var(--gold);display:inline-block}
+.hero h1{font:800 clamp(55px,7vw,91px)/.95 var(--serif);letter-spacing:-.045em;margin:23px 0 18px;max-width:640px}
+.hero h1 span{color:var(--gold)}
+.hero-copy{max-width:470px;color:#d5dce5;font-size:14px;line-height:1.8;margin:0 0 27px}
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hero-services{display:flex;gap:0;margin-top:35px;max-width:490px}
+.hero-service{width:25%;padding:0 14px;border-right:1px solid #ffffff35;text-align:center;color:#f2f4f7;font-size:10px;line-height:1.45}
+.hero-service:first-child{padding-left:0}.hero-service:last-child{border:0}
+.hero-service svg{display:block;width:24px;height:24px;margin:0 auto 8px;color:var(--gold)}
+.hero-side-index{position:absolute;right:4.5%;top:34%;display:grid;gap:18px;color:#bfc7d1;font-size:11px}
+.hero-side-index span:first-child{color:white}.hero-side-index span:first-child:after{content:"";display:block;width:1px;height:42px;background:var(--gold);margin:8px auto 0}
+.hero-bottom-wave{position:absolute;bottom:-1px;left:0;width:100%;height:26px;background:var(--cream);clip-path:polygon(0 25%,12% 85%,29% 65%,46% 100%,64% 60%,83% 75%,100% 18%,100% 100%,0 100%)}
+/* Section common */
+section{position:relative}
+.section{padding:82px 0}
+.section-heading{text-align:center;margin-bottom:34px}
+.section-kicker{display:flex;align-items:center;justify-content:center;gap:12px;color:#b77814;font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.section-kicker:before,.section-kicker:after{content:"";width:34px;height:1px;background:var(--gold)}
+.section-heading h2{font:700 clamp(32px,4vw,47px)/1.12 var(--serif);letter-spacing:-.03em;margin:11px 0 8px}
+.section-heading p{font-size:12px;color:var(--muted);margin:0;line-height:1.7}
+/* Services */
+.services{background:var(--cream);padding-top:42px;padding-bottom:28px}
+.service-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.service-card{background:#fff;border:1px solid #e6e0d7;border-radius:9px;overflow:hidden;box-shadow:0 5px 18px #101a280d;transition:transform .3s,box-shadow .3s}
+.service-card:hover{transform:translateY(-7px);box-shadow:var(--shadow)}
+.service-photo{height:160px;overflow:hidden;position:relative}
+.service-photo img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.service-card:hover .service-photo img{transform:scale(1.07)}
+.service-body{padding:16px 17px 17px;position:relative;min-height:127px}
+.service-icon{position:absolute;top:-23px;left:17px;width:42px;height:42px;border-radius:10px;background:var(--gold);color:#142238;display:grid;place-items:center;border:4px solid var(--cream)}
+.service-icon svg{width:22px;height:22px}
+.service-body h3{font:700 18px/1.15 var(--serif);margin:2px 25px 7px 0}
+.service-body p{font-size:10px;line-height:1.6;color:#566170;margin:0;max-width:230px}
+.service-arrow{position:absolute;right:14px;top:45px;border:1px solid var(--gold);color:#b77814;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font-size:15px}
+/* About */
+.about{background:var(--navy);color:#fff;overflow:hidden;padding:62px 0}
+.about:after{content:"";position:absolute;right:-50px;top:0;width:360px;height:100%;opacity:.045;background:radial-gradient(ellipse,#fff,transparent 65%);pointer-events:none}
+.about-grid{display:grid;grid-template-columns:1.05fr 1.15fr .72fr;gap:34px;align-items:center}
+.about-photos{height:275px;position:relative}
+.about-photo-main{position:absolute;left:0;top:0;width:78%;height:100%;object-fit:cover;clip-path:polygon(17% 0,100% 0,84% 100%,0 100%);border:2px solid #fff}
+.about-photo-small{position:absolute;right:0;bottom:0;width:47%;height:54%;object-fit:cover;border:5px solid var(--navy);clip-path:polygon(17% 0,100% 0,83% 100%,0 100%)}
+.about-copy .kicker{font-size:9px}
+.about-copy h2{font:700 clamp(29px,3.1vw,39px)/1.06 var(--serif);margin:12px 0}
+.about-copy h2 span{color:var(--gold)}
+.about-copy p{font-size:11px;line-height:1.8;color:#c5ced9;margin:0 0 12px}
+.about-points{display:flex;gap:15px;margin:18px 0 20px;flex-wrap:wrap}
+.about-point{display:flex;align-items:center;gap:7px;font-size:9px;color:#e7edf3}
+.about-point svg{width:20px;height:20px;color:var(--gold)}
+.about-stats{border-left:1px solid #ffffff35;padding-left:25px;display:grid;gap:18px}
+.about-stat{display:flex;align-items:center;gap:13px}
+.about-stat svg{width:28px;height:28px;color:var(--gold);flex:none}
+.about-stat strong{display:block;font:700 24px var(--serif);color:var(--gold)}
+.about-stat span{font-size:9px;color:#d2d9e2}
+/* Projects */
+.projects{background:#f7f4ee;padding:70px 0 75px}
+.projects-head{display:flex;align-items:end;justify-content:space-between;margin-bottom:25px}
+.projects-head .section-heading{text-align:left;margin:0}
+.projects-head .section-kicker{justify-content:flex-start}
+.projects-head .section-kicker:before{display:none}
+.projects-head h2{margin-bottom:0}
+.project-filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{border:1px solid #d8d4cd;background:#fff;border-radius:4px;padding:9px 13px;font-size:9px;font-weight:700;color:#354052;cursor:pointer;transition:.2s}
+.filter-btn.active,.filter-btn:hover{background:var(--gold);border-color:var(--gold);color:#101a28}
+.project-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.project-card{position:relative;height:225px;border-radius:8px;overflow:hidden;background:var(--navy);color:white;transition:transform .3s}
+.project-card.hide{display:none}
+.project-card:hover{transform:translateY(-5px)}
+.project-card img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.project-card:hover img{transform:scale(1.08)}
+.project-card:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#081522e8,transparent 62%)}
+.project-info{position:absolute;z-index:1;bottom:14px;left:15px;right:15px}
+.project-info small{font-size:9px;color:#d3dce5}
+.project-info h3{font:700 16px var(--serif);margin:4px 0}
+.project-go{position:absolute;right:0;bottom:0;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#142238;display:grid;place-items:center;font-size:15px}
+/* Team */
+.team{background:var(--navy);color:white;padding:62px 0}
+.team-grid{display:grid;grid-template-columns:1.05fr repeat(4,.72fr);gap:14px;align-items:center}
+.team-intro .section-kicker{justify-content:flex-start;color:var(--gold2)}
+.team-intro .section-kicker:before{display:none}
+.team-intro h2{font:700 32px/1.05 var(--serif);margin:12px 0}
+.team-intro p{font-size:10px;line-height:1.7;color:#c1cbd6;max-width:230px;margin-bottom:18px}
+.team-card{border:1px solid #b77b2488;border-radius:8px;overflow:hidden;background:#111f30;text-align:center}
+.team-card img{width:100%;height:145px;object-fit:cover;object-position:center 25%;filter:saturate(.82)}
+.team-card h3{font:700 14px var(--serif);margin:10px 4px 2px}
+.team-card p{font-size:9px;color:#c2cbd5;margin:0 4px 11px}
+/* Advantage */
+.advantage{background:var(--cream);padding:30px 0}
+.advantage-grid{display:grid;grid-template-columns:1.2fr repeat(4,1fr);align-items:center;gap:0}
+.advantage-title h2{font:700 27px var(--serif);margin:7px 0}
+.advantage-item{border-left:1px solid var(--line);padding:4px 17px;text-align:center}
+.advantage-item svg{width:30px;height:30px;color:#d68b12;margin:0 auto 7px}
+.advantage-item strong{display:block;font-size:10px;margin-bottom:5px}
+.advantage-item span{font-size:9px;color:var(--muted)}
+/* Contact banner/footer */
+.contact-banner{min-height:165px;color:white;display:flex;align-items:center;background:
+ linear-gradient(90deg,rgba(8,20,34,.92),rgba(8,20,34,.54),rgba(8,20,34,.9)),
+ url("https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=85") center 52%/cover}
+.contact-inner{display:flex;align-items:center;justify-content:space-between;gap:25px}
+.contact-banner h2{font:700 clamp(28px,3.5vw,42px) var(--serif);margin:0 0 7px}
+.contact-banner h2 span{color:var(--gold)}
+.contact-banner p{font-size:11px;color:#d6dce5;margin:0}
+.contact-actions{display:flex;gap:10px;flex-wrap:wrap}
+footer{background:#081421;color:#d8e0e9;padding:35px 0 15px}
+.footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1.1fr .9fr;gap:32px;padding-bottom:27px}
+.footer-brand p{font-size:10px;line-height:1.8;color:#98a6b5;max-width:250px;margin:14px 0}
+.footer-brand .brand-mark{width:40px;height:40px}
+.footer-brand .brand-name{font-size:21px}
+.footer-col h4{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin:6px 0 15px}
+.footer-col ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.footer-col li,.footer-col a{font-size:10px;color:#aeb9c6}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid #ffffff24;padding-top:14px;display:flex;justify-content:space-between;gap:15px;color:#8e9baa;font-size:9px}
+.back-top{position:fixed;z-index:50;right:22px;bottom:22px;width:42px;height:42px;border:0;border-radius:50%;background:var(--gold);color:#122033;font-size:20px;box-shadow:var(--shadow);cursor:pointer;opacity:0;pointer-events:none;transform:translateY(10px);transition:.25s}
+.back-top.show{opacity:1;pointer-events:auto;transform:none}
+/* Motion */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+/* Responsive */
+@media(max-width:1000px){
+ .nav-links{gap:17px}.brand{min-width:195px}.nav-call{display:none}
+ .hero-art{right:-12%;width:76%;opacity:.78}
+ .about-grid{grid-template-columns:1fr 1.2fr}.about-stats{grid-column:1/-1;border-left:0;border-top:1px solid #ffffff35;padding:18px 0 0;grid-template-columns:repeat(3,1fr)}
+ .team-grid{grid-template-columns:repeat(4,1fr)}.team-intro{grid-column:1/-1}
+ .advantage-grid{grid-template-columns:repeat(4,1fr);row-gap:20px}.advantage-title{grid-column:1/-1;text-align:center}
+}
+@media(max-width:720px){
+ .container{width:calc(100% - 36px)}.nav{height:70px}.brand{min-width:0}.brand-mark{width:40px;height:40px}.brand-name{font-size:21px}
+ .menu-btn{display:block}.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:#0b1725;padding:10px 22px 20px;flex-direction:column;align-items:stretch;gap:0}
+ .nav-links.open{display:flex}.nav-links a{padding:14px 0;border-bottom:1px solid #ffffff1c}.nav-links a:after{display:none}
+ .hero{height:auto;min-height:760px;align-items:flex-start;padding:140px 0 70px}
+ .hero:before{background:linear-gradient(90deg,#081522ed,#081522b5 100%),url("https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=1200&q=85") center/cover}
+ .griffin-stage{width:118%;height:410px;right:-31%;top:310px;opacity:.68;transform-origin:60% 50%}
+ .griffin-scroll-note{right:18px;bottom:30px;font-size:8px}
+ .hero-content{padding:0}.hero h1{font-size:clamp(53px,13vw,76px);max-width:490px}.hero-copy{font-size:13px;max-width:400px}
+ .hero-services{max-width:430px;margin-top:32px}.hero-service{font-size:9px;padding:0 8px}
+ .hero-side-index{display:none}
+ .section{padding:65px 0}.services{padding-top:35px;padding-bottom:25px}
+ .service-grid{grid-template-columns:repeat(2,1fr);gap:12px}.service-photo{height:135px}.service-body{padding:15px 12px;min-height:130px}.service-body h3{font-size:16px}.service-body p{font-size:9px}
+ .about{padding:55px 0}.about-grid{grid-template-columns:1fr;gap:28px}.about-photos{height:270px}.about-stats{grid-template-columns:repeat(3,1fr);gap:10px}.about-stat{gap:8px}.about-stat strong{font-size:20px}.about-stat span{font-size:8px}
+ .projects-head{display:block}.projects-head .section-heading{margin-bottom:20px}.project-filters{gap:6px}.filter-btn{padding:8px 10px;font-size:8px}
+ .project-grid{grid-template-columns:repeat(2,1fr);gap:10px}.project-card{height:185px}.project-info h3{font-size:14px}
+ .team-grid{grid-template-columns:repeat(2,1fr);gap:12px}.team-intro{grid-column:1/-1}.team-card img{height:170px}
+ .advantage-grid{grid-template-columns:repeat(2,1fr);gap:16px 0}.advantage-title{grid-column:1/-1}.advantage-item:nth-child(odd){border-left:0}
+ .contact-inner{display:block;padding:32px 0}.contact-actions{margin-top:20px}
+ .footer-grid{grid-template-columns:repeat(2,1fr);gap:25px 18px}.footer-brand{grid-column:1/-1}.footer-bottom{flex-direction:column}
+}
+@media(max-width:420px){
+ .hero{min-height:780px}.hero h1{font-size:51px}.hero-services{margin-top:25px}.hero-service{padding:0 5px;font-size:8px}
+ .service-grid{grid-template-columns:1fr}.service-photo{height:170px}.service-body{min-height:115px}
+ .about-stats{grid-template-columns:1fr 1fr}.about-stat:last-child{grid-column:1/-1}
+ .project-card{height:160px}.team-card img{height:140px}
+}
+
+/* ===== Refined Griffin hero: clean contrast, controlled artwork and responsive depth ===== */
+:root{
+ --navy:#091726;--navy2:#10243a;--gold:#f2a928;--gold2:#ffc65e;
+ --cream:#f6f4ef;--paper:#fffefa;--ink:#111d2c;--muted:#687587;
+}
+body{background:var(--cream);color:var(--ink)}
+.site-header{background:linear-gradient(180deg,rgba(5,15,27,.88),rgba(5,15,27,.18));}
+.site-header.sticky{background:rgba(7,19,32,.96)}
+.nav{height:84px}
+.brand-mark{filter:drop-shadow(0 2px 10px #f3a51f45)}
+.brand-name{letter-spacing:.08em}
+.nav-links a{font-size:12px;letter-spacing:.025em}
+.nav-call{background:rgba(7,19,32,.36);border-color:#d89a2c;color:#fff}
+.hero{
+ height:auto;min-height:790px;padding:120px 0 150px;align-items:stretch;
+ background:#091726;isolation:isolate;overflow:hidden;
+}
+.hero:before{
+ content:"";position:absolute;inset:0;z-index:-3;
+ background:
+  radial-gradient(ellipse at 72% 52%,rgba(196,120,42,.22),transparent 35%),
+  linear-gradient(105deg,#081625 0%,#0d2034 48%,#14283b 100%);
+}
+.hero:after{
+ content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+ background:linear-gradient(90deg,rgba(7,18,31,.18),transparent 65%),
+            linear-gradient(0deg,rgba(5,15,26,.82),transparent 30%);
+}
+.hero-glow{
+ position:absolute;z-index:-1;right:4%;top:13%;width:48vw;height:48vw;max-width:720px;max-height:650px;
+ background:radial-gradient(ellipse,rgba(239,164,65,.18),rgba(239,164,65,.035) 42%,transparent 70%);
+ filter:blur(20px);pointer-events:none;
+}
+.hero-layout{position:relative;min-height:520px;display:flex;align-items:center}
+.hero-content{position:relative;z-index:4;width:min(54%,610px);max-width:610px;padding:0}
+.hero .kicker{color:#f4bd5d;font-size:10px;letter-spacing:.28em}
+.hero h1{font:800 clamp(58px,6.4vw,92px)/.96 var(--serif);letter-spacing:-.045em;margin:24px 0 20px;max-width:680px;text-shadow:0 5px 25px #0003}
+.hero h1 span{color:var(--gold2)}
+.hero-copy{font-size:15px;line-height:1.8;color:#d7e0e9;max-width:500px;margin-bottom:30px}
+.hero-actions{gap:13px}
+.hero .btn{padding:15px 21px;font-size:11px}
+.hero .btn-outline{border-color:#d8e0e8a6;color:#f8fafc;background:rgba(255,255,255,.035)}
+.hero .btn-outline:hover{border-color:var(--gold);background:#ffffff12}
+.hero-services{max-width:540px;margin-top:42px}
+.hero-service{font-size:10px;color:#e8edf2;padding:0 14px;border-color:#ffffff32}
+.hero-service svg{width:27px;height:27px;color:var(--gold);margin-bottom:10px}
+.hero-service:first-child{padding-left:0}
+.griffin-stage{
+ position:absolute;z-index:2;top:54px;right:-2%;width:64%;height:calc(100% - 42px);
+ display:flex;align-items:center;justify-content:flex-end;pointer-events:none;
+ transform-origin:67% 52%;
+ transform:translate3d(var(--scroll-x,0px),var(--scroll-y,0px),0)
+   perspective(1200px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg))
+   rotateZ(var(--scroll-r,0deg)) scale(var(--scroll-scale,1));
+ will-change:transform,opacity;
+ transition:opacity .18s linear;
+}
+.hero-art{
+ position:relative;inset:auto;width:100%;height:100%;max-height:650px;
+ object-fit:contain;object-position:right center;z-index:1;
+ mix-blend-mode:normal;opacity:1;
+ filter:drop-shadow(0 25px 45px rgba(0,0,0,.42)) saturate(1.06);
+ -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.38) 11%,#000 28%);
+ mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.38) 11%,#000 28%);
+}
+.hero-scroll-hint{
+ position:absolute;left:0;bottom:8px;display:flex;align-items:center;gap:11px;
+ color:#aebbc9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+}
+.hero-scroll-hint span{display:block;width:34px;height:1px;background:var(--gold)}
+.hero-stats{
+ position:absolute;z-index:5;left:50%;bottom:24px;transform:translateX(-50%);
+ display:grid;grid-template-columns:repeat(4,1fr);align-items:center;
+ padding:19px 24px;border:1px solid rgba(255,196,94,.5);border-radius:12px;
+ background:linear-gradient(110deg,rgba(20,37,55,.94),rgba(31,42,54,.86));
+ box-shadow:0 15px 50px #0004,inset 0 1px #ffffff17;
+ backdrop-filter:blur(14px);
+}
+.hero-stat{display:flex;align-items:center;justify-content:center;gap:13px;min-height:42px;border-right:1px solid #ffffff35}
+.hero-stat:last-child{border:0}
+.hero-stat b{font:700 28px var(--serif);color:var(--gold2);white-space:nowrap}
+.hero-stat span{font-size:10px;line-height:1.4;color:#dce3eb;max-width:120px}
+.hero-side-index,.hero-bottom-wave,.griffin-scroll-note{display:none!important}
+/* Calm, consistent visual language below the hero */
+.services{background:#f8f6f1;padding:78px 0 76px}
+.section-heading h2{color:#142338}
+.service-card{border-color:#e4ded3;box-shadow:0 8px 25px rgba(16,28,43,.07)}
+.service-card:hover{box-shadow:0 18px 38px rgba(16,28,43,.13)}
+.service-icon{background:var(--gold);border-color:#f8f6f1}
+.about{background:#0b1a2a}
+.projects{background:#f1eee7}
+.team{background:#0b1a2a}
+.advantage{background:#f8f6f1}
+.contact-banner{background-color:#0b1a2a}
+.btn{background:var(--gold);border-color:var(--gold)}
+.btn:hover{background:var(--gold2);border-color:var(--gold2)}
+@media(max-width:1000px){
+ .hero{min-height:760px;padding-top:112px;padding-bottom:150px}
+ .hero-content{width:58%}
+ .griffin-stage{width:65%;right:-8%;top:80px}
+ .hero-stat{gap:8px}.hero-stat b{font-size:23px}.hero-stat span{font-size:9px}
+}
+@media(max-width:720px){
+ .nav{height:70px}
+ .hero{min-height:850px;padding:120px 0 205px}
+ .hero-layout{min-height:520px;align-items:flex-start}
+ .hero-content{width:100%;max-width:540px}
+ .hero h1{font-size:clamp(54px,12vw,76px);max-width:520px}
+ .hero-copy{max-width:440px;font-size:13px}
+ .griffin-stage{
+  width:112%;height:390px;right:-34%;top:375px;opacity:.48;
+  transform-origin:68% 50%;
+ }
+ .hero-art{-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 25%);mask-image:linear-gradient(90deg,transparent 0%,#000 25%)}
+ .hero-services{max-width:510px;margin-top:32px}
+ .hero-service{font-size:9px;padding:0 7px}
+ .hero-scroll-hint{display:none}
+ .hero-stats{bottom:18px;padding:14px 8px;grid-template-columns:repeat(2,1fr);gap:12px 0}
+ .hero-stat{justify-content:flex-start;padding:5px 12px;border-right:1px solid #ffffff30}
+ .hero-stat:nth-child(2){border-right:0}
+ .hero-stat b{font-size:21px}
+ .hero-stat span{font-size:8px}
+}
+@media(max-width:420px){
+ .hero{min-height:900px;padding-bottom:215px}
+ .hero h1{font-size:50px}
+ .hero-actions{gap:9px}
+ .hero .btn{padding:13px 14px;font-size:10px}
+ .griffin-stage{top:440px;width:125%;right:-43%;height:340px;opacity:.4}
+ .hero-services{margin-top:26px}
+ .hero-service{font-size:8px}
+ .hero-stat{padding:4px 8px;gap:7px}
+ .hero-stat b{font-size:18px}
+ .hero-stat span{font-size:7px}
+}
+
+
+/* ===== GryFno refreshed palette: warm ivory, clear sky, ink navy and copper gold ===== */
+:root{
+ --navy:#142b45;--navy2:#1d3d5d;--navy3:#315574;
+ --gold:#d88918;--gold2:#f2ae38;--cream:#f6f3ed;--paper:#fffdfa;
+ --ink:#17283d;--muted:#667487;--line:rgba(23,40,61,.14);
+ --shadow:0 18px 48px rgba(35,52,72,.12);
+}
+body{background:var(--cream);color:var(--ink)}
+.progress{background:var(--gold)}
+.site-header{color:var(--ink);background:rgba(255,253,249,.82);backdrop-filter:blur(16px);box-shadow:0 1px 0 rgba(20,43,69,.08)}
+.site-header.sticky{background:rgba(255,253,249,.96);box-shadow:0 8px 30px rgba(20,43,69,.10)}
+.nav{height:82px}
+.brand-name{color:var(--navy)}
+.brand-sub{color:#607187}
+.brand-mark{color:var(--gold);filter:drop-shadow(0 2px 4px #d8891825)}
+.nav-links a{color:#233a53}
+.nav-links a:hover,.nav-links a.active{color:var(--navy)}
+.nav-call{background:#fff;border-color:#d99a36;color:var(--navy)}
+.menu-btn{color:var(--navy)}
+/* Bright, uncluttered hero with the griffin kept on its own visual plane. */
+.hero{
+ height:auto;min-height:770px;padding:112px 0 148px;align-items:stretch;
+ color:var(--ink);background:linear-gradient(110deg,#fffaf2 0%,#f5f7f7 46%,#dceaf2 100%);
+ overflow:hidden;isolation:isolate;
+}
+.hero:before{
+ content:"";position:absolute;inset:0;z-index:-3;
+ background:
+  radial-gradient(ellipse at 72% 36%,rgba(255,255,255,.7),transparent 44%),
+  linear-gradient(110deg,#fffaf2 0%,#f6f6f2 43%,#d9e9f2 100%);
+}
+.hero:after{
+ content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+ background:linear-gradient(90deg,rgba(255,250,242,.15),transparent 57%),
+ linear-gradient(0deg,rgba(20,43,69,.10),transparent 20%);
+}
+.hero-glow{
+ position:absolute;z-index:-1;right:6%;top:10%;width:48vw;height:48vw;max-width:700px;max-height:650px;
+ background:radial-gradient(ellipse,rgba(255,255,255,.72),rgba(226,238,243,.24) 48%,transparent 72%);
+ filter:blur(12px);pointer-events:none;
+}
+.hero-layout{min-height:515px;display:flex;align-items:center;position:relative}
+.hero-content{width:51%;max-width:650px;z-index:4;position:relative}
+.hero .kicker{color:#a9660d;font-size:10px;letter-spacing:.28em}
+.hero .kicker:after{background:var(--gold)}
+.hero h1{font:800 clamp(58px,6.2vw,88px)/.98 var(--serif);color:var(--navy);letter-spacing:-.05em;margin:24px 0 18px;text-shadow:none}
+.hero h1 span{color:#c47a16}
+.hero-copy{font-size:15px;line-height:1.8;color:#455a70;max-width:490px;margin-bottom:29px}
+.hero .btn{background:var(--gold2);border-color:var(--gold2);color:#182b40;padding:15px 21px}
+.hero .btn:hover{background:#f8bd59;border-color:#f8bd59}
+.hero .btn-outline{background:rgba(255,255,255,.5);border-color:#60758a;color:var(--navy)}
+.hero .btn-outline:hover{background:#fff;border-color:var(--gold)}
+.hero-services{max-width:550px;margin-top:37px}
+.hero-service{color:#344a60;border-color:rgba(20,43,69,.2);font-size:10px}
+.hero-service svg{color:#c47a16;width:28px;height:28px}
+.griffin-stage{
+ position:absolute;z-index:2;top:14px;right:-5%;width:65%;height:calc(100% - 12px);
+ display:flex;align-items:center;justify-content:flex-end;pointer-events:none;
+ transform-origin:68% 52%;
+ transform:translate3d(var(--scroll-x,0px),var(--scroll-y,0px),0)
+ perspective(1200px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg))
+ rotateZ(var(--scroll-r,0deg)) scale(var(--scroll-scale,1));
+ will-change:transform,opacity;transition:opacity .18s linear;
+}
+.hero-art{
+ position:relative;inset:auto;width:100%;height:100%;max-height:610px;
+ object-fit:contain;object-position:right center;z-index:1;mix-blend-mode:normal;opacity:1;
+ filter:drop-shadow(0 24px 30px rgba(48,65,82,.22)) saturate(1.04);
+ -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.25) 10%,#000 26%);
+ mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.25) 10%,#000 26%);
+}
+.hero-scroll-hint{color:#65788b;bottom:5px}
+.hero-scroll-hint span{background:var(--gold)}
+.hero-stats{
+ position:absolute;z-index:5;left:50%;bottom:22px;transform:translateX(-50%);
+ display:grid;grid-template-columns:repeat(4,1fr);align-items:center;
+ padding:17px 22px;border:1px solid rgba(20,43,69,.09);border-radius:16px;
+ background:rgba(255,255,255,.88);box-shadow:0 14px 40px rgba(32,53,75,.12);
+ backdrop-filter:blur(14px);
+}
+.hero-stat{display:flex;align-items:center;justify-content:center;gap:12px;min-height:42px;border-right:1px solid rgba(20,43,69,.18)}
+.hero-stat:last-child{border:0}
+.hero-stat b{font:700 27px var(--serif);color:#bd7412;white-space:nowrap}
+.hero-stat span{font-size:10px;line-height:1.4;color:#53667b;max-width:125px}
+.hero-side-index,.hero-bottom-wave{display:none!important}
+/* Light, architectural content system */
+.services{background:#fffdfa;padding:78px 0 76px}
+.section-heading h2{color:var(--navy)}
+.section-heading p{color:#657488}
+.section-kicker{color:#b46e11}
+.service-card{background:#fff;border:1px solid #e8e2d8;box-shadow:0 8px 24px rgba(27,48,69,.07)}
+.service-card:hover{box-shadow:0 18px 38px rgba(27,48,69,.14)}
+.service-body h3{color:var(--navy)}
+.service-body p{color:#637184}
+.service-icon{background:var(--gold2);border-color:#fff}
+.service-arrow{background:#fff;border-color:#e3a23d;color:#b46e11}
+.about{background:#eaf0f2;color:var(--navy);padding:76px 0}
+.about:after{background:radial-gradient(ellipse,rgba(255,255,255,.7),transparent 65%);opacity:.5}
+.about-copy p{color:#52677b}
+.about-point{color:#29445e}
+.about-point svg,.about-stat svg{color:#bd7412}
+.about-stats{border-color:rgba(20,43,69,.2)}
+.about-stat strong{color:#bd7412}
+.about-stat span{color:#52677b}
+.projects{background:#f7f4ee}
+.project-card{box-shadow:0 10px 26px rgba(27,48,69,.10)}
+.team{background:#e4edf0;color:var(--navy)}
+.team-card{background:#fff;border-color:#d5a04b;box-shadow:0 8px 20px rgba(27,48,69,.08)}
+.team-card h3{color:var(--navy)}
+.team-card p{color:#637184}
+.team-intro p{color:#586d80}
+.advantage{background:#fffdfa}
+.advantage-title h2{color:var(--navy)}
+.advantage-item strong{color:#263f58}
+.advantage-item span{color:#69798a}
+.contact-banner{
+ background-color:#244560;
+ background-image:linear-gradient(90deg,rgba(18,43,67,.88),rgba(26,58,83,.58),rgba(18,43,67,.82)),
+ url("https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=85");
+}
+footer{background:#142b45;color:#eaf0f4}
+.footer-col li,.footer-col a{color:#c1cfdb}
+.footer-brand p{color:#b6c6d4}
+.footer-bottom{border-color:#ffffff2b;color:#a9bbc9}
+.back-top{background:var(--gold2);color:var(--navy)}
+/* Responsive */
+@media(max-width:1000px){
+ .hero{min-height:740px;padding-top:105px;padding-bottom:145px}
+ .hero-content{width:55%}
+ .griffin-stage{width:66%;right:-9%;top:30px}
+ .hero-stat b{font-size:23px}.hero-stat span{font-size:9px}
+}
+@media(max-width:720px){
+ .site-header{background:rgba(255,253,249,.95)}
+ .nav{height:70px}
+ .nav-links{background:#fffdfa;box-shadow:0 16px 24px rgba(20,43,69,.12)}
+ .nav-links a{color:var(--navy);border-color:rgba(20,43,69,.10)}
+ .hero{min-height:875px;padding:115px 0 205px}
+ .hero-layout{min-height:545px;align-items:flex-start}
+ .hero-content{width:100%;max-width:540px}
+ .hero h1{font-size:clamp(51px,12vw,72px)}
+ .hero-copy{max-width:440px;font-size:13px}
+ .griffin-stage{width:110%;height:390px;right:-31%;top:385px;opacity:.76}
+ .hero-art{-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 24%);mask-image:linear-gradient(90deg,transparent 0%,#000 24%)}
+ .hero-services{margin-top:30px;max-width:500px}
+ .hero-service{font-size:9px;padding:0 7px}
+ .hero-stats{bottom:17px;padding:13px 9px;grid-template-columns:repeat(2,1fr);gap:10px 0}
+ .hero-stat{justify-content:flex-start;padding:5px 12px;border-right:1px solid rgba(20,43,69,.15)}
+ .hero-stat:nth-child(2){border-right:0}
+ .hero-stat b{font-size:21px}.hero-stat span{font-size:8px}
+}
+@media(max-width:420px){
+ .hero{min-height:900px;padding-bottom:215px}
+ .hero h1{font-size:49px}
+ .griffin-stage{top:435px;width:125%;right:-43%;height:340px;opacity:.7}
+ .hero-actions{gap:8px}.hero .btn{padding:13px 14px;font-size:10px}
+ .hero-services{margin-top:25px}
+ .hero-service{font-size:8px}
+ .hero-stat{padding:4px 8px;gap:7px}.hero-stat b{font-size:18px}.hero-stat span{font-size:7px}
+}
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="site-header" id="header">
+ <div class="container nav">
+  <a href="#home" class="brand" aria-label="Griffin Construction home">
+   <svg class="brand-mark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M7 42c8-3 13-10 14-19 4 5 5 10 4 15 8-5 12-14 11-25 8 7 11 17 8 27 5-3 8-8 9-14 7 8 7 20 1 28-7 9-22 11-34 5L7 42zm23-5c-3 8-9 11-16 12 8 6 20 7 29 1-5-2-9-6-13-13z"/><path d="M37 8c8-5 16-4 22 2-7 0-11 3-14 8l-8-10zM18 14l-8-8 2 14 6-6z" opacity=".8"/><circle cx="43" cy="24" r="2.2" fill="#0b1725"/></svg>
+   <span><span class="brand-name">GRIFFIN</span><span class="brand-sub">CONSTRUCTION</span></span>
+  </a>
+  <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+   <a class="active" href="#home">Home</a><a href="#about">About</a><a href="#services">Services⌄</a><a href="#projects">Projects</a><a href="#team">Team</a><a href="#advantage">Why Us</a><a href="#contact">Contact</a>
+  </nav>
+  <a class="nav-call" href="tel:+911234567890"><b>☎</b> +91 123 456 7890</a>
+  <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false">☰</button>
+ </div>
+</header>
+
+<main>
+<section class="hero" id="home">
+ <div class="hero-glow" aria-hidden="true"></div>
+ <div class="griffin-stage" id="griffinStage" aria-hidden="true">
+  <img class="hero-art" src="griffin-bright-hero.jpg" alt="">
+ </div>
+ <div class="container hero-layout">
+  <div class="hero-content">
+   <div class="kicker reveal">Building a stronger tomorrow</div>
+   <h1 class="reveal d1">Griffin<br><span>Construction</span></h1>
+   <p class="hero-copy reveal d2">End-to-end construction solutions with strength, precision and trust. From concept to completion, we build spaces that last for generations.</p>
+   <div class="hero-actions reveal d2">
+    <a class="btn" href="#services">Explore our services <span>→</span></a>
+    <a class="btn btn-outline" href="#projects">View our projects <span>↗</span></a>
+   </div>
+   <div class="hero-services reveal d3">
+    <div class="hero-service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21V8l9-5 9 5v13M8 21v-8h8v8"/></svg>Residential<br>Construction</div>
+    <div class="hero-service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h12v11H3zM15 11h4l3 3v4h-7"/></svg>Commercial<br>Projects</div>
+    <div class="hero-service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18M5 8l7-5 7 5v13M9 21v-7h6v7"/></svg>Project<br>Management</div>
+    <div class="hero-service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m14 7 3-3 3 3-3 3M4 20l9-9M3 8l5-5 4 4-5 5M14 14l7 7"/></svg>Renovation &<br>Remodeling</div>
+   </div>
+  </div>
+  <div class="hero-scroll-hint"><span></span> Scroll to explore</div>
+ </div>
+ <div class="hero-stats container">
+  <div class="hero-stat"><b>10+</b><span>Years of experience</span></div>
+  <div class="hero-stat"><b>50+</b><span>Expert professionals</span></div>
+  <div class="hero-stat"><b>100+</b><span>Projects completed</span></div>
+  <div class="hero-stat"><b>100%</b><span>Commitment to quality</span></div>
+ </div>
+</section>
+
+<section class="services" id="services">
+ <div class="container">
+  <div class="section-heading reveal"><div class="section-kicker">What we do</div><h2>Explore Our Services</h2><p>Comprehensive construction solutions tailored to your needs.</p></div>
+  <div class="service-grid">
+   <article class="service-card reveal"><div class="service-photo"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=85" alt="Modern residential property"></div><div class="service-body"><span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11 12 3l9 8M5 10v11h14V10M9 21v-7h6v7"/></svg></span><h3>Real Estate<br>Development</h3><p>End-to-end property development with modern design and high value.</p><span class="service-arrow">→</span></div></article>
+   <article class="service-card reveal d1"><div class="service-photo"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=85" alt="Construction transport and logistics"></div><div class="service-body"><span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6h13v11H2zM15 10h4l3 4v3h-7M6 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></span><h3>Transport<br>& Logistics</h3><p>Reliable material transport and on-site logistics support for timely execution.</p><span class="service-arrow">→</span></div></article>
+   <article class="service-card reveal d2"><div class="service-photo"><img src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=85" alt="Construction site inspection"></div><div class="service-body"><span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m14 7 3-3 3 3-3 3M4 20l9-9M3 8l5-5 4 4-5 5zM14 14l7 7M17 14l4-4"/></svg></span><h3>Site<br>Inspections</h3><p>Professional construction, structural, and safety inspections.</p><span class="service-arrow">→</span></div></article>
+   <article class="service-card reveal d3"><div class="service-photo"><img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=85" alt="Digital construction planning"></div><div class="service-body"><span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span><h3>Websites & Digital</h3><p>Modern websites for real estate and construction firms.</p><span class="service-arrow">→</span></div></article>
+  </div>
+ </div>
+</section>
+
+<section class="about" id="about">
+ <div class="container about-grid">
+  <div class="about-photos reveal"><img class="about-photo-main" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=85" alt="Contemporary commercial construction"><img class="about-photo-small" src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=85" alt="Architect reviewing construction plans"></div>
+  <div class="about-copy reveal d1"><div class="kicker">About Griffin</div><h2>A Construction Partner<br>Built on Strength & <span>Trust</span></h2><p>Griffin Construction is a modern construction and real estate company committed to delivering high-quality, sustainable, and value-driven projects. We combine industry expertise, advanced technology and a commitment to excellence to build spaces that last.</p><div class="about-points"><div class="about-point">✦ Quality First</div><div class="about-point">♧ Expert Team</div><div class="about-point">◈ Sustainable</div><div class="about-point">⬡ On-Time Delivery</div></div><a class="btn" href="#contact">Learn More →</a></div>
+  <div class="about-stats reveal d2">
+   <div class="about-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 5v6c0 5 3 8 8 11 5-3 8-6 8-11V5z"/><path d="m8 12 3 3 5-6"/></svg><div><strong>10+</strong><span>Years of Experience</span></div></div>
+   <div class="about-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M17 4a4 4 0 0 1 0 8m2 3a6 6 0 0 1 3 5v1"/></svg><div><strong>150+</strong><span>Projects Completed</span></div></div>
+   <div class="about-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21V8l9-5 9 5v13M8 21v-8h8v8"/></svg><div><strong>500+</strong><span>Happy Clients</span></div></div>
+  </div>
+ </div>
+</section>
+
+<section class="projects" id="projects">
+ <div class="container">
+  <div class="projects-head"><div class="section-heading reveal"><div class="section-kicker">Our work</div><h2>Featured Projects</h2></div><div class="project-filters reveal"><button class="filter-btn active" data-filter="all">All Projects</button><button class="filter-btn" data-filter="residential">Residential</button><button class="filter-btn" data-filter="commercial">Commercial</button><button class="filter-btn" data-filter="industrial">Industrial</button><button class="filter-btn" data-filter="renovation">Renovation</button></div></div>
+  <div class="project-grid">
+   <article class="project-card reveal" data-category="residential"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=85" alt="Skyline modern residence"><div class="project-info"><small>Residential · Mohali</small><h3>Skyline Residences</h3><span class="project-go">→</span></div></article>
+   <article class="project-card reveal d1" data-category="commercial"><img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=85" alt="Commercial office building"><div class="project-info"><small>Commercial · Chandigarh</small><h3>Griffin Business Park</h3><span class="project-go">→</span></div></article>
+   <article class="project-card reveal d2" data-category="residential"><img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=85" alt="Riverdale villa"><div class="project-info"><small>Residential · Panchkula</small><h3>Riverdale Villas</h3><span class="project-go">→</span></div></article>
+   <article class="project-card reveal d3" data-category="industrial"><img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=85" alt="Industrial construction site"><div class="project-info"><small>Industrial · Zirakpur</small><h3>City Trade Center</h3><span class="project-go">→</span></div></article>
+  </div>
+ </div>
+</section>
+
+<section class="team" id="team">
+ <div class="container team-grid">
+  <div class="team-intro reveal"><div class="section-kicker">Our team</div><h2>The People Behind<br>Griffin Construction</h2><p>A team of experienced professionals, engineers and project managers who turn vision into reality.</p><a class="btn" href="#contact">Meet Our Team →</a></div>
+  <article class="team-card reveal"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=85" alt="Founder and CEO portrait"><h3>Mayank Goyal</h3><p>Founder & CEO</p></article>
+  <article class="team-card reveal d1"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=85" alt="Project director portrait"><h3>Priya Sharma</h3><p>Project Director</p></article>
+  <article class="team-card reveal d2"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=85" alt="Chief engineer portrait"><h3>Rahul Verma</h3><p>Chief Engineer</p></article>
+  <article class="team-card reveal d3"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=85" alt="Operations manager portrait"><h3>Amit Khanna</h3><p>Operations Head</p></article>
+ </div>
+</section>
+
+<section class="advantage" id="advantage">
+ <div class="container advantage-grid">
+  <div class="advantage-title reveal"><div class="section-kicker" style="justify-content:flex-start">Why choose us</div><h2>The Griffin Advantage</h2></div>
+  <div class="advantage-item reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg><strong>End-to-End Solutions</strong><span>From planning to handover.</span></div>
+  <div class="advantage-item reveal d1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2m1-16a4 4 0 0 1 0 8m1 3a6 6 0 0 1 4 5"/></svg><strong>Trusted Partnerships</strong><span>With leading vendors & experts.</span></div>
+  <div class="advantage-item reveal d2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 4C10 4 5 8 5 15c0 3 2 5 5 5 7 0 10-7 10-16zM4 21c2-5 6-9 12-13"/></svg><strong>Safety & Compliance</strong><span>Highest industry standards.</span></div>
+  <div class="advantage-item reveal d3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 6v6c0 5 4 8 9 10 5-2 9-5 9-10V6z"/><path d="m8 12 3 3 5-6"/></svg><strong>Sustainable Build</strong><span>For a better tomorrow.</span></div>
+ </div>
+</section>
+
+<section class="contact-banner" id="contact"><div class="container contact-inner"><div class="reveal"><h2>Let’s Build Your <span>Next Project</span></h2><p>Get in touch with our team for a consultation and a detailed quote.</p></div><div class="contact-actions reveal d1"><a class="btn" href="mailto:contact@griffinconstruction.in">✉ &nbsp; Contact Us →</a><a class="btn btn-outline" href="tel:+911234567890">☎ &nbsp; +91 123 456 7890</a></div></div></section>
+</main>
+
+<footer>
+ <div class="container">
+  <div class="footer-grid">
+   <div class="footer-brand"><a href="#home" class="brand"><svg class="brand-mark" viewBox="0 0 64 64" fill="currentColor"><path d="M7 42c8-3 13-10 14-19 4 5 5 10 4 15 8-5 12-14 11-25 8 7 11 17 8 27 5-3 8-8 9-14 7 8 7 20 1 28-7 9-22 11-34 5L7 42zm23-5c-3 8-9 11-16 12 8 6 20 7 29 1-5-2-9-6-13-13z"/></svg><span><span class="brand-name">GRIFFIN</span><span class="brand-sub">CONSTRUCTION</span></span></a><p>A trusted construction and real estate company delivering quality, innovation and lasting value.</p></div>
+   <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="#home">Home</a></li><li><a href="#about">About Us</a></li><li><a href="#services">Services</a></li><li><a href="#projects">Projects</a></li><li><a href="#team">Our Team</a></li></ul></div>
+   <div class="footer-col"><h4>Contact Info</h4><ul><li><a href="tel:+911234567890">☎ &nbsp;+91 123 456 7890</a></li><li><a href="mailto:contact@griffinconstruction.in">✉ &nbsp;contact@griffinconstruction.in</a></li><li>⌖ &nbsp;Mohali, Punjab – 160055, India</li></ul></div>
+   <div class="footer-col"><h4>Follow Us</h4><ul><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">Facebook</a></li><li><a href="#">YouTube</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>© <span id="year"></span> Griffin Construction. All Rights Reserved.</span><span><a href="#">Privacy Policy</a> &nbsp; | &nbsp; <a href="#">Terms & Conditions</a></span></div>
+ </div>
+</footer>
+<button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+
+<script>
+const header=document.getElementById('header');
+const progress=document.getElementById('progress');
+const backTop=document.getElementById('backTop');
+const menuBtn=document.getElementById('menuBtn');
+const navLinks=document.getElementById('navLinks');
+const hero=document.querySelector('.hero');
+const griffinStage=document.getElementById('griffinStage');
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let scrollFrame=0;
+let pointerX=0,pointerY=0;
+
+function renderGriffinMotion(){
+ scrollFrame=0;
+ if(!griffinStage||reduceMotion)return;
+ const heroRect=hero.getBoundingClientRect();
+ const progress=Math.max(0,Math.min(1,(-heroRect.top)/(heroRect.height*.92)));
+ const mobile=window.innerWidth<=720;
+ // As the visitor scrolls, the griffin rises, glides inward and turns slightly in 3D.
+ const x=(mobile? -5: -28)*progress;
+ const y=(mobile? -18: -34)*progress;
+ const rotation=(mobile? .8: 2)*progress;
+ const scale=1-(mobile?.025:.05)*progress;
+ const fade=1-(progress*.08);
+ griffinStage.style.setProperty('--scroll-x',`${x}px`);
+ griffinStage.style.setProperty('--scroll-y',`${y}px`);
+ griffinStage.style.setProperty('--scroll-r',`${rotation}deg`);
+ griffinStage.style.setProperty('--scroll-scale',scale.toFixed(3));
+ griffinStage.style.opacity=String(Math.max(.82,fade));
+ // Pointer tilt is deliberately subtle so the visual still feels premium, not like a game.
+ griffinStage.style.setProperty('--tilt-x',`${pointerY}deg`);
+ griffinStage.style.setProperty('--tilt-y',`${pointerX}deg`);
+}
+function requestGriffinFrame(){
+ if(!scrollFrame)scrollFrame=requestAnimationFrame(renderGriffinMotion);
+}
+if(griffinStage&&!reduceMotion){
+ hero.addEventListener('pointermove',event=>{
+  if(event.pointerType==='touch'||window.innerWidth<=720)return;
+  const rect=hero.getBoundingClientRect();
+  const nx=(event.clientX-rect.left)/rect.width-.5;
+  const ny=(event.clientY-rect.top)/rect.height-.5;
+  pointerX=nx*1.4;pointerY=-ny*1.0;requestGriffinFrame();
+ });
+ hero.addEventListener('pointerleave',()=>{pointerX=0;pointerY=0;requestGriffinFrame();});
+ window.addEventListener('resize',requestGriffinFrame,{passive:true});
+}
+
+function updateScroll(){
+ const max=document.documentElement.scrollHeight-window.innerHeight;
+ progress.style.width=(max>0?window.scrollY/max*100:0)+'%';
+ header.classList.toggle('sticky',window.scrollY>65);
+ backTop.classList.toggle('show',window.scrollY>500);
+ requestGriffinFrame();
+}
+window.addEventListener('scroll',updateScroll,{passive:true});updateScroll();requestGriffinFrame();
+
+menuBtn.addEventListener('click',()=>{
+ const open=navLinks.classList.toggle('open');
+ menuBtn.setAttribute('aria-expanded',String(open));
+ menuBtn.textContent=open?'×':'☰';
+});
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+ navLinks.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.textContent='☰';
+}));
+
+// Scroll reveal with a graceful fallback for browsers without IntersectionObserver.
+if('IntersectionObserver' in window){
+ const observer=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target);}});
+ },{threshold:.12,rootMargin:'0px 0px -25px 0px'});
+ document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));}
+
+
+// Lightweight perspective tilt on desktop cards; disabled for touch and reduced-motion users.
+if(!reduceMotion && window.matchMedia('(pointer:fine)').matches){
+ document.querySelectorAll('.service-card,.project-card,.team-card').forEach(card=>{
+  card.addEventListener('pointermove',event=>{
+   const r=card.getBoundingClientRect(),x=(event.clientX-r.left)/r.width-.5,y=(event.clientY-r.top)/r.height-.5;
+   card.style.transform=`perspective(900px) rotateX(${-y*3}deg) rotateY(${x*4}deg) translateY(-4px)`;
+  });
+  card.addEventListener('pointerleave',()=>{card.style.transform='';});
+ });
+}
+
+// Portfolio filters.
+document.querySelectorAll('.filter-btn').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active');
+ const filter=btn.dataset.filter;
+ document.querySelectorAll('.project-card').forEach(card=>{
+  card.classList.toggle('hide',filter!=='all'&&card.dataset.category!==filter);
+ });
+}));
+
+document.getElementById('backTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+document.getElementById('year').textContent=new Date().getFullYear();
+
+// Highlight the current section in the navigation.
+const sections=[...document.querySelectorAll('main section[id]')];
+if('IntersectionObserver' in window){
+ const sectionObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+   if(entry.isIntersecting){
+    navLinks.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+entry.target.id));
+   }
+  });
+ },{rootMargin:'-35% 0px -55% 0px'});
+ sections.forEach(section=>sectionObserver.observe(section));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Griffin Construction brand */
+    --navy: 214 24% 13%;        /* #0C1F38 */
+    --navy-2: 208 30% 16%;      /* #102B43 */
+    --gold: 38 82% 53%;         /* #E9A126 */
+    --gold-dark: 36 80% 44%;    /* #C98216 */
+    --cream: 38 44% 96%;        /* #FAF7F2 */
+    --ink: 212 27% 22%;         /* #24364B */
+    --muted-ink: 218 13% 45%;   /* #758195 */
+
+    --background: 38 44% 96%;
+    --foreground: 212 27% 22%;
+    --card: 0 0% 100%;
+    --card-foreground: 212 27% 22%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 212 27% 22%;
+    --primary: 214 24% 13%;
+    --primary-foreground: 38 44% 96%;
+    --secondary: 208 30% 16%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 40 26% 94%;
+    --muted-foreground: 218 13% 42%;
+    --accent: 38 82% 53%;
+    --accent-foreground: 214 24% 13%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 16% 87%;
+    --input: 40 16% 84%;
+    --ring: 38 82% 53%;
+    --chart-1: 38 82% 53%;
+    --chart-2: 214 24% 13%;
+    --chart-3: 208 30% 16%;
+    --chart-4: 194 55% 42%;
+    --chart-5: 36 80% 44%;
+    --radius: 0.75rem;
+
+    --font-heading: "Playfair Display", Georgia, "Times New Roman", serif;
+    --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+    --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .gc-card {
+    @apply min-w-0 rounded-xl border border-border bg-card shadow-[0_1px_2px_rgba(12,31,56,0.05),0_12px_28px_-18px_rgba(12,31,56,0.25)];
+  }
+
+  .gc-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground;
+  }
+
+  .gc-prose h2 {
+    @apply mt-8 mb-3 text-2xl font-semibold text-primary;
+  }
+
+  .gc-prose h3 {
+    @apply mt-6 mb-2 text-xl font-semibold text-primary;
+  }
+
+  .gc-prose p {
+    @apply mb-4 leading-relaxed text-foreground/85;
+  }
+
+  .gc-prose ul {
+    @apply mb-4 list-disc space-y-2 pl-6;
+  }
+
+  .gc-prose ol {
+    @apply mb-4 list-decimal space-y-2 pl-6;
+  }
+
+  .gc-prose a {
+    @apply underline decoration-accent decoration-2 underline-offset-2;
+  }
+
+  .gc-prose blockquote {
+    @apply my-6 border-l-2 border-accent pl-4 italic text-foreground/80;
+  }
+}
+
+/* Rich text editor (Quill) tuned to the Griffin palette */
+.ql-toolbar.ql-snow {
+  border-color: hsl(var(--border));
+  border-radius: 0.5rem 0.5rem 0 0;
+  background: hsl(var(--muted));
+}
+
+.ql-container.ql-snow {
+  border-color: hsl(var(--border));
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-family: var(--font-body);
+  font-size: 15px;
+  min-height: 260px;
+}
+
+.ql-editor {
+  min-height: 260px;
+}

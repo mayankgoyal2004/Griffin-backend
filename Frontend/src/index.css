@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #091726;
+  --color-navy-deep: #050e18;
+  --color-navy-card: #0f2237;
+  --color-navy-light: #183350;
+  --color-gold: #d88918;
+  --color-gold-light: #f2ae38;
+  --color-gold-glow: #ffc65e;
+  --color-cream: #f6f4ef;
+  --color-cream-light: #faf8f4;
+  --color-paper: #fffdfa;
+  --color-ink: #111d2c;
+  --color-muted: #657488;
+  --color-line: rgba(17, 29, 44, 0.12);
+
+  --font-serif: serif;
+  --font-sans: serif;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: serif;
+}
+
+:root {
+  --navy: #091726;
+  --gold: #d88918;
+  --gold-light: #f2ae38;
+  --cream: #f6f4ef;
+  --paper: #fffdfa;
+  --ink: #111d2c;
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 9px;
+}
+::-webkit-scrollbar-track {
+  background: #f1ede4;
+}
+::-webkit-scrollbar-thumb {
+  background: #c5bba8;
+  border-radius: 9999px;
+  border: 2px solid #f1ede4;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d88918;
+}
+
+/* Glassmorphism helpers */
+.glass-nav {
+  background: rgba(255, 253, 250, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-dark {
+  background: rgba(9, 23, 38, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(216, 137, 24, 0.18);
+}
+
+/* Griffin 3D Stage styles */
+.griffin-stage {
+  transform-origin: 68% 52%;
+  will-change: transform, opacity;
+  transition: opacity 0.2s ease-out;
+}
+
+/* Subtle architectural patterns */
+.pattern-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(17, 29, 44, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 29, 44, 0.04) 1px, transparent 1px);
+}
+
+.pattern-grid-dark {
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+/* Glow animation */
+@keyframes ambientGlow {
+  0%, 100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.1) translate(15px, -10px);
+    opacity: 0.85;
+  }
+}
+
+.animate-ambient-glow {
+  animation: ambientGlow 10s ease-in-out infinite;
+}
