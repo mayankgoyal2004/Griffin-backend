@@ -48,14 +48,17 @@ export function AuthProvider({ children }) {
       isLoadingAuth: isPending,
       authError: data?.error ?? (error ? { type: "unknown", message: error.message ?? "Failed to load session" } : null),
       refresh: () => queryClient.fetchQuery({ ...authQuery, staleTime: 0 }),
-      logout: () => {
+      logout: async () => {
         queryClient.setQueryData(authQuery.queryKey, { user: null, error: null });
-        base44.auth.logout(window.location.origin);
+        queryClient.removeQueries({ queryKey: ["auth"] });
+        await base44.auth.logout("/login");
       },
       // Full-page sign-in: /login with the current page as the way back. A hard
       // navigation on purpose — on an app served behind the platform login the
       // platform answers /login itself; an app with its own auth pages serves its /login route.
-      navigateToLogin: () => base44.auth.redirectToLogin(currentUrl()),
+      navigateToLogin: () => {
+        window.location.href = "/login";
+      },
     }),
     [data, error, isPending, queryClient],
   );

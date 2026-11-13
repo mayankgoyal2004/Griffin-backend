@@ -5,6 +5,7 @@ import { ENV } from "../config/env.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { normalizeUser } from "../utils/serializer.js";
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -62,14 +63,7 @@ export const login = asyncHandler(async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  const userPayload = {
-    id: user.id,
-    email: user.email,
-    fullName: user.fullName,
-    role: user.role,
-    phone: user.phone,
-    avatar: user.avatar,
-  };
+  const userPayload = normalizeUser(user);
 
   return res.status(200).json(
     new ApiResponse(
@@ -81,7 +75,7 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const register = asyncHandler(async (req, res) => {
-  const { email, password, fullName, role = "ADMIN", phone } = req.body;
+  const { email, password, fullName, full_name, role = "ADMIN", phone } = req.body;
 
   const existing = await prisma.user.findUnique({
     where: { email: email.toLowerCase() },
@@ -98,31 +92,22 @@ export const register = asyncHandler(async (req, res) => {
     data: {
       email: email.toLowerCase(),
       password: hashedPassword,
-      fullName,
-      role,
+      fullName: fullName || full_name || "Admin User",
+      role: (role || "ADMIN").toUpperCase(),
       phone,
-    },
-    select: {
-      id: true,
-      email: true,
-      fullName: true,
-      role: true,
-      phone: true,
-      avatar: true,
-      createdAt: true,
     },
   });
 
   const token = generateToken(newUser);
 
   return res.status(201).json(
-    new ApiResponse(201, { user: newUser, token }, "User registered successfully.")
+    new ApiResponse(201, { user: normalizeUser(newUser), token }, "User registered successfully.")
   );
 });
 
 export const getCurrentUser = asyncHandler(async (req, res) => {
   return res.status(200).json(
-    new ApiResponse(200, req.user, "Current user profile fetched successfully.")
+    new ApiResponse(200, normalizeUser(req.user), "Current user profile fetched successfully.")
   );
 });
 

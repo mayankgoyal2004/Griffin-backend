@@ -3,15 +3,60 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { slugify } from "../utils/slugify.js";
+import { normalizeProject } from "../utils/serializer.js";
+
+function parseProjectData(body) {
+  const data = {};
+  if (body.name !== undefined) data.name = body.name;
+  if (body.slug !== undefined) data.slug = slugify(body.slug || body.name);
+  if (body.category !== undefined) data.category = body.category;
+  if (body.location !== undefined) data.location = body.location;
+  if (body.clientName !== undefined || body.client_name !== undefined) {
+    data.clientName = body.clientName ?? body.client_name;
+  }
+  if (body.status !== undefined) {
+    const s = String(body.status).toUpperCase();
+    data.status = ["PLANNING", "ONGOING", "COMPLETED", "ON_HOLD"].includes(s) ? s : "ONGOING";
+  }
+  if (body.startDate !== undefined || body.start_date !== undefined) {
+    const raw = body.startDate ?? body.start_date;
+    data.startDate = raw ? new Date(raw) : null;
+  }
+  if (body.completionDate !== undefined || body.completion_date !== undefined) {
+    const raw = body.completionDate ?? body.completion_date;
+    data.completionDate = raw ? new Date(raw) : null;
+  }
+  if (body.shortDescription !== undefined || body.short_description !== undefined) {
+    data.shortDescription = body.shortDescription ?? body.short_description;
+  }
+  if (body.fullDescription !== undefined || body.full_description !== undefined) {
+    data.fullDescription = body.fullDescription ?? body.full_description;
+  }
+  if (body.coverImage !== undefined || body.cover_image !== undefined) {
+    data.coverImage = body.coverImage ?? body.cover_image;
+  }
+  if (body.gallery !== undefined) data.gallery = body.gallery;
+  if (body.displayOrder !== undefined || body.display_order !== undefined) {
+    data.displayOrder = parseInt(body.displayOrder ?? body.display_order ?? 0, 10);
+  }
+  if (body.featured !== undefined) data.featured = Boolean(body.featured);
+  if (body.published !== undefined) data.published = Boolean(body.published);
+  return data;
+}
 
 export const getProjects = asyncHandler(async (req, res) => {
   const { category, status, featured, published, search, page = 1, limit = 50 } = req.query;
 
   const where = {};
-  if (category) where.category = category;
-  if (status) where.status = status;
-  if (featured !== undefined) where.featured = featured === "true";
-  if (published !== undefined) where.published = published === "true";
+  if (category && category !== "all") where.category = category;
+  if (status && status !== "all") {
+    const s = String(status).toUpperCase();
+    if (["PLANNING", "ONGOING", "COMPLETED", "ON_HOLD"].includes(s)) {
+      where.status = s;
+    }
+  }
+  if (featured !== undefined && featured !== "all") where.featured = featured === "true";
+  if (published !== undefined && published !== "all") where.published = published === "true";
 
   if (search) {
     where.OR = [
@@ -38,7 +83,7 @@ export const getProjects = asyncHandler(async (req, res) => {
     new ApiResponse(
       200,
       {
-        items: projects,
+        items: projects.map(normalizeProject),
         pagination: {
           total,
           page: parseInt(page, 10),
@@ -61,25 +106,25 @@ export const getProjectBySlug = asyncHandler(async (req, res) => {
     throw new ApiError(404, `Project with slug '${slug}' not found.`);
   }
 
-  return res.status(200).json(new ApiResponse(200, project, "Project fetched successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeProject(project), "Project fetched successfully."));
 });
 
 export const getProjectById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const project = await prisma.project.findUnique({
-    where: { id },
+  const project = await prisma.project.findFirst({
+    where: { OR: [{ id }, { slug: id }] },
   });
 
   if (!project) {
     throw new ApiError(404, `Project not found.`);
   }
 
-  return res.status(200).json(new ApiResponse(200, project, "Project fetched successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeProject(project), "Project fetched successfully."));
 });
 
 export const createProject = asyncHandler(async (req, res) => {
-  const data = req.body;
-  const slug = data.slug ? slugify(data.slug) : slugify(data.name);
+  const data = parseProjectData(req.body);
+  const slug = data.slug || slugify(data.name || "project");
 
   // Check unique slug
   const existing = await prisma.project.findUnique({ where: { slug } });
@@ -88,9 +133,12 @@ export const createProject = asyncHandler(async (req, res) => {
   const project = await prisma.project.create({
     data: {
       ...data,
+      name: data.name || "Untitled Project",
+      category: data.category || "Commercial",
+      location: data.location || "Location",
+      shortDescription: data.shortDescription || "",
+      coverImage: data.coverImage || "",
       slug: finalSlug,
-      startDate: data.startDate ? new Date(data.startDate) : null,
-      completionDate: data.completionDate ? new Date(data.completionDate) : null,
     },
   });
 
@@ -106,21 +154,22 @@ export const createProject = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(201).json(new ApiResponse(201, project, "Project created successfully."));
+  return res.status(201).json(new ApiResponse(201, normalizeProject(project), "Project created successfully."));
 });
 
 export const updateProject = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const data = req.body;
+  const data = parseProjectData(req.body);
 
-  if (data.slug) {
-    data.slug = slugify(data.slug);
+  const existing = await prisma.project.findFirst({
+    where: { OR: [{ id }, { slug: id }] },
+  });
+  if (!existing) {
+    throw new ApiError(404, "Project not found to update.");
   }
-  if (data.startDate) data.startDate = new Date(data.startDate);
-  if (data.completionDate) data.completionDate = new Date(data.completionDate);
 
   const updated = await prisma.project.update({
-    where: { id },
+    where: { id: existing.id },
     data,
   });
 
@@ -135,12 +184,19 @@ export const updateProject = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(200).json(new ApiResponse(200, updated, "Project updated successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeProject(updated), "Project updated successfully."));
 });
 
 export const deleteProject = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const deleted = await prisma.project.delete({ where: { id } });
+  const existing = await prisma.project.findFirst({
+    where: { OR: [{ id }, { slug: id }] },
+  });
+  if (!existing) {
+    throw new ApiError(404, "Project not found to delete.");
+  }
+
+  const deleted = await prisma.project.delete({ where: { id: existing.id } });
 
   await prisma.activityLog.create({
     data: {

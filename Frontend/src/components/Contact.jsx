@@ -337,7 +337,7 @@ export default function Contact() {
             {/* Dark Navy Button: Get Directions → */}
             <div>
               <a
-                href="https://maps.google.com/?q=Dera+Bassi,+Punjab,+160055"
+                href="https://maps.google.com/?q=+Punjab,+160055"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#091a2e] hover:bg-[#122840] text-white text-xs font-bold tracking-wide transition-all shadow-md hover:shadow-slate-900/20"
@@ -354,7 +354,7 @@ export default function Contact() {
             {/* Interactive Embedded Map */}
             <iframe
               title="Griffin Construction Location Map"
-              src="https://maps.google.com/maps?q=Dera+Bassi,+Punjab+160055&t=&z=13&ie=UTF8&iwloc=&output=embed"
+              src="https://maps.google.com/maps?q=+Punjab+160055&t=&z=13&ie=UTF8&iwloc=&output=embed"
               className="w-full h-full min-h-[240px] sm:min-h-[280px] border-0"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

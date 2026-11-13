@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useAuth } from "@/lib/AuthContext";
 import { Image } from "@/components/ui/image";
 import { GRIFFIN_EMBLEM } from "@/lib/defaultContent";
 import {
@@ -56,6 +57,7 @@ const GROUPS = [
 ];
 
 export default function Sidebar({ open, onClose, isAdmin }) {
+  const { logout } = useAuth();
   return (
     <>
       {open && <div className="fixed inset-0 z-40 bg-navy/50 lg:hidden" onClick={onClose} aria-hidden="true" />}
@@ -100,21 +102,33 @@ export default function Sidebar({ open, onClose, isAdmin }) {
           ))}
         </nav>
 
-        <div className="border-t border-white/10 p-3">
+        <div className="border-t border-white/10 p-3 space-y-1">
           <Link
             to="/dashboard/api-docs"
             onClick={onClose}
-            className="mb-1 block rounded-md px-3 py-2 text-[13px] text-white/70 hover:bg-white/5 hover:text-white"
+            className="block rounded-md px-3 py-2 text-[13px] text-white/70 hover:bg-white/5 hover:text-white"
           >
             API &amp; Integration
           </Link>
-          <Link
-            to="/"
-            onClick={onClose}
-            className="block rounded-md border border-white/15 px-3 py-2 text-center text-[13px] text-white/80 hover:border-accent hover:text-accent"
+          <a
+            href="http://localhost:5173"
+            target="_blank"
+            rel="noreferrer"
+            className="block rounded-md border border-white/15 px-3 py-2 text-center text-[13px] text-white/80 hover:border-accent hover:text-accent transition-colors"
           >
             View website
-          </Link>
+          </a>
+          <button
+            type="button"
+            onClick={async () => {
+              onClose?.();
+              await logout();
+            }}
+            className="w-full flex items-center justify-center gap-2 rounded-md bg-white/5 hover:bg-red-500/20 text-white/70 hover:text-red-300 px-3 py-2 text-[13px] transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sign out</span>
+          </button>
         </div>
       </aside>
     </>

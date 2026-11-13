@@ -1,6 +1,7 @@
 import { prisma } from "../config/db.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { normalizeInquiry, normalizeActivityLog } from "../utils/serializer.js";
 
 export const getDashboardSummary = asyncHandler(async (req, res) => {
   const [
@@ -54,8 +55,8 @@ export const getDashboardSummary = asyncHandler(async (req, res) => {
           category: p.category,
           count: p._count.id,
         })),
-        recentInquiries,
-        recentActivity,
+        recentInquiries: recentInquiries.map(normalizeInquiry),
+        recentActivity: recentActivity.map(normalizeActivityLog),
       },
       "Dashboard metrics retrieved successfully."
     )

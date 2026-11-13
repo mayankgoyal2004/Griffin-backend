@@ -2,13 +2,20 @@ import { prisma } from "../config/db.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { normalizeInquiry } from "../utils/serializer.js";
 
 export const getInquiries = asyncHandler(async (req, res) => {
-  const { status, projectType, search, page = 1, limit = 50 } = req.query;
+  const { status, projectType, project_type, search, page = 1, limit = 50 } = req.query;
 
   const where = {};
-  if (status) where.status = status;
-  if (projectType) where.projectType = projectType;
+  if (status && status !== "all") {
+    const s = String(status).toUpperCase();
+    if (["NEW", "IN_PROGRESS", "CONTACTED", "RESOLVED", "ARCHIVED"].includes(s)) {
+      where.status = s;
+    }
+  }
+  const pType = projectType || project_type;
+  if (pType && pType !== "all") where.projectType = pType;
 
   if (search) {
     where.OR = [
@@ -36,7 +43,7 @@ export const getInquiries = asyncHandler(async (req, res) => {
     new ApiResponse(
       200,
       {
-        items: inquiries,
+        items: inquiries.map(normalizeInquiry),
         pagination: {
           total,
           page: parseInt(page, 10),
@@ -57,20 +64,20 @@ export const getInquiryById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Inquiry not found.");
   }
 
-  return res.status(200).json(new ApiResponse(200, inquiry, "Inquiry fetched successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeInquiry(inquiry), "Inquiry fetched successfully."));
 });
 
 export const createInquiry = asyncHandler(async (req, res) => {
-  const { fullName, email, phone, subject, projectType, message } = req.body;
+  const { fullName, full_name, email, phone, subject, projectType, project_type, message } = req.body;
 
   const inquiry = await prisma.contactInquiry.create({
     data: {
-      fullName,
+      fullName: fullName || full_name || "Anonymous",
       email: email.toLowerCase(),
       phone,
-      subject,
-      projectType,
-      message,
+      subject: subject || "Inquiry",
+      projectType: projectType || project_type || null,
+      message: message || "",
       status: "NEW",
     },
   });
@@ -79,16 +86,16 @@ export const createInquiry = asyncHandler(async (req, res) => {
     data: {
       action: "received",
       entityType: "ContactInquiry",
-      entityTitle: `${fullName} - ${subject}`,
+      entityTitle: `${inquiry.fullName} - ${inquiry.subject}`,
       userEmail: email,
-      userName: fullName,
+      userName: inquiry.fullName,
     },
   });
 
   return res.status(201).json(
     new ApiResponse(
       201,
-      inquiry,
+      normalizeInquiry(inquiry),
       "Thank you for contacting Griffin Construction. We have received your inquiry and will be in touch shortly."
     )
   );
@@ -96,11 +103,18 @@ export const createInquiry = asyncHandler(async (req, res) => {
 
 export const updateInquiryStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { status, assignedTo, notes } = req.body;
+  const { status, assignedTo, assigned_to, notes } = req.body;
 
   const updateData = {};
-  if (status) updateData.status = status;
-  if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
+  if (status) {
+    const s = String(status).toUpperCase().replace(/\s+/g, "_");
+    if (["NEW", "IN_PROGRESS", "CONTACTED", "RESOLVED", "ARCHIVED"].includes(s)) {
+      updateData.status = s;
+    }
+  }
+  if (assignedTo !== undefined || assigned_to !== undefined) {
+    updateData.assignedTo = assignedTo ?? assigned_to;
+  }
   if (notes !== undefined) updateData.notes = notes;
 
   const updated = await prisma.contactInquiry.update({
@@ -112,14 +126,18 @@ export const updateInquiryStatus = asyncHandler(async (req, res) => {
     data: {
       action: "status_changed",
       entityType: "ContactInquiry",
-      entityTitle: `${updated.fullName} (${status})`,
+      entityTitle: `${updated.fullName} (${updated.status})`,
       userEmail: req.user?.email,
       userName: req.user?.fullName,
       userId: req.user?.id,
     },
   });
 
-  return res.status(200).json(new ApiResponse(200, updated, "Inquiry status updated successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeInquiry(updated), "Inquiry status updated successfully."));
+});
+
+export const updateInquiry = asyncHandler(async (req, res) => {
+  return updateInquiryStatus(req, res);
 });
 
 export const deleteInquiry = asyncHandler(async (req, res) => {

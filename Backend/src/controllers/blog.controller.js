@@ -3,14 +3,39 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { slugify } from "../utils/slugify.js";
+import { normalizeBlogPost } from "../utils/serializer.js";
+
+function parseBlogData(body) {
+  const data = {};
+  if (body.title !== undefined) data.title = body.title;
+  if (body.slug !== undefined) data.slug = slugify(body.slug || body.title);
+  if (body.excerpt !== undefined) data.excerpt = body.excerpt;
+  if (body.content !== undefined) data.content = body.content;
+  if (body.author !== undefined) data.author = body.author;
+  if (body.category !== undefined) data.category = body.category;
+  if (body.tags !== undefined) data.tags = body.tags;
+  if (body.featuredImage !== undefined || body.featured_image !== undefined) {
+    data.featuredImage = body.featuredImage ?? body.featured_image;
+  }
+  if (body.readingTime !== undefined || body.reading_time !== undefined) {
+    data.readingTime = parseInt(body.readingTime ?? body.reading_time ?? 5, 10);
+  }
+  if (body.featured !== undefined) data.featured = Boolean(body.featured);
+  if (body.published !== undefined) data.published = Boolean(body.published);
+  if (body.publicationDate !== undefined || body.publication_date !== undefined) {
+    const raw = body.publicationDate ?? body.publication_date;
+    data.publicationDate = raw ? new Date(raw) : new Date();
+  }
+  return data;
+}
 
 export const getBlogPosts = asyncHandler(async (req, res) => {
-  const { category, featured, published, search, page = 1, limit = 20 } = req.query;
+  const { category, featured, published, search, page = 1, limit = 50 } = req.query;
 
   const where = {};
-  if (category) where.category = category;
-  if (featured !== undefined) where.featured = featured === "true";
-  if (published !== undefined) where.published = published === "true";
+  if (category && category !== "all") where.category = category;
+  if (featured !== undefined && featured !== "all") where.featured = featured === "true";
+  if (published !== undefined && published !== "all") where.published = published === "true";
 
   if (search) {
     where.OR = [
@@ -37,7 +62,7 @@ export const getBlogPosts = asyncHandler(async (req, res) => {
     new ApiResponse(
       200,
       {
-        items: posts,
+        items: posts.map(normalizeBlogPost),
         pagination: {
           total,
           page: parseInt(page, 10),
@@ -53,7 +78,6 @@ export const getBlogPosts = asyncHandler(async (req, res) => {
 export const getBlogPostBySlug = asyncHandler(async (req, res) => {
   const { slug } = req.params;
 
-  // Increment views
   const post = await prisma.blogPost.update({
     where: { slug },
     data: { views: { increment: 1 } },
@@ -63,23 +87,25 @@ export const getBlogPostBySlug = asyncHandler(async (req, res) => {
     throw new ApiError(404, `Post '${slug}' not found.`);
   }
 
-  return res.status(200).json(new ApiResponse(200, post, "Blog post fetched successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeBlogPost(post), "Blog post fetched successfully."));
 });
 
 export const getBlogPostById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const post = await prisma.blogPost.findUnique({ where: { id } });
+  const post = await prisma.blogPost.findFirst({
+    where: { OR: [{ id }, { slug: id }] },
+  });
 
   if (!post) {
     throw new ApiError(404, "Blog post not found.");
   }
 
-  return res.status(200).json(new ApiResponse(200, post, "Blog post fetched successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeBlogPost(post), "Blog post fetched successfully."));
 });
 
 export const createBlogPost = asyncHandler(async (req, res) => {
-  const data = req.body;
-  const slug = data.slug ? slugify(data.slug) : slugify(data.title);
+  const data = parseBlogData(req.body);
+  const slug = data.slug || slugify(data.title || "post");
 
   const existing = await prisma.blogPost.findUnique({ where: { slug } });
   const finalSlug = existing ? `${slug}-${Date.now()}` : slug;
@@ -87,8 +113,9 @@ export const createBlogPost = asyncHandler(async (req, res) => {
   const post = await prisma.blogPost.create({
     data: {
       ...data,
+      title: data.title || "Untitled Post",
+      content: data.content || "",
       slug: finalSlug,
-      publicationDate: data.publicationDate ? new Date(data.publicationDate) : new Date(),
     },
   });
 
@@ -103,18 +130,22 @@ export const createBlogPost = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(201).json(new ApiResponse(201, post, "Blog post created successfully."));
+  return res.status(201).json(new ApiResponse(201, normalizeBlogPost(post), "Blog post created successfully."));
 });
 
 export const updateBlogPost = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const data = req.body;
+  const data = parseBlogData(req.body);
 
-  if (data.slug) data.slug = slugify(data.slug);
-  if (data.publicationDate) data.publicationDate = new Date(data.publicationDate);
+  const existing = await prisma.blogPost.findFirst({
+    where: { OR: [{ id }, { slug: id }] },
+  });
+  if (!existing) {
+    throw new ApiError(404, "Blog post not found to update.");
+  }
 
   const updated = await prisma.blogPost.update({
-    where: { id },
+    where: { id: existing.id },
     data,
   });
 
@@ -129,12 +160,19 @@ export const updateBlogPost = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(200).json(new ApiResponse(200, updated, "Blog post updated successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeBlogPost(updated), "Blog post updated successfully."));
 });
 
 export const deleteBlogPost = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const deleted = await prisma.blogPost.delete({ where: { id } });
+  const existing = await prisma.blogPost.findFirst({
+    where: { OR: [{ id }, { slug: id }] },
+  });
+  if (!existing) {
+    throw new ApiError(404, "Blog post not found to delete.");
+  }
+
+  const deleted = await prisma.blogPost.delete({ where: { id: existing.id } });
 
   await prisma.activityLog.create({
     data: {
