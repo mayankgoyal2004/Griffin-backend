@@ -47,11 +47,11 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#071322] font-sans overflow-x-hidden selection:bg-[#E5A83B] selection:text-[#0B1D33]">
+    <div className="min-h-screen lg:h-screen lg:max-h-screen w-full flex flex-col lg:flex-row bg-[#071322] font-sans overflow-y-auto lg:overflow-hidden selection:bg-[#E5A83B] selection:text-[#0B1D33]">
       {/* =========================================================================
           LEFT HALF: Hero Showcase (Griffin Executive at Dusk)
           ========================================================================= */}
-      <div className="relative w-full lg:w-[52%] xl:w-[54%] min-h-[580px] lg:min-h-screen bg-[#071322] flex flex-col justify-between p-8 sm:p-12 lg:p-16 overflow-hidden">
+      <div className="relative w-full lg:w-[52%] xl:w-[54%] min-h-[500px] lg:min-h-0 lg:h-full bg-[#071322] flex flex-col justify-between p-6 sm:p-8 xl:p-12 overflow-hidden">
         {/* Background Artwork */}
         <img
           src="/Griffin-Executive-at-Dusk.png"
@@ -77,9 +77,9 @@ export function LoginPage() {
         </div>
 
         {/* --- Top Brand Logo Header --- */}
-        <div className="relative z-20 flex items-center gap-3.5">
+        <div className="relative z-20 flex items-center gap-3">
           {/* Golden Griffin Mythical Beast Emblem Icon */}
-          <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-amber-400/20 to-amber-600/10 border border-amber-500/30 p-2 flex items-center justify-center backdrop-blur-md shadow-md shadow-amber-950/30">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400/20 to-amber-600/10 border border-amber-500/30 p-2 flex items-center justify-center backdrop-blur-md shadow-md shadow-amber-950/30">
             <svg
               viewBox="0 0 64 64"
               fill="none"
@@ -104,22 +104,22 @@ export function LoginPage() {
           </div>
 
           <div className="flex flex-col">
-            <span className="text-white font-serif font-bold text-xl tracking-[0.16em] leading-none drop-shadow-sm">
+            <span className="text-white font-serif font-bold text-lg tracking-[0.16em] leading-none drop-shadow-sm">
               GRIFFIN
             </span>
-            <span className="text-[#E5A83B] text-[10px] font-bold tracking-[0.28em] uppercase mt-1 leading-none drop-shadow">
+            <span className="text-[#E5A83B] text-[9px] font-bold tracking-[0.28em] uppercase mt-1 leading-none drop-shadow">
               CONSTRUCTION
             </span>
           </div>
         </div>
 
         {/* --- Hero Main Message & Value Pillars --- */}
-        <div className="relative z-20 my-auto py-10 lg:py-16 max-w-lg">
+        <div className="relative z-20 my-auto py-3 xl:py-6 max-w-lg">
           {/* Accent Gold Horizontal Dash */}
-          <div className="w-14 h-1.5 bg-gradient-to-r from-[#F2BC56] to-[#D99A26] rounded-full mb-6 shadow-sm shadow-amber-500/30" />
+          <div className="w-12 h-1 bg-gradient-to-r from-[#F2BC56] to-[#D99A26] rounded-full mb-3 xl:mb-5 shadow-sm shadow-amber-500/30" />
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl xl:text-[56px] font-serif font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
+          <h1 className="text-3xl sm:text-4xl xl:text-5xl font-serif font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
             Welcome to <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3C469] via-[#E5A83B] to-[#D49020] italic font-semibold">
               Griffin
@@ -128,18 +128,18 @@ export function LoginPage() {
           </h1>
 
           {/* Paragraph */}
-          <p className="mt-5 text-slate-300 text-sm sm:text-base leading-relaxed max-w-md font-normal drop-shadow">
+          <p className="mt-3 xl:mt-4 text-slate-300 text-xs sm:text-sm leading-relaxed max-w-md font-normal drop-shadow">
             Manage your website, projects, services and digital presence from one powerful dashboard.
           </p>
 
           {/* 3 Value Badges */}
-          <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-6 pt-4 border-t border-white/10 max-w-md">
+          <div className="mt-5 xl:mt-8 grid grid-cols-3 gap-3 pt-3 border-t border-white/10 max-w-md">
             {/* Feature 1 */}
             <div className="flex flex-col items-center text-center group">
-              <div className="w-12 h-12 rounded-xl bg-white/[0.06] border border-[#E5A83B]/30 flex items-center justify-center text-[#E5A83B] shadow-inner backdrop-blur-sm group-hover:border-[#E5A83B] group-hover:bg-[#E5A83B]/10 transition-all duration-300">
-                <Layers className="w-6 h-6 stroke-[1.75]" />
+              <div className="w-10 h-10 xl:w-11 xl:h-11 rounded-xl bg-white/[0.06] border border-[#E5A83B]/30 flex items-center justify-center text-[#E5A83B] shadow-inner backdrop-blur-sm group-hover:border-[#E5A83B] group-hover:bg-[#E5A83B]/10 transition-all duration-300">
+                <Layers className="w-5 h-5 stroke-[1.75]" />
               </div>
-              <span className="text-xs font-medium text-slate-200 mt-2.5 leading-snug">
+              <span className="text-[11px] xl:text-xs font-medium text-slate-200 mt-2 leading-tight">
                 Projects <br />
                 <span className="text-slate-400 font-normal">Management</span>
               </span>
@@ -147,10 +147,10 @@ export function LoginPage() {
 
             {/* Feature 2 */}
             <div className="flex flex-col items-center text-center group">
-              <div className="w-12 h-12 rounded-xl bg-white/[0.06] border border-[#E5A83B]/30 flex items-center justify-center text-[#E5A83B] shadow-inner backdrop-blur-sm group-hover:border-[#E5A83B] group-hover:bg-[#E5A83B]/10 transition-all duration-300">
-                <LayoutGrid className="w-6 h-6 stroke-[1.75]" />
+              <div className="w-10 h-10 xl:w-11 xl:h-11 rounded-xl bg-white/[0.06] border border-[#E5A83B]/30 flex items-center justify-center text-[#E5A83B] shadow-inner backdrop-blur-sm group-hover:border-[#E5A83B] group-hover:bg-[#E5A83B]/10 transition-all duration-300">
+                <LayoutGrid className="w-5 h-5 stroke-[1.75]" />
               </div>
-              <span className="text-xs font-medium text-slate-200 mt-2.5 leading-snug">
+              <span className="text-[11px] xl:text-xs font-medium text-slate-200 mt-2 leading-tight">
                 Services <br />
                 <span className="text-slate-400 font-normal">Management</span>
               </span>
@@ -158,10 +158,10 @@ export function LoginPage() {
 
             {/* Feature 3 */}
             <div className="flex flex-col items-center text-center group">
-              <div className="w-12 h-12 rounded-xl bg-white/[0.06] border border-[#E5A83B]/30 flex items-center justify-center text-[#E5A83B] shadow-inner backdrop-blur-sm group-hover:border-[#E5A83B] group-hover:bg-[#E5A83B]/10 transition-all duration-300">
-                <Users className="w-6 h-6 stroke-[1.75]" />
+              <div className="w-10 h-10 xl:w-11 xl:h-11 rounded-xl bg-white/[0.06] border border-[#E5A83B]/30 flex items-center justify-center text-[#E5A83B] shadow-inner backdrop-blur-sm group-hover:border-[#E5A83B] group-hover:bg-[#E5A83B]/10 transition-all duration-300">
+                <Users className="w-5 h-5 stroke-[1.75]" />
               </div>
-              <span className="text-xs font-medium text-slate-200 mt-2.5 leading-snug">
+              <span className="text-[11px] xl:text-xs font-medium text-slate-200 mt-2 leading-tight">
                 Team <br />
                 <span className="text-slate-400 font-normal">Management</span>
               </span>
@@ -170,9 +170,9 @@ export function LoginPage() {
         </div>
 
         {/* --- Bottom Slogan With Vertical Gold Accent --- */}
-        <div className="relative z-20 flex items-center gap-3 pt-4">
-          <div className="w-1 h-7 bg-gradient-to-b from-[#F2BC56] to-[#D99A26] rounded-full shadow-sm shadow-amber-500/40" />
-          <p className="text-white font-serif italic text-lg sm:text-xl font-light tracking-wide drop-shadow-sm">
+        <div className="relative z-20 flex items-center gap-2.5 pt-2 xl:pt-4">
+          <div className="w-1 h-6 bg-gradient-to-b from-[#F2BC56] to-[#D99A26] rounded-full shadow-sm shadow-amber-500/40" />
+          <p className="text-white font-serif italic text-base xl:text-lg font-light tracking-wide drop-shadow-sm">
             Building Tomorrow, Together.
           </p>
         </div>
@@ -181,33 +181,33 @@ export function LoginPage() {
       {/* =========================================================================
           RIGHT HALF: Admin Login Form
           ========================================================================= */}
-      <div className="relative w-full lg:w-[48%] xl:w-[46%] min-h-screen bg-[#FAF8F5] flex flex-col justify-between p-6 sm:p-12 lg:p-16 overflow-hidden">
+      <div className="relative w-full lg:w-[48%] xl:w-[46%] lg:h-full bg-[#FAF8F5] flex flex-col justify-between p-6 sm:p-8 xl:p-12 overflow-hidden">
         {/* Subtle Luxury Griffin Silhouette Watermark (Top Right) */}
         <img
           src="/Elegant-Monochrome-Griffin-Profile.png"
           alt=""
           aria-hidden="true"
-          className="absolute -top-6 -right-6 w-72 sm:w-88 h-72 sm:h-88 object-contain opacity-[0.16] pointer-events-none select-none mix-blend-multiply"
+          className="absolute -top-6 -right-6 w-64 sm:w-80 h-64 sm:h-80 object-contain opacity-[0.16] pointer-events-none select-none mix-blend-multiply"
         />
 
         {/* Top spacer */}
-        <div className="w-full h-2" />
+        <div className="w-full h-1" />
 
         {/* --- Login Form Box (Centered) --- */}
-        <div className="w-full max-w-[420px] mx-auto my-auto py-6 z-10">
+        <div className="w-full max-w-[390px] xl:max-w-[420px] mx-auto my-auto py-2 xl:py-4 z-10">
           {/* Admin Dashboard Tag */}
-          <div className="flex items-center gap-2.5 mb-2.5">
-            <div className="w-7 h-[3.5px] bg-[#D49520] rounded-full" />
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#5A6A7E]">
+          <div className="flex items-center gap-2 mb-1.5 xl:mb-2">
+            <div className="w-6 h-[3px] bg-[#D49520] rounded-full" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#5A6A7E]">
               ADMIN DASHBOARD
             </span>
           </div>
 
           {/* Heading */}
-          <h2 className="text-4xl sm:text-[44px] font-serif font-bold text-[#0B1D33] tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-[36px] xl:text-[40px] font-serif font-bold text-[#0B1D33] tracking-tight leading-tight">
             Welcome Back
           </h2>
-          <p className="text-[#5A6B7E] text-sm sm:text-base mt-2 mb-7 font-normal">
+          <p className="text-[#5A6B7E] text-xs sm:text-sm mt-1.5 mb-5 xl:mb-6 font-normal">
             Sign in to your administrator account.
           </p>
 
@@ -215,26 +215,26 @@ export function LoginPage() {
           {error && (
             <div
               role="alert"
-              className="mb-6 rounded-xl bg-rose-50 border border-rose-200/80 p-3.5 text-sm text-rose-800 flex items-start gap-3 shadow-xs animate-in fade-in slide-in-from-top-1"
+              className="mb-4 rounded-xl bg-rose-50 border border-rose-200/80 p-3 text-xs sm:text-sm text-rose-800 flex items-start gap-2.5 shadow-xs animate-in fade-in slide-in-from-top-1"
             >
-              <div className="w-2 h-2 rounded-full bg-rose-500 mt-1.5 shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-rose-500 mt-1 shrink-0" />
               <div className="flex-1 font-medium">{error}</div>
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={submit} className="space-y-5">
+          <form onSubmit={submit} className="space-y-4">
             {/* Email Address */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label
                 htmlFor="admin-email"
-                className="block text-sm font-bold text-[#0F172A]"
+                className="block text-xs sm:text-sm font-bold text-[#0F172A]"
               >
                 Email Address
               </label>
               <div className="relative rounded-lg sm:rounded-xl border border-slate-200 bg-white transition-all shadow-[0_1px_2px_rgba(0,0,0,0.03)] focus-within:border-[#D99A26] focus-within:ring-3 focus-within:ring-[#D99A26]/15 hover:border-slate-300">
                 <Mail
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none stroke-[1.75]"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-slate-400 pointer-events-none stroke-[1.75]"
                   aria-hidden="true"
                 />
                 <input
@@ -246,22 +246,22 @@ export function LoginPage() {
                   placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-12 rounded-lg sm:rounded-xl bg-transparent pl-11 pr-4 text-sm font-normal text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                  className="w-full h-11 sm:h-12 rounded-lg sm:rounded-xl bg-transparent pl-10 sm:pl-11 pr-4 text-xs sm:text-sm font-normal text-slate-900 placeholder:text-slate-400 focus:outline-none"
                 />
               </div>
             </div>
 
             {/* Password */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label
                 htmlFor="admin-password"
-                className="block text-sm font-bold text-[#0F172A]"
+                className="block text-xs sm:text-sm font-bold text-[#0F172A]"
               >
                 Password
               </label>
               <div className="relative rounded-lg sm:rounded-xl border border-slate-200 bg-white transition-all shadow-[0_1px_2px_rgba(0,0,0,0.03)] focus-within:border-[#D99A26] focus-within:ring-3 focus-within:ring-[#D99A26]/15 hover:border-slate-300">
                 <Lock
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none stroke-[1.75]"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-slate-400 pointer-events-none stroke-[1.75]"
                   aria-hidden="true"
                 />
                 <input
@@ -272,7 +272,7 @@ export function LoginPage() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 rounded-lg sm:rounded-xl bg-transparent pl-11 pr-11 text-sm font-normal text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                  className="w-full h-11 sm:h-12 rounded-lg sm:rounded-xl bg-transparent pl-10 sm:pl-11 pr-11 text-xs sm:text-sm font-normal text-slate-900 placeholder:text-slate-400 focus:outline-none"
                 />
                 <button
                   type="button"
@@ -281,17 +281,17 @@ export function LoginPage() {
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
-                    <Eye className="h-5 w-5 stroke-[1.75]" />
+                    <Eye className="h-4 w-4 sm:h-5 sm:w-5 stroke-[1.75]" />
                   ) : (
-                    <EyeOff className="h-5 w-5 stroke-[1.75]" />
+                    <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 stroke-[1.75]" />
                   )}
                 </button>
               </div>
             </div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+            <div className="flex items-center justify-between pt-0.5">
+              <label className="flex items-center gap-2 cursor-pointer select-none group">
                 <div
                   className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
                     rememberMe
@@ -304,7 +304,7 @@ export function LoginPage() {
                 </div>
                 <span
                   onClick={() => setRememberMe(!rememberMe)}
-                  className="text-sm font-medium text-[#1E293B]"
+                  className="text-xs sm:text-sm font-medium text-[#1E293B]"
                 >
                   Remember me
                 </span>
@@ -312,7 +312,7 @@ export function LoginPage() {
 
               <Link
                 to="/forgot-password"
-                className="text-sm font-semibold text-[#D98A1D] hover:text-[#B87010] hover:underline transition-colors"
+                className="text-xs sm:text-sm font-semibold text-[#D98A1D] hover:text-[#B87010] hover:underline transition-colors"
               >
                 Forgot Password?
               </Link>
@@ -322,16 +322,16 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={busy}
-              className="mt-6 w-full h-12 rounded-lg sm:rounded-xl bg-[#0B1D33] hover:bg-[#071324] text-white flex items-center justify-center gap-2.5 shadow-md active:scale-[0.99] transition-all duration-200 group disabled:opacity-75 disabled:pointer-events-none"
+              className="mt-4 xl:mt-5 w-full h-11 sm:h-12 rounded-lg sm:rounded-xl bg-[#0B1D33] hover:bg-[#071324] text-white flex items-center justify-center gap-2.5 shadow-md active:scale-[0.99] transition-all duration-200 group disabled:opacity-75 disabled:pointer-events-none"
             >
               {busy ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-[#E5A83B]" />
-                  <span className="font-serif font-bold text-base text-white">Signing In...</span>
+                  <span className="font-serif font-bold text-sm sm:text-base text-white">Signing In...</span>
                 </>
               ) : (
                 <>
-                  <span className="font-serif font-bold text-base sm:text-lg text-white tracking-wide">
+                  <span className="font-serif font-bold text-sm sm:text-base xl:text-lg text-white tracking-wide">
                     Sign In
                   </span>
                   <ArrowRight className="w-4 h-4 text-[#E5A83B] stroke-[2.5] group-hover:translate-x-1 transition-transform" />
@@ -341,11 +341,11 @@ export function LoginPage() {
           </form>
 
           {/* Security Badge Divider */}
-          <div className="mt-8 flex items-center justify-center gap-3">
+          <div className="mt-5 xl:mt-6 flex items-center justify-center gap-3">
             <div className="h-[1px] bg-slate-200 flex-1" />
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#D99A26] stroke-[2]" />
-              <span className="text-xs sm:text-sm font-semibold text-[#334155]">
+            <div className="flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#D99A26] stroke-[2]" />
+              <span className="text-[11px] sm:text-xs font-semibold text-[#334155]">
                 Secure Admin Access
               </span>
             </div>
@@ -354,7 +354,7 @@ export function LoginPage() {
         </div>
 
         {/* --- Footer Links & Copyright --- */}
-        <div className="text-center pt-8 text-xs text-[#334155] space-y-2 z-10">
+        <div className="text-center pt-3 xl:pt-4 text-xs text-[#334155] space-y-1 z-10">
           <div className="flex items-center justify-center gap-3 font-medium">
             <span className="hover:text-slate-900 transition-colors cursor-pointer">
               Privacy Policy
@@ -364,7 +364,7 @@ export function LoginPage() {
               Terms &amp; Conditions
             </span>
           </div>
-          <p className="text-[#475569] text-xs">
+          <p className="text-[#475569] text-[11px]">
             &copy; 2026 Griffin Construction. All rights reserved.
           </p>
         </div>
