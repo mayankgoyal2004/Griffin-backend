@@ -6,6 +6,7 @@ import ImageField from "@/components/dashboard/ImageField";
 import RepeaterField from "@/components/dashboard/RepeaterField";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { logActivity } from "@/lib/activity";
 import { SITE_DEFAULTS } from "@/lib/defaultContent";
@@ -30,12 +31,22 @@ function SettingsPage() {
       .catch(() => setForm({ ...SITE_DEFAULTS }));
   }, []);
 
-  const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+  const set = (key, value) => {
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === "show_projects") next.showProjects = value;
+      if (key === "showProjects") next.show_projects = value;
+      return next;
+    });
+  };
 
   const save = async () => {
     setSaving(true);
     try {
       const payload = { ...form };
+      if (payload.show_projects !== undefined) {
+        payload.showProjects = payload.show_projects;
+      }
       if (form.id) await base44.entities.SiteSettings.update(form.id, payload);
       else await base44.entities.SiteSettings.create(payload);
       await logActivity({ action: "updated", entity_type: "Website settings", entity_title: "Global settings", user });
@@ -80,6 +91,22 @@ function SettingsPage() {
 
         <TabsContent value="general" className="mt-0">
           <div className="gc-card space-y-4 p-5">
+            <div className="flex items-center justify-between rounded-lg border border-border p-4 bg-muted/20">
+              <div>
+                <p className="text-sm font-semibold text-primary">Show Projects on Website</p>
+                <p className="text-xs text-muted-foreground">
+                  When turned off, the Projects section on the home page, navigation link, and the /projects page are hidden from visitors.
+                </p>
+              </div>
+              <Switch
+                checked={form.show_projects !== false && form.showProjects !== false}
+                onCheckedChange={(v) => {
+                  set("show_projects", v);
+                  set("showProjects", v);
+                }}
+                disabled={!isAdmin}
+              />
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Company name" value={form.company_name} onChange={(v) => set("company_name", v)} />
               <Field label="Website URL" value={form.website_url} onChange={(v) => set("website_url", v)} placeholder="https://griffinconstruction.com" />

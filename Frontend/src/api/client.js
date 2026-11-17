@@ -98,11 +98,28 @@ export const apiClient = {
   getSettings: async () => {
     try {
       const res = await api.get('/settings');
+      if (res?.data) {
+        try {
+          localStorage.setItem('griffin_site_settings', JSON.stringify(res.data));
+        } catch (_) {}
+      }
       return res.data;
     } catch (err) {
       console.warn('API getSettings failed, falling back:', err.message);
+      try {
+        const cached = localStorage.getItem('griffin_site_settings');
+        if (cached) return JSON.parse(cached);
+      } catch (_) {}
       return null;
     }
+  },
+
+  getCachedSettings: () => {
+    try {
+      const cached = localStorage.getItem('griffin_site_settings');
+      if (cached) return JSON.parse(cached);
+    } catch (_) {}
+    return null;
   },
 
   // Website Pages

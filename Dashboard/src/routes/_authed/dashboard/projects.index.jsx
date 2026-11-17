@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { base44 } from "@/api/base44Client";
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Image } from "@/components/ui/image";
 import { PROJECT_CATEGORIES } from "@/lib/defaultContent";
-import { Pencil, Plus, Search, Star, Trash2 } from "lucide-react";
+import { Eye, EyeOff, Pencil, Plus, Search, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authed/dashboard/projects/")({
@@ -27,7 +27,48 @@ function ProjectsPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
+  const [showProjectsOnWebsite, setShowProjectsOnWebsite] = useState(true);
+  const [togglingVisibility, setTogglingVisibility] = useState(false);
   const context = Route.useRouteContext();
+
+  useEffect(() => {
+    base44.entities.SiteSettings.list()
+      .then((rows) => {
+        const s = rows[0] || {};
+        if (s.show_projects !== undefined) {
+          setShowProjectsOnWebsite(Boolean(s.show_projects));
+        } else if (s.showProjects !== undefined) {
+          setShowProjectsOnWebsite(Boolean(s.showProjects));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleToggleWebsiteVisibility = async (nextVal) => {
+    setTogglingVisibility(true);
+    try {
+      await base44.entities.SiteSettings.update("settings_global", {
+        show_projects: nextVal,
+        showProjects: nextVal,
+      });
+      setShowProjectsOnWebsite(nextVal);
+      logActivity({
+        action: nextVal ? "enabled" : "disabled",
+        entity_type: "Website settings",
+        entity_title: nextVal ? "Show Projects on Website (Enabled)" : "Show Projects on Website (Hidden)",
+        user: context.user,
+      });
+      toast.success(
+        nextVal
+          ? "Projects are now visible on the website."
+          : "Projects are now hidden from the website."
+      );
+    } catch (err) {
+      toast.error(err.message || "Failed to update website visibility");
+    } finally {
+      setTogglingVisibility(false);
+    }
+  };
 
   const filter = {};
   if (search.trim()) filter.name = { $regex: search.trim() };
@@ -59,12 +100,52 @@ function ProjectsPage() {
   return (
     <div>
       <PageHeader title="Projects" description="Portfolio records that power the projects listing, category filters and detail pages.">
-        <Button asChild size="sm">
-          <Link to="/dashboard/projects/new">
-            <Plus className="mr-2 h-4 w-4" /> New project
-          </Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2.5 rounded-lg border border-border bg-white px-3 py-1.5 shadow-sm">
+            <span className="text-xs font-medium text-foreground">
+              Show on Website:
+            </span>
+            <span
+              className={`text-xs font-semibold ${
+                showProjectsOnWebsite ? "text-emerald-600" : "text-amber-600"
+              }`}
+            >
+              {showProjectsOnWebsite ? "Visible" : "Hidden"}
+            </span>
+            <Switch
+              checked={showProjectsOnWebsite}
+              onCheckedChange={handleToggleWebsiteVisibility}
+              disabled={togglingVisibility}
+              aria-label="Toggle projects visibility on website"
+            />
+          </div>
+          <Button asChild size="sm">
+            <Link to="/dashboard/projects/new">
+              <Plus className="mr-2 h-4 w-4" /> New project
+            </Link>
+          </Button>
+        </div>
       </PageHeader>
+
+      {!showProjectsOnWebsite && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-900 shadow-sm">
+          <div className="flex items-center gap-2">
+            <EyeOff className="h-4 w-4 shrink-0 text-amber-600" />
+            <span>
+              <strong>Projects are currently hidden from the website.</strong> The Projects section, navigation link, and the public /projects page are hidden from visitors.
+            </span>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 border-amber-300 bg-white text-xs hover:bg-amber-100"
+            disabled={togglingVisibility}
+            onClick={() => handleToggleWebsiteVisibility(true)}
+          >
+            <Eye className="mr-1.5 h-3.5 w-3.5" /> Show on website
+          </Button>
+        </div>
+      )}
 
       <div className="mb-4 grid gap-2 sm:grid-cols-3">
         <div className="relative sm:col-span-1">

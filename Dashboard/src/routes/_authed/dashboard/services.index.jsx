@@ -177,7 +177,7 @@ function ServicesPage() {
           onPrev={list.prev}
           onNext={list.next}
           loading={list.loading}
-          total={list.items.length}
+          total={list.total ?? list.items.length}
         />
       </div>
     </div>

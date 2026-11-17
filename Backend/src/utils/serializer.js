@@ -119,6 +119,8 @@ export function normalizeSiteSettings(s) {
     header_cta_link: s.headerCtaLink ?? s.header_cta_link ?? "",
     footer_description: s.footerDescription ?? s.footer_description ?? "",
     copyright_text: s.copyrightText ?? s.copyright_text ?? "",
+    show_projects: s.showProjects !== undefined ? Boolean(s.showProjects) : (s.show_projects !== undefined ? Boolean(s.show_projects) : true),
+    showProjects: s.showProjects !== undefined ? Boolean(s.showProjects) : (s.show_projects !== undefined ? Boolean(s.show_projects) : true),
     updated_date: s.updatedAt ?? s.updated_date ?? new Date().toISOString(),
   };
 }

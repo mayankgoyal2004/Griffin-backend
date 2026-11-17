@@ -492,6 +492,7 @@ const SEED_DATA = {
       footer_description:
         "A premier construction and real estate development partner delivering residential, commercial and infrastructure landmarks with uncompromising precision.",
       copyright_text: "© 2026 Griffin Construction. All rights reserved.",
+      show_projects: true,
       updated_date: "2026-03-10T10:00:00.000Z",
     },
   ],
@@ -706,6 +707,7 @@ function createEntityStore(entityName, defaults) {
         try {
           const params = new URLSearchParams();
           if (options.limit) params.set("limit", String(options.limit));
+          if (options.page) params.set("page", String(options.page));
           if (query.category && query.category !== "all")
             params.set("category", query.category);
           if (query.status && query.status !== "all")
@@ -744,7 +746,7 @@ function createEntityStore(entityName, defaults) {
             }
             return {
               items: returnedList,
-              total: returnedList.length,
+              total: res?.pagination?.total ?? returnedList.length,
               has_more: res?.pagination ? res.pagination.page < res.pagination.totalPages : false,
               next_cursor: null,
             };

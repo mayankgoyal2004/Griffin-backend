@@ -12,7 +12,7 @@ export function usePagedList(entityName, { filter = {}, sort = "-updated_date", 
   const [page, setPage] = useState(0);
   const [cursors, setCursors] = useState([null]);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [state, setState] = useState({ items: [], next_cursor: null, has_more: false, loading: true, error: null });
+  const [state, setState] = useState({ items: [], total: 0, next_cursor: null, has_more: false, loading: true, error: null });
   const keyRef = useRef(filterKey);
   const requestId = useRef(0);
 
@@ -28,7 +28,7 @@ export function usePagedList(entityName, { filter = {}, sort = "-updated_date", 
     let active = true;
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
-    const options = { sort, limit };
+    const options = { sort, limit, page: page + 1 };
     if (cursors[page]) options.cursor = cursors[page];
 
     base44.entities[entityName]
@@ -37,6 +37,7 @@ export function usePagedList(entityName, { filter = {}, sort = "-updated_date", 
         if (!active || id !== requestId.current) return;
         setState({
           items: res?.items ?? [],
+          total: res?.total ?? (res?.items?.length || 0),
           next_cursor: res?.next_cursor ?? null,
           has_more: !!res?.has_more,
           loading: false,
@@ -45,7 +46,7 @@ export function usePagedList(entityName, { filter = {}, sort = "-updated_date", 
       })
       .catch((error) => {
         if (!active || id !== requestId.current) return;
-        setState({ items: [], next_cursor: null, has_more: false, loading: false, error });
+        setState({ items: [], total: 0, next_cursor: null, has_more: false, loading: false, error });
       });
 
     return () => {
@@ -69,6 +70,7 @@ export function usePagedList(entityName, { filter = {}, sort = "-updated_date", 
 
   return {
     items: state.items,
+    total: state.total,
     loading: state.loading,
     error: state.error,
     hasNext: state.has_more,

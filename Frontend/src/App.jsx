@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { apiClient } from './api/client';
 
 import ScrollProgress from './components/ScrollProgress';
 import Header from './components/Header';
@@ -29,13 +30,13 @@ import ServiceDetailModal from './components/ServiceDetailModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
-function HomePage({ handleOpenQuote, setSelectedService, setSelectedProject }) {
+function HomePage({ handleOpenQuote, setSelectedService, setSelectedProject, showProjects = true }) {
   return (
     <>
       <Hero onOpenQuote={handleOpenQuote} />
       <Services onSelectService={(srv) => setSelectedService(srv)} />
       <About onOpenQuote={handleOpenQuote} />
-      <Projects onSelectProject={(prj) => setSelectedProject(prj)} />
+      {showProjects && <Projects onSelectProject={(prj) => setSelectedProject(prj)} />}
       <Team onOpenQuote={handleOpenQuote} />
       <Advantage />
       <ContactBanner />
@@ -52,6 +53,33 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
 
+  const cachedSettings = apiClient.getCachedSettings();
+  const [showProjects, setShowProjects] = useState(() => {
+    if (cachedSettings) {
+      return Boolean(cachedSettings.show_projects ?? cachedSettings.showProjects ?? false);
+    }
+    return false; // Safe initial state to prevent flash of content
+  });
+  const [settingsLoading, setSettingsLoading] = useState(() => !cachedSettings);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient
+      .getSettings()
+      .then((settings) => {
+        if (!isMounted || !settings) return;
+        const visible = Boolean(settings.show_projects ?? settings.showProjects ?? false);
+        setShowProjects(visible);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setSettingsLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Initialize Lenis smooth scroll
   useEffect(() => {
     const lenis = new Lenis({
@@ -59,8 +87,16 @@ export default function App() {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       touchMultiplier: 1.4,
+      prevent: (node) => {
+        return (
+          node?.hasAttribute?.('data-lenis-prevent') ||
+          Boolean(node?.closest?.('[data-lenis-prevent]')) ||
+          Boolean(node?.closest?.('[role="dialog"]'))
+        );
+      },
     });
 
+    window.__lenis = lenis;
     lenis.on('scroll', ScrollTrigger.update);
 
     const updateTicker = (time) => {
@@ -71,10 +107,27 @@ export default function App() {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      delete window.__lenis;
       lenis.destroy();
       gsap.ticker.remove(updateTicker);
     };
   }, []);
+
+  // Lock background scroll when any global modal is open
+  useEffect(() => {
+    const isModalOpen = quoteModalOpen || Boolean(selectedProject) || Boolean(selectedService);
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+      window.__lenis?.stop();
+    } else {
+      document.body.style.overflow = '';
+      window.__lenis?.start();
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.__lenis?.start();
+    };
+  }, [quoteModalOpen, selectedProject, selectedService]);
 
   // Handle hash-based redirect e.g. #contact -> /contact
   useEffect(() => {
@@ -139,13 +192,27 @@ export default function App() {
                 handleOpenQuote={handleOpenQuote}
                 setSelectedService={setSelectedService}
                 setSelectedProject={setSelectedProject}
+                showProjects={showProjects}
               />
             }
           />
           <Route path="/about" element={<AboutPage onOpenQuote={handleOpenQuote} />} />
           <Route path="/services" element={<ServicesPage onOpenQuote={handleOpenQuote} />} />
           <Route path="/services/:slug" element={<ServicesPage onOpenQuote={handleOpenQuote} />} />
-          <Route path="/projects" element={<ProjectsPage onSelectProject={handleConsultForSimilar} onOpenQuote={handleOpenQuote} />} />
+          <Route
+            path="/projects"
+            element={
+              settingsLoading ? (
+                <div className="min-h-screen bg-[#071322] flex items-center justify-center">
+                  <div className="w-8 h-8 border-2 border-[#d88918] border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : showProjects ? (
+                <ProjectsPage onSelectProject={handleConsultForSimilar} onOpenQuote={handleOpenQuote} />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
+          />
           <Route path="/team" element={<TeamPage onOpenQuote={handleOpenQuote} />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<Blog />} />
@@ -159,6 +226,7 @@ export default function App() {
                 handleOpenQuote={handleOpenQuote}
                 setSelectedService={setSelectedService}
                 setSelectedProject={setSelectedProject}
+                showProjects={showProjects}
               />
             }
           />
@@ -166,7 +234,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer showProjects={showProjects} />
 
       {/* Interactive Modals */}
       <QuoteModal

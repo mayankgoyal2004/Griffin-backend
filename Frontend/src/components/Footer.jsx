@@ -10,7 +10,15 @@ import {
 import { companyInfo } from '../data/websiteData';
 import { apiClient } from '../api/client';
 
-export default function Footer() {
+export default function Footer({ showProjects: initialShowProjects }) {
+  const cachedSettings = apiClient.getCachedSettings();
+  const [canShowProjects, setCanShowProjects] = useState(() => {
+    if (initialShowProjects !== undefined) return initialShowProjects;
+    if (cachedSettings) {
+      return Boolean(cachedSettings.show_projects ?? cachedSettings.showProjects ?? false);
+    }
+    return false;
+  });
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [footerInfo, setFooterInfo] = useState({
     address: companyInfo.address,
@@ -21,6 +29,12 @@ export default function Footer() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (initialShowProjects !== undefined) {
+      setCanShowProjects(initialShowProjects);
+    }
+  }, [initialShowProjects]);
+
+  useEffect(() => {
     let isMounted = true;
     apiClient.getSettings().then((settings) => {
       if (settings && isMounted) {
@@ -29,6 +43,8 @@ export default function Footer() {
           phone: settings.phone || companyInfo.phone,
           email: settings.email || companyInfo.email,
         });
+        const visible = Boolean(settings.show_projects ?? settings.showProjects ?? false);
+        setCanShowProjects(visible);
       }
     });
     return () => {
@@ -211,7 +227,7 @@ export default function Footer() {
                 { label: 'Home', path: '/', hash: '#home', isActive: location.pathname === '/' && (!location.hash || location.hash === '#home') },
                 { label: 'About', path: '/about', hash: '', isActive: location.pathname === '/about' },
                 { label: 'Services', path: '/services', hash: '', isActive: location.pathname.startsWith('/services') },
-                { label: 'Projects', path: '/projects', hash: '', isActive: location.pathname === '/projects' },
+                ...(canShowProjects ? [{ label: 'Projects', path: '/projects', hash: '', isActive: location.pathname === '/projects' }] : []),
                 { label: 'Team', path: '/team', hash: '', isActive: location.pathname === '/team' },
                 { label: 'Blog', path: '/blog', hash: '', isActive: location.pathname === '/blog' },
                 { label: 'Contact', path: '/contact', hash: '', isActive: location.pathname === '/contact' },

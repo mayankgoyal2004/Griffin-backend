@@ -74,15 +74,27 @@ export default function Header() {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  const [sitePhone, setSitePhone] = useState(companyInfo.phone);
+  const cachedSettings = apiClient.getCachedSettings();
+  const [sitePhone, setSitePhone] = useState(
+    cachedSettings?.phone || companyInfo.phone
+  );
+  const [showProjects, setShowProjects] = useState(() => {
+    if (cachedSettings) {
+      return Boolean(cachedSettings.show_projects ?? cachedSettings.showProjects ?? false);
+    }
+    return false; // Safe initial state to prevent flash of content
+  });
   const [servicesList, setServicesList] = useState(SERVICES_DROPDOWN_ITEMS);
 
   useEffect(() => {
     let isMounted = true;
     apiClient.getSettings().then((settings) => {
-      if (settings?.phone && isMounted) {
+      if (!isMounted || !settings) return;
+      if (settings.phone) {
         setSitePhone(settings.phone);
       }
+      const visible = Boolean(settings.show_projects ?? settings.showProjects ?? false);
+      setShowProjects(visible);
     });
     apiClient.getServices().then((data) => {
       const items = Array.isArray(data) ? data : data?.items;
@@ -200,7 +212,7 @@ export default function Header() {
     { label: 'Home', href: '#home', id: 'home', icon: Home },
     { label: 'About', href: '/about', id: 'about', icon: Info },
     { label: 'Services', href: '/services', id: 'services', icon: Layers, hasDropdown: true },
-    { label: 'Projects', href: '/projects', id: 'projects', icon: Building2 },
+    ...(showProjects ? [{ label: 'Projects', href: '/projects', id: 'projects', icon: Building2 }] : []),
     { label: 'Team', href: '/team', id: 'team', icon: Users },
     { label: 'Blog', href: '/blog', id: 'blog', icon: FileEdit },
     { label: 'Contact', href: '/contact', id: 'contact', icon: Mail },

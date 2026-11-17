@@ -842,6 +842,14 @@ export default function ServicesPage({ onOpenQuote }) {
   const [dbServices, setDbServices] = useState([]);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
+  const cachedSettings = apiClient.getCachedSettings();
+  const [showProjects, setShowProjects] = useState(() => {
+    if (cachedSettings) {
+      return Boolean(cachedSettings.show_projects ?? cachedSettings.showProjects ?? false);
+    }
+    return false;
+  });
+
   useEffect(() => {
     let isMounted = true;
     apiClient.getServices().then((items) => {
@@ -849,6 +857,11 @@ export default function ServicesPage({ onOpenQuote }) {
         setDbServices(items);
       }
     });
+    apiClient.getSettings().then((s) => {
+      if (isMounted && s) {
+        setShowProjects(Boolean(s.show_projects ?? s.showProjects ?? false));
+      }
+    }).catch(() => {});
     return () => {
       isMounted = false;
     };
@@ -1175,58 +1188,60 @@ export default function ServicesPage({ onOpenQuote }) {
       </section>
 
       {/* 6. RELATED PROJECTS (3 Cards) matching reference screenshot */}
-      <section className="py-12 sm:py-16 bg-[#faf7f2] border-t border-[#ece4d6]">
-        <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
-          <div className="flex items-end justify-between gap-4 mb-8 sm:mb-10">
-            <div>
-              <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold tracking-[0.22em] uppercase text-[#d88918] mb-1.5">
-                <span className="w-5 sm:w-6 h-[1.5px] bg-[#d88918]" />
-                <span>RELATED PROJECTS</span>
+      {showProjects && service.relatedProjects && service.relatedProjects.length > 0 && (
+        <section className="py-12 sm:py-16 bg-[#faf7f2] border-t border-[#ece4d6]">
+          <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
+            <div className="flex items-end justify-between gap-4 mb-8 sm:mb-10">
+              <div>
+                <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold tracking-[0.22em] uppercase text-[#d88918] mb-1.5">
+                  <span className="w-5 sm:w-6 h-[1.5px] bg-[#d88918]" />
+                  <span>RELATED PROJECTS</span>
+                </div>
+                <h2 className="font-serif font-extrabold text-2xl sm:text-3xl text-[#0c1f38] tracking-tight">
+                  Our {service.title} Projects
+                </h2>
               </div>
-              <h2 className="font-serif font-extrabold text-2xl sm:text-3xl text-[#0c1f38] tracking-tight">
-                Our {service.title} Projects
-              </h2>
+
+              <Link
+                to="/projects"
+                className="text-xs sm:text-sm font-semibold text-[#d88918] hover:text-[#c27912] inline-flex items-center gap-1 group transition-colors"
+              >
+                <span>View All Projects</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
 
-            <Link
-              to="/projects"
-              className="text-xs sm:text-sm font-semibold text-[#d88918] hover:text-[#c27912] inline-flex items-center gap-1 group transition-colors"
-            >
-              <span>View All Projects</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {service.relatedProjects.map((p) => (
-              <div
-                key={p.title}
-                onClick={() => navigate("/projects")}
-                className="bg-white rounded-2xl overflow-hidden border border-[#e8dfd3] shadow-[0_4px_16px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 group cursor-pointer"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4 justify-between">
-                    <div>
-                      <h4 className="font-bold text-white text-sm">
-                        {p.title}
-                      </h4>
-                      <p className="text-[11px] text-slate-200">{p.location}</p>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center group-hover:bg-[#d88918] transition-colors">
-                      <ArrowRight className="w-4 h-4" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {service.relatedProjects.map((p) => (
+                <div
+                  key={p.title}
+                  onClick={() => navigate("/projects")}
+                  className="bg-white rounded-2xl overflow-hidden border border-[#e8dfd3] shadow-[0_4px_16px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 group cursor-pointer"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                    <img
+                      src={p.image}
+                      alt={p.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4 justify-between">
+                      <div>
+                        <h4 className="font-bold text-white text-sm">
+                          {p.title}
+                        </h4>
+                        <p className="text-[11px] text-slate-200">{p.location}</p>
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center group-hover:bg-[#d88918] transition-colors">
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 7. FREQUENTLY ASKED QUESTIONS (FAQs Accordion) matching reference screenshot */}
       <section className="py-14 sm:py-20 bg-[#faf7f2] border-t border-[#ece4d6]">

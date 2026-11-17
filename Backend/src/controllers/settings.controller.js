@@ -37,6 +37,11 @@ function parseSettingsData(body) {
   if (body.copyrightText !== undefined || body.copyright_text !== undefined) {
     data.copyrightText = body.copyrightText ?? body.copyright_text;
   }
+  if (body.show_projects !== undefined) {
+    data.showProjects = Boolean(body.show_projects);
+  } else if (body.showProjects !== undefined) {
+    data.showProjects = Boolean(body.showProjects);
+  }
   return data;
 }
 

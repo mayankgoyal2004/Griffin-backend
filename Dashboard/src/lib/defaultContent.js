@@ -31,6 +31,7 @@ export const SITE_DEFAULTS = {
   footer_description:
     "A premium construction and real estate partner for clients who value craft, clarity and long-term value.",
   copyright_text: "© {year} Griffin Construction. All rights reserved.",
+  show_projects: true,
 };
 
 export const HOME_DEFAULTS = {

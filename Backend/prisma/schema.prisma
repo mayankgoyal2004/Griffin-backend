@@ -200,6 +200,7 @@ model SiteSettings {
   twitter           String?
   footerDescription String?  @db.Text
   copyrightText     String?  @default("© 2026 Griffin Construction. All rights reserved.")
+  showProjects      Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

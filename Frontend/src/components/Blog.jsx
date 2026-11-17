@@ -237,6 +237,21 @@ export default function Blog() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
+  // Lock background scroll and pause Lenis while reading an article in modal
+  useEffect(() => {
+    if (selectedArticle) {
+      document.body.style.overflow = 'hidden';
+      window.__lenis?.stop();
+    } else {
+      document.body.style.overflow = '';
+      window.__lenis?.start();
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.__lenis?.start();
+    };
+  }, [selectedArticle]);
+
   useEffect(() => {
     let isMounted = true;
     apiClient.getBlogPosts().then((posts) => {
@@ -803,12 +818,18 @@ export default function Blog() {
       {/* 4. ARTICLE DETAIL READING MODAL */}
       {selectedArticle && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-fadeIn"
+          data-lenis-prevent
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-fadeIn overscroll-contain"
           onClick={() => setSelectedArticle(null)}
+          onWheel={(e) => e.stopPropagation()}
         >
           <div
-            className="bg-white rounded-2xl max-w-[760px] w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200"
+            data-lenis-prevent
+            className="bg-white rounded-2xl max-w-[760px] w-full max-h-[90vh] overflow-y-auto overscroll-contain shadow-2xl border border-slate-200"
             onClick={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
           >
             {/* Modal Image Header */}
             <div className="relative aspect-[16/8] overflow-hidden bg-slate-900">

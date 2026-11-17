@@ -5,7 +5,13 @@ export default function ServiceDetailModal({ service, onClose, onConsultForServi
   if (!service) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div
+      data-lenis-prevent
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain"
+      onWheel={(e) => e.stopPropagation()}
+    >
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-[#091726]/80 backdrop-blur-md transition-opacity"
@@ -13,7 +19,11 @@ export default function ServiceDetailModal({ service, onClose, onConsultForServi
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-[#fffdfa] rounded-3xl max-w-xl w-full overflow-hidden border border-[#e8e2d8] shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200">
+      <div
+        data-lenis-prevent
+        className="relative bg-[#fffdfa] rounded-3xl max-w-xl w-full overflow-hidden border border-[#e8e2d8] shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200"
+        onWheel={(e) => e.stopPropagation()}
+      >
         <button
           onClick={onClose}
           type="button"
