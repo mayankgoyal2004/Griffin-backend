@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import ProjectDetailModal from "./ProjectDetailModal";
 import { apiClient } from "../api/client";
+import { usePageSeo } from "../hooks/usePageSeo";
 
 export const ALL_PROJECTS = [
   {
@@ -168,9 +169,22 @@ export default function ProjectsPage({ onSelectProject, onOpenQuote }) {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("all");
   const [projectsList, setProjectsList] = useState(ALL_PROJECTS);
+  const [pageData, setPageData] = useState(null);
+
+  usePageSeo(pageData, 'Projects', pageData?.subtitle);
   const [visibleCount, setVisibleCount] = useState(6);
   const [selectedModalProject, setSelectedModalProject] = useState(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage("projects").then((data) => {
+      if (data && isMounted) setPageData(data);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -243,8 +257,8 @@ export default function ProjectsPage({ onSelectProject, onOpenQuote }) {
         {/* Panoramic Cityscape Artwork with Griffin */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
           <img
-            src="/Golden-Riverside-Castle.png"
-            alt="Griffin Projects Banner"
+            src={pageData?.heroImage || pageData?.hero_image || "/Golden-Riverside-Castle.png"}
+            alt={pageData?.heading || "Griffin Projects Banner"}
             className="w-full h-full object-cover object-[85%_top] sm:object-[right_top] md:object-[right_top]"
             onError={(e) => {
               e.currentTarget.src = "/Golden-Riverside-Castle.png";
@@ -274,14 +288,21 @@ export default function ProjectsPage({ onSelectProject, onOpenQuote }) {
 
             {/* Heading: Projects */}
             <h1 className="font-serif font-extrabold text-3xl sm:text-4xl md:text-[44px] text-[#0c1f38] tracking-tight leading-[1.12] mb-3">
-              Projects
+              {pageData?.heading || "Projects"}
             </h1>
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm md:text-[15px] text-[#556477] leading-relaxed max-w-[440px]">
-              A showcase of our work, reflecting our commitment to quality,
-              innovation, and lasting value.
+              {pageData?.subtitle ||
+                "A showcase of our work, reflecting our commitment to quality, innovation, and lasting value."}
             </p>
+
+            {/* Description (from CMS) */}
+            {pageData?.description && (
+              <p className="text-xs sm:text-sm text-[#718296] leading-relaxed max-w-[480px] mt-2.5 pt-2.5 border-t border-[#ece4d6]">
+                {pageData.description}
+              </p>
+            )}
           </div>
         </div>
       </section>

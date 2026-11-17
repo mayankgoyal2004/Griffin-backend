@@ -9,6 +9,7 @@ import {
   Mail,
 } from 'lucide-react';
 import { apiClient } from '../api/client';
+import { usePageSeo } from '../hooks/usePageSeo';
 
 export const TEAM_MEMBERS = [
   {
@@ -88,18 +89,31 @@ export const TEAM_MEMBERS = [
 export default function TeamPage({ onOpenQuote }) {
   const navigate = useNavigate();
   const [teamList, setTeamList] = useState(TEAM_MEMBERS);
+  const [pageData, setPageData] = useState(null);
+
+  usePageSeo(pageData, 'Our Team', pageData?.subtitle);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage('team').then((data) => {
+      if (data && isMounted) setPageData(data);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
     apiClient.getTeam().then((members) => {
       if (Array.isArray(members) && isMounted) {
         const mapped = members.map((m) => ({
-          name: m.fullName || m.name,
+          name: m.fullName || m.full_name || m.name,
           role: m.designation || m.role || 'Project Lead',
-          bio: m.shortBio || m.bio || 'Contributing expertise and excellence to Griffin Construction developments.',
+          bio: m.shortBio || m.short_bio || m.bio || 'Contributing expertise and excellence to Griffin Construction developments.',
           image: m.photo || m.image || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80',
-          linkedin: m.linkedin || '#',
-          instagram: m.instagram || '#',
+          linkedin: m.linkedin_url || m.linkedinUrl || m.linkedin || '',
+          instagram: m.instagram_url || m.instagramUrl || m.instagram || '',
           email: m.email || 'contact@griffinconstruction.in',
         }));
         setTeamList(mapped);
@@ -122,8 +136,8 @@ export default function TeamPage({ onOpenQuote }) {
         {/* Panoramic Cityscape Artwork with Griffin */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
           <img
-            src="/Golden-Riverside-Castle.png"
-            alt="Griffin Team Banner"
+            src={pageData?.heroImage || pageData?.hero_image || '/Golden-Riverside-Castle.png'}
+            alt={pageData?.heading || "Griffin Team Banner"}
             className="w-full h-full object-cover object-[85%_top] sm:object-[right_top] md:object-[right_top]"
             onError={(e) => {
               e.currentTarget.src = '/Golden-Riverside-Castle.png';
@@ -153,14 +167,21 @@ export default function TeamPage({ onOpenQuote }) {
 
             {/* Heading: Meet Our Team */}
             <h1 className="font-serif font-extrabold text-3xl sm:text-4xl md:text-[44px] text-[#0c1f38] tracking-tight leading-[1.12] mb-3">
-              Meet Our Team
+              {pageData?.heading || 'Meet Our Team'}
             </h1>
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm md:text-[15px] text-[#556477] leading-relaxed max-w-[440px]">
-              A team of experienced professionals, builders, and problem-solvers committed to delivering
-              exceptional results.
+              {pageData?.subtitle ||
+                'A team of experienced professionals, builders, and problem-solvers committed to delivering exceptional results.'}
             </p>
+
+            {/* Description (from CMS) */}
+            {pageData?.description && (
+              <p className="text-xs sm:text-sm text-[#718296] leading-relaxed max-w-[480px] mt-2.5 pt-2.5 border-t border-[#ece4d6]">
+                {pageData.description}
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -225,37 +246,47 @@ export default function TeamPage({ onOpenQuote }) {
                 {/* Social Links Row at Bottom */}
                 <div className="pt-3 border-t border-[#f0e8dc] flex items-center gap-3 text-[#7b8a9b]">
                   {/* LinkedIn */}
-                  <a
-                    href={member.linkedin}
-                    aria-label={`${member.name} LinkedIn`}
-                    className="w-7 h-7 rounded-lg bg-[#f7f2e8] hover:bg-[#d88918] hover:text-white flex items-center justify-center transition-all cursor-pointer"
-                  >
-                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
-                    </svg>
-                  </a>
+                  {member.linkedin && member.linkedin !== '#' ? (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${member.name} LinkedIn`}
+                      className="w-7 h-7 rounded-lg bg-[#f7f2e8] hover:bg-[#d88918] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+                    >
+                      <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
+                      </svg>
+                    </a>
+                  ) : null}
 
                   {/* Instagram */}
-                  <a
-                    href={member.instagram}
-                    aria-label={`${member.name} Instagram`}
-                    className="w-7 h-7 rounded-lg bg-[#f7f2e8] hover:bg-[#d88918] hover:text-white flex items-center justify-center transition-all cursor-pointer"
-                  >
-                    <svg className="w-3.5 h-3.5 stroke-current fill-none stroke-[2]" viewBox="0 0 24 24">
-                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                    </svg>
-                  </a>
+                  {member.instagram && member.instagram !== '#' ? (
+                    <a
+                      href={member.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${member.name} Instagram`}
+                      className="w-7 h-7 rounded-lg bg-[#f7f2e8] hover:bg-[#d88918] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+                    >
+                      <svg className="w-3.5 h-3.5 stroke-current fill-none stroke-[2]" viewBox="0 0 24 24">
+                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                      </svg>
+                    </a>
+                  ) : null}
 
                   {/* Mail */}
-                  <a
-                    href={`mailto:${member.email}`}
-                    aria-label={`Email ${member.name}`}
-                    className="w-7 h-7 rounded-lg bg-[#f7f2e8] hover:bg-[#d88918] hover:text-white flex items-center justify-center transition-all cursor-pointer"
-                  >
-                    <Mail className="w-3.5 h-3.5 stroke-[2]" />
-                  </a>
+                  {member.email ? (
+                    <a
+                      href={`mailto:${member.email}`}
+                      aria-label={`Email ${member.name}`}
+                      className="w-7 h-7 rounded-lg bg-[#f7f2e8] hover:bg-[#d88918] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+                    >
+                      <Mail className="w-3.5 h-3.5 stroke-[2]" />
+                    </a>
+                  ) : null}
                 </div>
               </div>
             ))}

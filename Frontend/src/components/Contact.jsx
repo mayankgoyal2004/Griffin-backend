@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { companyInfo } from '../data/websiteData';
 import { apiClient } from '../api/client';
+import { usePageSeo } from '../hooks/usePageSeo';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -24,25 +25,44 @@ export default function Contact() {
   });
 
   const [contactInfo, setContactInfo] = useState({
+    companyName: companyInfo.name || 'Griffin',
     address: companyInfo.address,
     phone: companyInfo.phone,
     email: companyInfo.email,
     hours: companyInfo.hours,
+    mapsLink: '',
+    mapEmbedUrl: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [pageData, setPageData] = useState(null);
+
+  usePageSeo(pageData, 'Contact Us', pageData?.subtitle);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage('contact').then((data) => {
+      if (data && isMounted) setPageData(data);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
     apiClient.getSettings().then((settings) => {
       if (settings && isMounted) {
         setContactInfo({
+          companyName: settings.companyName || settings.company_name || companyInfo.name || 'Griffin',
           address: settings.address || companyInfo.address,
           phone: settings.phone || companyInfo.phone,
           email: settings.email || companyInfo.email,
-          hours: settings.workingHours || companyInfo.hours,
+          hours: settings.workingHours || settings.working_hours || companyInfo.hours,
+          mapsLink: settings.mapsLink || settings.maps_link || '',
+          mapEmbedUrl: settings.mapEmbedUrl || settings.map_embed_url || '',
         });
       }
     });
@@ -98,8 +118,8 @@ export default function Contact() {
         {/* Panoramic Cityscape Artwork with Griffin */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
           <img
-            src="/Golden-Riverside-Castle.png"
-            alt="Griffin Over Golden Cityscape"
+            src={pageData?.heroImage || pageData?.hero_image || '/Golden-Riverside-Castle.png'}
+            alt={pageData?.heading || "Griffin Over Golden Cityscape"}
             className="w-full h-full object-cover object-[85%_top] sm:object-[right_top] md:object-[right_top]"
             onError={(e) => {
               e.currentTarget.src = '/Golden-Riverside-Castle.png';
@@ -129,14 +149,21 @@ export default function Contact() {
 
             {/* Heading: Contact Us */}
             <h1 className="font-serif font-extrabold text-3xl sm:text-4xl md:text-[44px] text-[#0c1f38] tracking-tight leading-[1.12] mb-3">
-              Contact Us
+              {pageData?.heading || 'Contact Us'}
             </h1>
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm md:text-[15px] text-[#556477] leading-relaxed max-w-[430px]">
-              We'd love to hear from you. Reach out for project inquiries, consultations, or any
-              other questions.
+              {pageData?.subtitle ||
+                "We'd love to hear from you. Reach out for project inquiries, consultations, or any other questions."}
             </p>
+
+            {/* Description (from CMS) */}
+            {pageData?.description && (
+              <p className="text-xs sm:text-sm text-[#718296] leading-relaxed max-w-[480px] mt-2.5 pt-2.5 border-t border-[#ece4d6]">
+                {pageData.description}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -401,7 +428,10 @@ export default function Contact() {
             {/* Dark Navy Button: Get Directions → */}
             <div>
               <a
-                href="https://maps.google.com/?q=+Punjab,+160055"
+                href={
+                  contactInfo.mapsLink ||
+                  `https://maps.google.com/?q=${encodeURIComponent(contactInfo.address || 'Mohali, Punjab 160055')}`
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#091a2e] hover:bg-[#122840] text-white text-xs font-bold tracking-wide transition-all shadow-md hover:shadow-slate-900/20"
@@ -417,22 +447,15 @@ export default function Contact() {
           <div className="lg:col-span-7 relative min-h-[240px] sm:min-h-[280px] bg-[#eef1f6] overflow-hidden">
             {/* Interactive Embedded Map */}
             <iframe
-              title="Griffin Construction Location Map"
-              src="https://maps.google.com/maps?q=+Punjab+160055&t=&z=13&ie=UTF8&iwloc=&output=embed"
+              title={`${contactInfo.companyName} Location Map`}
+              src={
+                contactInfo.mapEmbedUrl ||
+                `https://maps.google.com/maps?q=${encodeURIComponent(contactInfo.address || 'Mohali, Punjab 160055')}&t=&z=16&ie=UTF8&iwloc=&output=embed`
+              }
               className="w-full h-full min-h-[240px] sm:min-h-[280px] border-0"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-
-            {/* Stylized Floating Badge Overlay matching Reference Screenshot */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-black/10 flex items-center gap-2.5 pointer-events-none z-10">
-              <div className="w-7 h-7 rounded-full bg-[#fdf3e5] border border-[#fae2c1] flex items-center justify-center text-[#d88918] shadow-sm">
-                <MapPin className="w-4 h-4 fill-[#d88918]" />
-              </div>
-              <div className="font-bold text-xs text-[#0c1f38] tracking-tight">
-                Griffin Construction
-              </div>
-            </div>
           </div>
         </div>
       </div>

@@ -119,9 +119,24 @@ export const createInquiry = asyncHandler(async (req, res) => {
   );
 });
 
-export const updateInquiryStatus = asyncHandler(async (req, res) => {
+export const updateInquiry = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { status, assignedTo, assigned_to, notes } = req.body;
+  const {
+    status,
+    assignedTo,
+    assigned_to,
+    notes,
+    internal_notes,
+    internalNotes,
+    subject,
+    message,
+    fullName,
+    full_name,
+    email,
+    phone,
+    projectType,
+    project_type,
+  } = req.body;
 
   const updateData = {};
   if (status) {
@@ -133,7 +148,22 @@ export const updateInquiryStatus = asyncHandler(async (req, res) => {
   if (assignedTo !== undefined || assigned_to !== undefined) {
     updateData.assignedTo = assignedTo ?? assigned_to;
   }
-  if (notes !== undefined) updateData.notes = notes;
+
+  const resolvedNotes = internal_notes ?? internalNotes ?? notes;
+  if (resolvedNotes !== undefined) {
+    if (typeof resolvedNotes === "object") {
+      updateData.notes = JSON.stringify(resolvedNotes);
+    } else {
+      updateData.notes = String(resolvedNotes);
+    }
+  }
+
+  if (subject !== undefined) updateData.subject = subject;
+  if (message !== undefined) updateData.message = message;
+  if (fullName || full_name) updateData.fullName = fullName || full_name;
+  if (email !== undefined) updateData.email = email;
+  if (phone !== undefined) updateData.phone = phone;
+  if (projectType || project_type) updateData.projectType = projectType || project_type;
 
   const updated = await prisma.contactInquiry.update({
     where: { id },
@@ -142,7 +172,7 @@ export const updateInquiryStatus = asyncHandler(async (req, res) => {
 
   await prisma.activityLog.create({
     data: {
-      action: "status_changed",
+      action: status ? "status_changed" : "updated",
       entityType: "ContactInquiry",
       entityTitle: `${updated.fullName} (${updated.status})`,
       userEmail: req.user?.email,
@@ -151,11 +181,11 @@ export const updateInquiryStatus = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(200).json(new ApiResponse(200, normalizeInquiry(updated), "Inquiry status updated successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeInquiry(updated), "Inquiry updated successfully."));
 });
 
-export const updateInquiry = asyncHandler(async (req, res) => {
-  return updateInquiryStatus(req, res);
+export const updateInquiryStatus = asyncHandler(async (req, res) => {
+  return updateInquiry(req, res);
 });
 
 export const deleteInquiry = asyncHandler(async (req, res) => {

@@ -19,6 +19,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { apiClient } from '../api/client';
+import { usePageSeo } from '../hooks/usePageSeo';
 
 export const BLOG_POSTS = [
   {
@@ -236,19 +237,32 @@ export default function Blog() {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [newsletterMessage, setNewsletterMessage] = useState('');
+  const [newsletterError, setNewsletterError] = useState('');
+  const [pageData, setPageData] = useState(null);
 
-  // Lock background scroll and pause Lenis while reading an article in modal
+  usePageSeo(pageData, 'Blog & Insights', 'Industry perspectives and modern engineering practices from Griffin Construction.');
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage('blog').then((data) => {
+      if (data && isMounted) setPageData(data);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Lock background scroll while reading an article in modal
   useEffect(() => {
     if (selectedArticle) {
       document.body.style.overflow = 'hidden';
-      window.__lenis?.stop();
     } else {
       document.body.style.overflow = '';
-      window.__lenis?.start();
     }
     return () => {
       document.body.style.overflow = '';
-      window.__lenis?.start();
     };
   }, [selectedArticle]);
 
@@ -364,14 +378,22 @@ export default function Blog() {
     return postsList.slice(0, 3);
   }, [postsList]);
 
-  const handleNewsletterSubmit = (e) => {
+  const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
     if (!newsletterEmail.trim()) return;
-    setNewsletterSubscribed(true);
-    setTimeout(() => {
+    setNewsletterLoading(true);
+    setNewsletterError('');
+
+    try {
+      const res = await apiClient.subscribeNewsletter(newsletterEmail.trim(), 'blog');
+      setNewsletterSubscribed(true);
+      setNewsletterMessage(res?.message || 'Thank you for subscribing!');
       setNewsletterEmail('');
-      setNewsletterSubscribed(false);
-    }, 4000);
+    } catch (err) {
+      setNewsletterError(err.message || 'Could not subscribe. Please try again.');
+    } finally {
+      setNewsletterLoading(false);
+    }
   };
 
   return (
@@ -381,8 +403,8 @@ export default function Blog() {
         {/* Panoramic Cityscape Artwork with Griffin */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
           <img
-            src="/Golden-Riverside-Castle.png"
-            alt="Griffin Insights and Updates"
+            src={pageData?.heroImage || pageData?.hero_image || '/Golden-Riverside-Castle.png'}
+            alt={pageData?.heading || "Griffin Insights and Updates"}
             className="w-full h-full object-cover object-[85%_top] sm:object-[right_top] md:object-[right_top]"
             onError={(e) => {
               e.currentTarget.src = '/Golden-Riverside-Castle.png';
@@ -412,14 +434,21 @@ export default function Blog() {
 
             {/* Heading: Insights & Updates */}
             <h1 className="font-serif font-extrabold text-3xl sm:text-4xl md:text-[44px] text-[#0c1f38] tracking-tight leading-[1.12] mb-3">
-              Insights &amp; Updates
+              {pageData?.heading || 'Insights & Updates'}
             </h1>
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm md:text-[15px] text-[#556477] leading-relaxed max-w-[430px]">
-              Stay informed with the latest trends, expert insights, and updates from the world of
-              construction and real estate.
+              {pageData?.subtitle ||
+                'Stay informed with the latest trends, expert insights, and updates from the world of construction and real estate.'}
             </p>
+
+            {/* Description (from CMS) */}
+            {pageData?.description && (
+              <p className="text-xs sm:text-sm text-[#718296] leading-relaxed max-w-[480px] mt-2.5 pt-2.5 border-t border-[#ece4d6]">
+                {pageData.description}
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -788,25 +817,36 @@ export default function Blog() {
                 {newsletterSubscribed ? (
                   <div className="flex items-center gap-2 p-3 bg-emerald-500/20 border border-emerald-400/40 rounded-xl text-emerald-300 text-xs font-semibold">
                     <CheckCircle2 className="w-4 h-4 shrink-0" />
-                    <span>Thank you for subscribing!</span>
+                    <span>{newsletterMessage || 'Thank you for subscribing!'}</span>
                   </div>
                 ) : (
-                  <form onSubmit={handleNewsletterSubmit} className="relative flex items-center">
-                    <input
-                      type="email"
-                      value={newsletterEmail}
-                      onChange={(e) => setNewsletterEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      required
-                      className="w-full bg-white text-[#0c1f38] placeholder-slate-400 text-xs rounded-xl pl-3.5 pr-11 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#f2ae38]"
-                    />
-                    <button
-                      type="submit"
-                      aria-label="Subscribe"
-                      className="absolute right-1 w-8 h-8 rounded-lg bg-[#d88918] text-white flex items-center justify-center hover:bg-[#be7610] transition-colors cursor-pointer shadow-sm"
-                    >
-                      <ArrowRight className="w-4 h-4 stroke-[2.2]" />
-                    </button>
+                  <form onSubmit={handleNewsletterSubmit} className="space-y-2">
+                    <div className="relative flex items-center">
+                      <input
+                        type="email"
+                        value={newsletterEmail}
+                        onChange={(e) => setNewsletterEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        required
+                        disabled={newsletterLoading}
+                        className="w-full bg-white text-[#0c1f38] placeholder-slate-400 text-xs rounded-xl pl-3.5 pr-11 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#f2ae38] disabled:opacity-75"
+                      />
+                      <button
+                        type="submit"
+                        disabled={newsletterLoading}
+                        aria-label="Subscribe"
+                        className="absolute right-1 w-8 h-8 rounded-lg bg-[#d88918] text-white flex items-center justify-center hover:bg-[#be7610] disabled:opacity-50 transition-colors cursor-pointer shadow-sm"
+                      >
+                        {newsletterLoading ? (
+                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <ArrowRight className="w-4 h-4 stroke-[2.2]" />
+                        )}
+                      </button>
+                    </div>
+                    {newsletterError && (
+                      <p className="text-[11px] text-red-300 font-medium pl-1">{newsletterError}</p>
+                    )}
                   </form>
                 )}
               </div>
@@ -823,13 +863,11 @@ export default function Blog() {
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-fadeIn overscroll-contain"
           onClick={() => setSelectedArticle(null)}
-          onWheel={(e) => e.stopPropagation()}
         >
           <div
             data-lenis-prevent
             className="bg-white rounded-2xl max-w-[760px] w-full max-h-[90vh] overflow-y-auto overscroll-contain shadow-2xl border border-slate-200"
             onClick={(e) => e.stopPropagation()}
-            onWheel={(e) => e.stopPropagation()}
           >
             {/* Modal Image Header */}
             <div className="relative aspect-[16/8] overflow-hidden bg-slate-900">

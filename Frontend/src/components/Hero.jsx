@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { HardHat, Layers, Users, ShieldCheck } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { apiClient } from '../api/client';
+import { usePageSeo } from '../hooks/usePageSeo';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,6 +14,19 @@ export default function Hero() {
   const headlineRef = useRef(null);
   const copyRef = useRef(null);
   const statsBarRef = useRef(null);
+  const [pageData, setPageData] = useState(null);
+
+  usePageSeo(pageData, 'Griffin Construction | Building a Stronger Tomorrow', pageData?.subtitle);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage('home').then((data) => {
+      if (data && isMounted) setPageData(data);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const [counts, setCounts] = useState({
     years: 10,
@@ -85,8 +100,8 @@ export default function Hero() {
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
         <img
           ref={bgImgRef}
-          src="/Griffin-valiue.png"
-          alt="Griffin Construction Artwork"
+          src={pageData?.heroImage || pageData?.hero_image || "/Griffin-valiue.png"}
+          alt={pageData?.heading || "Griffin Construction Artwork"}
           className="w-full h-full object-cover object-[78%_top] sm:object-[82%_top] md:object-[96%_top] lg:object-[98%_top] xl:object-[96%_top]"
         />
 
@@ -129,10 +144,16 @@ export default function Hero() {
             ref={headlineRef}
             className="font-serif font-extrabold text-[36px] sm:text-[46px] md:text-[52px] lg:text-[58px] xl:text-[66px] leading-[1.06] tracking-tight text-white mb-3 sm:mb-3.5 drop-shadow-[0_3px_20px_rgba(0,0,0,0.7)]"
           >
-            Your Nest,<br />
-            <span className="text-[#d88918] drop-shadow-[0_4px_24px_rgba(216,137,24,0.4)]">
-              Our Business.
-            </span>
+            {pageData?.heading ? (
+              pageData.heading
+            ) : (
+              <>
+                Your Nest,<br />
+                <span className="text-[#d88918] drop-shadow-[0_4px_24px_rgba(216,137,24,0.4)]">
+                  Our Business.
+                </span>
+              </>
+            )}
           </h1>
 
           {/* Subtitle / Description */}
@@ -140,8 +161,14 @@ export default function Hero() {
             ref={copyRef}
             className="text-xs sm:text-sm lg:text-[15.5px] leading-relaxed text-slate-200/90 max-w-[440px] font-normal drop-shadow-sm"
           >
-            Construction solutions for residential, commercial and infrastructure projects.
+            {pageData?.subtitle || "Construction solutions for residential, commercial and infrastructure projects."}
           </p>
+
+          {pageData?.description && (
+            <p className="text-xs sm:text-sm text-slate-300/80 leading-relaxed max-w-[440px] font-normal mt-2 pt-2 border-t border-white/10 drop-shadow-sm">
+              {pageData.description}
+            </p>
+          )}
         </div>
       </div>
 

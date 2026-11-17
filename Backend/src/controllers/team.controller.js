@@ -13,9 +13,15 @@ function parseTeamData(body) {
   if (body.shortBio !== undefined || body.short_bio !== undefined) {
     data.shortBio = body.shortBio ?? body.short_bio;
   }
+  if (body.detailedBio !== undefined || body.detailed_bio !== undefined) {
+    data.detailedBio = body.detailedBio ?? body.detailed_bio;
+  }
   if (body.photo !== undefined) data.photo = body.photo;
-  if (body.linkedinUrl !== undefined || body.linkedin_url !== undefined) {
-    data.linkedinUrl = body.linkedinUrl ?? body.linkedin_url;
+  if (body.linkedinUrl !== undefined || body.linkedin_url !== undefined || body.linkedin !== undefined) {
+    data.linkedinUrl = body.linkedinUrl ?? body.linkedin_url ?? body.linkedin;
+  }
+  if (body.instagramUrl !== undefined || body.instagram_url !== undefined || body.instagram !== undefined) {
+    data.instagramUrl = body.instagramUrl ?? body.instagram_url ?? body.instagram;
   }
   if (body.email !== undefined) data.email = body.email;
   if (body.experience !== undefined) data.experience = body.experience;

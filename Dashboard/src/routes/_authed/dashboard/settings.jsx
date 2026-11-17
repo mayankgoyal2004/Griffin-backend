@@ -43,7 +43,15 @@ function SettingsPage() {
   const save = async () => {
     setSaving(true);
     try {
-      const payload = { ...form };
+      const payload = {
+        ...form,
+        companyName: form.company_name || form.companyName || "",
+        company_name: form.company_name || form.companyName || "",
+        mapsLink: form.maps_link || form.mapsLink || "",
+        maps_link: form.maps_link || form.mapsLink || "",
+        mapEmbedUrl: form.map_embed_url || form.mapEmbedUrl || "",
+        map_embed_url: form.map_embed_url || form.mapEmbedUrl || "",
+      };
       if (payload.show_projects !== undefined) {
         payload.showProjects = payload.show_projects;
       }
@@ -126,9 +134,21 @@ function SettingsPage() {
             </div>
             <Field label="Office address" type="textarea" rows={2} value={form.address} onChange={(v) => set("address", v)} />
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Google Maps link" value={form.maps_link} onChange={(v) => set("maps_link", v)} />
+              <Field
+                label="Google Maps link"
+                value={form.maps_link}
+                onChange={(v) => set("maps_link", v)}
+                hint="Share link (e.g. https://maps.app.goo.gl/...)"
+              />
               <Field label="Working hours" value={form.working_hours} onChange={(v) => set("working_hours", v)} />
             </div>
+            <Field
+              label="Map Embed URL or Iframe (Optional)"
+              value={form.map_embed_url}
+              onChange={(v) => set("map_embed_url", v)}
+              placeholder="Auto-generated from Google Maps link or paste custom iframe / embed URL"
+              hint="Leave blank to automatically generate from your Google Maps link."
+            />
           </div>
         </TabsContent>
 

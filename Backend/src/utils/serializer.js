@@ -83,12 +83,30 @@ const INQUIRY_STATUS_DISPLAY = {
 export function normalizeInquiry(i) {
   if (!i) return null;
   const statusDisplay = INQUIRY_STATUS_DISPLAY[i.status] || i.status || "New";
+
+  let internalNotes = [];
+  if (i.notes) {
+    try {
+      const parsed = JSON.parse(i.notes);
+      if (Array.isArray(parsed)) {
+        internalNotes = parsed;
+      } else if (typeof parsed === "string") {
+        internalNotes = [{ note: parsed, author: "Staff", date: i.updatedAt || new Date().toISOString() }];
+      }
+    } catch {
+      internalNotes = [{ note: i.notes, author: "Staff", date: i.updatedAt || new Date().toISOString() }];
+    }
+  }
+
   return {
     ...i,
     status: statusDisplay,
     full_name: i.fullName ?? i.full_name ?? "",
     project_type: i.projectType ?? i.project_type ?? null,
     assigned_to: i.assignedTo ?? i.assigned_to ?? null,
+    internal_notes: internalNotes,
+    internalNotes: internalNotes,
+    notes: i.notes,
     created_date: i.createdAt ?? i.created_date ?? new Date().toISOString(),
     updated_date: i.updatedAt ?? i.updated_date ?? new Date().toISOString(),
   };
@@ -99,8 +117,15 @@ export function normalizeTeamMember(t) {
   return {
     ...t,
     full_name: t.fullName ?? t.full_name ?? "",
+    fullName: t.fullName ?? t.full_name ?? "",
     short_bio: t.shortBio ?? t.short_bio ?? "",
+    shortBio: t.shortBio ?? t.short_bio ?? "",
+    detailed_bio: t.detailedBio ?? t.detailed_bio ?? "",
+    detailedBio: t.detailedBio ?? t.detailed_bio ?? "",
     linkedin_url: t.linkedinUrl ?? t.linkedin_url ?? null,
+    linkedin: t.linkedinUrl ?? t.linkedin_url ?? null,
+    instagram_url: t.instagramUrl ?? t.instagram_url ?? null,
+    instagram: t.instagramUrl ?? t.instagram_url ?? null,
     display_order: t.displayOrder ?? t.display_order ?? 0,
     created_date: t.createdAt ?? t.created_date ?? new Date().toISOString(),
     updated_date: t.updatedAt ?? t.updated_date ?? new Date().toISOString(),
@@ -113,6 +138,10 @@ export function normalizeSiteSettings(s) {
     ...s,
     company_name: s.companyName ?? s.company_name ?? "Griffin Construction",
     phone_display: s.phoneDisplay ?? s.phone_display ?? s.phone,
+    maps_link: s.mapsLink ?? s.maps_link ?? "",
+    mapsLink: s.mapsLink ?? s.maps_link ?? "",
+    map_embed_url: s.mapEmbedUrl ?? s.map_embed_url ?? "",
+    mapEmbedUrl: s.mapEmbedUrl ?? s.map_embed_url ?? "",
     working_hours: s.workingHours ?? s.working_hours ?? "",
     website_url: s.websiteUrl ?? s.website_url ?? "",
     header_cta_text: s.headerCtaText ?? s.header_cta_text ?? "",
@@ -155,13 +184,37 @@ export function normalizeWebsitePage(p) {
   return {
     ...p,
     page_type: p.pageType ?? p.page_type ?? "general",
+    hero_image: p.heroImage ?? p.hero_image ?? null,
+    heroImage: p.heroImage ?? p.hero_image ?? null,
+    hero_secondary_image: p.heroSecondaryImage ?? p.hero_secondary_image ?? null,
+    heroSecondaryImage: p.heroSecondaryImage ?? p.hero_secondary_image ?? null,
+    description: p.description ?? null,
     cta_text: p.ctaText ?? p.cta_text ?? null,
     cta_link: p.ctaLink ?? p.cta_link ?? null,
     seo_title: p.seoTitle ?? p.seo_title ?? null,
+    seoTitle: p.seoTitle ?? p.seo_title ?? null,
     seo_description: p.seoDescription ?? p.seo_description ?? null,
-    published: true,
+    seoDescription: p.seoDescription ?? p.seo_description ?? null,
+    canonical_url: p.canonicalUrl ?? p.canonical_url ?? null,
+    canonicalUrl: p.canonicalUrl ?? p.canonical_url ?? null,
+    og_image: p.ogImage ?? p.og_image ?? null,
+    ogImage: p.ogImage ?? p.og_image ?? null,
+    robots_index: p.robotsIndex !== undefined ? Boolean(p.robotsIndex) : (p.robots_index !== undefined ? Boolean(p.robots_index) : true),
+    robotsIndex: p.robotsIndex !== undefined ? Boolean(p.robotsIndex) : (p.robots_index !== undefined ? Boolean(p.robots_index) : true),
+    last_revised: p.lastRevised ?? p.last_revised ?? null,
+    lastRevised: p.lastRevised ?? p.last_revised ?? null,
+    published: p.published !== undefined ? Boolean(p.published) : true,
     created_date: p.createdAt ?? p.created_date ?? new Date().toISOString(),
     updated_date: p.updatedAt ?? p.updated_date ?? new Date().toISOString(),
+  };
+}
+
+export function normalizeNewsletterSubscriber(s) {
+  if (!s) return null;
+  return {
+    ...s,
+    created_date: s.createdAt ?? s.created_date ?? new Date().toISOString(),
+    updated_date: s.updatedAt ?? s.updated_date ?? new Date().toISOString(),
   };
 }
 

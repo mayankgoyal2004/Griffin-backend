@@ -118,6 +118,52 @@ async function main() {
       heading: "Engineering Excellence with Griffin Strength",
       subtitle:
         "Delivering world-class residential, commercial, and industrial landmarks across the country.",
+      heroImage: "/Golden-Riverside-Castle.png",
+      published: true,
+    },
+    {
+      slug: "services",
+      title: "Services",
+      pageType: "services",
+      heading: "Our Specialized Services",
+      subtitle:
+        "Comprehensive Construction & Development Services — from conceptual design through turnkey handover.",
+      heroImage: "/Golden-Riverside-Castle.png",
+      published: true,
+      sections: [],
+    },
+    {
+      slug: "projects",
+      title: "Projects",
+      pageType: "projects",
+      heading: "Landmark Portfolio",
+      subtitle:
+        "Explore residential communities, corporate hubs, and infrastructure developments delivered nationwide.",
+      heroImage: "/Golden-Riverside-Castle.png",
+      published: true,
+      sections: [],
+    },
+    {
+      slug: "team",
+      title: "Our Team",
+      pageType: "team",
+      heading: "Leadership & Engineering Team",
+      subtitle:
+        "The architects, engineers, and project leaders driving Griffin's commitment to uncompromising precision.",
+      heroImage: "/Golden-Riverside-Castle.png",
+      published: true,
+      sections: [],
+    },
+    {
+      slug: "blog",
+      title: "Blog & Insights",
+      pageType: "blog",
+      heading: "Industry Insights & News",
+      subtitle:
+        "Industry perspectives, project milestones, and modern engineering practices from Griffin Construction.",
+      heroImage: "/Golden-Riverside-Castle.png",
+      published: true,
+      sections: [],
     },
     {
       slug: "contact",
@@ -126,6 +172,8 @@ async function main() {
       heading: "Get in Touch With Our Team",
       subtitle:
         "We are ready to discuss your next construction or development project.",
+      heroImage: "/Golden-Riverside-Castle.png",
+      published: true,
     },
     {
       slug: "privacy-policy",
@@ -133,6 +181,7 @@ async function main() {
       pageType: "legal",
       heading: "Privacy Policy",
       subtitle: "How we collect, protect and process your data.",
+      published: true,
       sections: [],
     },
     {
@@ -141,6 +190,7 @@ async function main() {
       pageType: "legal",
       heading: "Terms and Conditions",
       subtitle: "Standard contractual terms and usage policies.",
+      published: true,
       sections: [],
     },
   ];

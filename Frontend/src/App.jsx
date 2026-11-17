@@ -118,14 +118,11 @@ export default function App() {
     const isModalOpen = quoteModalOpen || Boolean(selectedProject) || Boolean(selectedService);
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
-      window.__lenis?.stop();
     } else {
       document.body.style.overflow = '';
-      window.__lenis?.start();
     }
     return () => {
       document.body.style.overflow = '';
-      window.__lenis?.start();
     };
   }, [quoteModalOpen, selectedProject, selectedService]);
 

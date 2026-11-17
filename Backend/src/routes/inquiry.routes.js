@@ -4,6 +4,7 @@ import {
   deleteInquiry,
   getInquiryById,
   getInquiries,
+  updateInquiry,
   updateInquiryStatus,
 } from "../controllers/inquiry.controller.js";
 import { authenticate, authorizeRoles } from "../middlewares/auth.middleware.js";
@@ -21,6 +22,8 @@ router.post("/", validate(createInquirySchema), createInquiry);
 // Admin-protected: Manage inquiries
 router.get("/", authenticate, authorizeRoles("ADMIN", "EDITOR"), getInquiries);
 router.get("/:id", authenticate, authorizeRoles("ADMIN", "EDITOR"), getInquiryById);
+router.put("/:id", authenticate, authorizeRoles("ADMIN", "EDITOR"), updateInquiry);
+router.patch("/:id", authenticate, authorizeRoles("ADMIN", "EDITOR"), updateInquiry);
 router.patch(
   "/:id/status",
   authenticate,

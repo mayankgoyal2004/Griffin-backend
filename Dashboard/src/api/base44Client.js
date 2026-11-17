@@ -125,6 +125,46 @@ const SEED_DATA = {
       subtitle: "Standard contractual terms and usage policies.",
       sections: [],
     },
+    {
+      id: "page_services",
+      slug: "services",
+      title: "Services",
+      page_type: "services",
+      heading: "Our Services",
+      subtitle: "Comprehensive Construction & Development Services — from conceptual design through turnkey handover.",
+      hero_image: "/Golden-Riverside-Castle.png",
+      sections: [],
+    },
+    {
+      id: "page_projects",
+      slug: "projects",
+      title: "Projects",
+      page_type: "projects",
+      heading: "Our Projects",
+      subtitle: "Enduring landmarks engineered with precision and built to stand the test of time.",
+      hero_image: "/Golden-Riverside-Castle.png",
+      sections: [],
+    },
+    {
+      id: "page_team",
+      slug: "team",
+      title: "Our Team",
+      page_type: "team",
+      heading: "Meet Our Team",
+      subtitle: "The dedicated architects, civil engineers, and project leaders driving Griffin's commitment to excellence.",
+      hero_image: "/Golden-Riverside-Castle.png",
+      sections: [],
+    },
+    {
+      id: "page_blog",
+      slug: "blog",
+      title: "Blog & Insights",
+      page_type: "blog",
+      heading: "Latest News & Insights",
+      subtitle: "Industry perspectives, project milestones, and modern engineering practices from Griffin Construction.",
+      hero_image: "/Golden-Riverside-Castle.png",
+      sections: [],
+    },
   ],
 
   Service: [
@@ -663,6 +703,7 @@ const ENTITY_ENDPOINTS = {
   Service: "/services",
   BlogPost: "/blog",
   ContactInquiry: "/inquiries",
+  NewsletterSubscriber: "/newsletter",
   TeamMember: "/team",
   WebsitePage: "/pages",
   SiteSettings: "/settings",
@@ -804,24 +845,20 @@ function createEntityStore(entityName, defaults) {
     },
 
     async create(data) {
-      let created = null;
       if (endpoint) {
-        try {
-          created = await apiFetch(endpoint, {
-            method: "POST",
-            body: JSON.stringify(data),
-          });
-        } catch (err) {
-          console.warn(
-            `[Backend API] create ${entityName} offline/failed, falling back to local storage:`,
-            err.message,
-          );
-        }
+        const created = await apiFetch(endpoint, {
+          method: "POST",
+          body: JSON.stringify(data),
+        });
+        const items = getLocalItems();
+        items.unshift(created);
+        saveLocalItems(items);
+        return created;
       }
 
       const items = getLocalItems();
       const now = new Date().toISOString();
-      const newItem = created || {
+      const newItem = {
         ...data,
         id:
           data.id ||
@@ -835,30 +872,28 @@ function createEntityStore(entityName, defaults) {
     },
 
     async update(id, data) {
-      let updated = null;
       if (endpoint) {
-        try {
-          // For inquiry status updates or standard PUT
-          const url =
-            entityName === "ContactInquiry" &&
-            data.status &&
-            Object.keys(data).length <= 3
-              ? `${endpoint}/${id}/status`
-              : `${endpoint}/${id}`;
-          const method =
-            entityName === "ContactInquiry" && url.endsWith("/status")
-              ? "PATCH"
-              : "PUT";
-          updated = await apiFetch(url, {
-            method,
-            body: JSON.stringify(data),
-          });
-        } catch (err) {
-          console.warn(
-            `[Backend API] update ${entityName} offline/failed, falling back to local storage:`,
-            err.message,
-          );
+        // For inquiry or newsletter status updates, or standard PUT
+        const isStatusPatch =
+          (entityName === "ContactInquiry" || entityName === "NewsletterSubscriber") &&
+          data.status &&
+          Object.keys(data).length <= 3;
+        const url = isStatusPatch ? `${endpoint}/${id}/status` : `${endpoint}/${id}`;
+        const method = isStatusPatch ? "PATCH" : "PUT";
+        const updated = await apiFetch(url, {
+          method,
+          body: JSON.stringify(data),
+        });
+
+        const items = getLocalItems();
+        const index = items.findIndex((i) => i.id === id || i.slug === id);
+        if (index !== -1) {
+          items[index] = updated;
+        } else {
+          items.unshift(updated);
         }
+        saveLocalItems(items);
+        return updated;
       }
 
       const items = getLocalItems();
@@ -868,26 +903,18 @@ function createEntityStore(entityName, defaults) {
         ...data,
         updated_date: new Date().toISOString(),
       };
-      const finalRecord = updated || fallbackUpdated;
       if (index !== -1) {
-        items[index] = finalRecord;
+        items[index] = fallbackUpdated;
       } else {
-        items.unshift(finalRecord);
+        items.unshift(fallbackUpdated);
       }
       saveLocalItems(items);
-      return finalRecord;
+      return fallbackUpdated;
     },
 
     async delete(id) {
       if (endpoint) {
-        try {
-          await apiFetch(`${endpoint}/${id}`, { method: "DELETE" });
-        } catch (err) {
-          console.warn(
-            `[Backend API] delete ${entityName} offline/failed:`,
-            err.message,
-          );
-        }
+        await apiFetch(`${endpoint}/${id}`, { method: "DELETE" });
       }
 
       const items = getLocalItems();
@@ -1252,6 +1279,7 @@ export const base44 = {
       "ContactInquiry",
       SEED_DATA.ContactInquiry,
     ),
+    NewsletterSubscriber: createEntityStore("NewsletterSubscriber", []),
     TeamMember: createEntityStore("TeamMember", SEED_DATA.TeamMember),
     SiteSettings: createEntityStore("SiteSettings", SEED_DATA.SiteSettings),
     MediaAsset: createEntityStore("MediaAsset", SEED_DATA.MediaAsset),

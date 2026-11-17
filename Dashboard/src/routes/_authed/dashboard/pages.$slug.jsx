@@ -41,7 +41,25 @@ function PageEditor() {
     };
   }, [slug]);
 
-  const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+  const set = (key, value) => {
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === "hero_image") next.heroImage = value;
+      if (key === "heroImage") next.hero_image = value;
+      if (key === "hero_secondary_image") next.heroSecondaryImage = value;
+      if (key === "heroSecondaryImage") next.hero_secondary_image = value;
+      if (key === "cta_text") next.ctaText = value;
+      if (key === "cta_link") next.ctaLink = value;
+      if (key === "seo_title") next.seoTitle = value;
+      if (key === "seo_description") next.seoDescription = value;
+      if (key === "canonical_url") next.canonicalUrl = value;
+      if (key === "og_image") next.ogImage = value;
+      if (key === "robots_index") next.robotsIndex = value;
+      if (key === "last_revised") next.lastRevised = value;
+      if (key === "lastRevised") next.last_revised = value;
+      return next;
+    });
+  };
 
   const save = async (publishValue) => {
     if (!form) return;
@@ -105,68 +123,111 @@ function PageEditor() {
         </div>
 
         <div className="gc-card space-y-4 p-5">
-          <h2 className="font-heading text-lg font-semibold text-primary">Hero</h2>
-          <ImageField label="Hero image" value={form.hero_image} folder="Hero Images" onChange={(v) => set("hero_image", v)} />
-          <ImageField label="Secondary hero image / Griffin visual" value={form.hero_secondary_image} folder="Hero Images" onChange={(v) => set("hero_secondary_image", v)} />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Primary CTA text" value={form.cta_text} onChange={(v) => set("cta_text", v)} />
-            <Field label="Primary CTA link" value={form.cta_link} onChange={(v) => set("cta_link", v)} />
-            <Field label="Secondary CTA text" value={form.secondary_cta_text} onChange={(v) => set("secondary_cta_text", v)} />
-            <Field label="Secondary CTA link" value={form.secondary_cta_link} onChange={(v) => set("secondary_cta_link", v)} />
-          </div>
-        </div>
-
-        <div className="gc-card space-y-4 p-5">
-          <h2 className="font-heading text-lg font-semibold text-primary">
-            {form.page_type === "legal" ? "Policy sections" : "Page sections"}
-          </h2>
+          <h2 className="font-heading text-lg font-semibold text-primary">Hero Banner Artwork</h2>
           <p className="-mt-2 text-xs text-muted-foreground">
-            {form.page_type === "legal"
-              ? "Each entry is a heading and its body copy. Reorder them with the arrows."
-              : "Add, edit and reorder the content blocks that make up this page."}
+            The panoramic background artwork displayed behind the page title in the top banner.
           </p>
-          <RepeaterField
-            label=""
-            items={form.sections || []}
-            onChange={(v) => set("sections", v)}
-            addLabel="Add section"
-            fields={[
-              { key: "key", label: "Internal key", placeholder: "why-choose-us" },
-              { key: "heading", label: "Heading" },
-              { key: "subheading", label: "Subheading" },
-              { key: "description", label: "Description", type: "textarea" },
-              { key: "cta_text", label: "CTA text" },
-              { key: "cta_link", label: "CTA link" },
-            ]}
-          />
-          {form.page_type === "legal" && <Field label="Last revised date" type="date" value={form.last_revised} onChange={(v) => set("last_revised", v)} />}
+          <ImageField label="Banner artwork image" value={form.hero_image} folder="Hero Images" onChange={(v) => set("hero_image", v)} />
         </div>
 
-        <div className="gc-card space-y-4 p-5">
-          <h2 className="font-heading text-lg font-semibold text-primary">Statistics &amp; advantages</h2>
-          <RepeaterField
-            label="Statistics"
-            items={form.stats || []}
-            onChange={(v) => set("stats", v)}
-            fields={[
-              { key: "value", label: "Value", placeholder: "180+" },
-              { key: "label", label: "Label", placeholder: "Projects delivered" },
-            ]}
-          />
-          {form.page_type === "home" && (
+        {/* Quick link to entity collections for dynamic pages */}
+        {form.slug === "blog" && (
+          <div className="rounded-xl border border-amber-200/80 bg-amber-50/60 p-4 text-xs text-amber-900 flex flex-wrap items-center justify-between gap-3">
+            <span>Articles displayed on the blog page are managed under the Blog section.</span>
+            <Button asChild size="sm" variant="outline" className="border-amber-300 bg-white hover:bg-amber-100">
+              <Link to="/dashboard/blog">Manage Articles</Link>
+            </Button>
+          </div>
+        )}
+        {form.slug === "services" && (
+          <div className="rounded-xl border border-amber-200/80 bg-amber-50/60 p-4 text-xs text-amber-900 flex flex-wrap items-center justify-between gap-3">
+            <span>Services cards and details are managed under the Services section.</span>
+            <Button asChild size="sm" variant="outline" className="border-amber-300 bg-white hover:bg-amber-100">
+              <Link to="/dashboard/services">Manage Services</Link>
+            </Button>
+          </div>
+        )}
+        {form.slug === "projects" && (
+          <div className="rounded-xl border border-amber-200/80 bg-amber-50/60 p-4 text-xs text-amber-900 flex flex-wrap items-center justify-between gap-3">
+            <span>Projects in your portfolio are managed under the Projects section.</span>
+            <Button asChild size="sm" variant="outline" className="border-amber-300 bg-white hover:bg-amber-100">
+              <Link to="/dashboard/projects">Manage Projects</Link>
+            </Button>
+          </div>
+        )}
+        {form.slug === "team" && (
+          <div className="rounded-xl border border-amber-200/80 bg-amber-50/60 p-4 text-xs text-amber-900 flex flex-wrap items-center justify-between gap-3">
+            <span>Team members and leadership profiles are managed under the Team section.</span>
+            <Button asChild size="sm" variant="outline" className="border-amber-300 bg-white hover:bg-amber-100">
+              <Link to="/dashboard/team">Manage Team</Link>
+            </Button>
+          </div>
+        )}
+
+        {/* Content sections (only for legal policies or custom home blocks) */}
+        {(form.page_type === "legal" || form.slug === "home" || form.page_type === "home") && (
+          <div className="gc-card space-y-4 p-5">
+            <h2 className="font-heading text-lg font-semibold text-primary">
+              {form.page_type === "legal" ? "Policy sections" : "Page sections"}
+            </h2>
+            <p className="-mt-2 text-xs text-muted-foreground">
+              {form.page_type === "legal"
+                ? "Each entry is a heading and its body copy. Reorder them with the arrows."
+                : "Add, edit and reorder the content blocks that make up this page."}
+            </p>
             <RepeaterField
-              label="Why choose us advantages"
-              items={form.advantages || []}
-              onChange={(v) => set("advantages", v)}
-              addLabel="Add advantage"
+              label=""
+              items={form.sections || []}
+              onChange={(v) => set("sections", v)}
+              addLabel={form.page_type === "legal" ? "Add policy section" : "Add section"}
+              fields={
+                form.page_type === "legal"
+                  ? [
+                      { key: "heading", label: "Section Heading", placeholder: "e.g. Information We Collect" },
+                      { key: "description", label: "Section Content / Paragraphs", type: "textarea", rows: 4, placeholder: "Enter paragraph text or bullet points..." },
+                    ]
+                  : [
+                      { key: "key", label: "Internal key", placeholder: "why-choose-us" },
+                      { key: "heading", label: "Heading" },
+                      { key: "subheading", label: "Subheading" },
+                      { key: "description", label: "Description", type: "textarea" },
+                      { key: "cta_text", label: "CTA text" },
+                      { key: "cta_link", label: "CTA link" },
+                    ]
+              }
+            />
+            {form.page_type === "legal" && <Field label="Last revised date" type="date" value={form.last_revised} onChange={(v) => set("last_revised", v)} />}
+          </div>
+        )}
+
+        {/* Statistics & Advantages (only for Home and About pages) */}
+        {(form.slug === "home" || form.page_type === "home" || form.slug === "about" || form.page_type === "about") && (
+          <div className="gc-card space-y-4 p-5">
+            <h2 className="font-heading text-lg font-semibold text-primary">Statistics &amp; advantages</h2>
+            <RepeaterField
+              label="Statistics"
+              items={form.stats || []}
+              onChange={(v) => set("stats", v)}
               fields={[
-                { key: "icon", label: "Icon (lucide name)" },
-                { key: "title", label: "Title" },
-                { key: "description", label: "Description", type: "textarea" },
+                { key: "value", label: "Value", placeholder: "180+" },
+                { key: "label", label: "Label", placeholder: "Projects delivered" },
               ]}
             />
-          )}
-        </div>
+            {(form.page_type === "home" || form.slug === "home") && (
+              <RepeaterField
+                label="Why choose us advantages"
+                items={form.advantages || []}
+                onChange={(v) => set("advantages", v)}
+                addLabel="Add advantage"
+                fields={[
+                  { key: "icon", label: "Icon (lucide name)" },
+                  { key: "title", label: "Title" },
+                  { key: "description", label: "Description", type: "textarea" },
+                ]}
+              />
+            )}
+          </div>
+        )}
 
         <div className="gc-card space-y-4 p-5">
           <h2 className="font-heading text-lg font-semibold text-primary">SEO &amp; sharing</h2>

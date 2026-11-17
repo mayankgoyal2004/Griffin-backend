@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { apiClient } from "../api/client";
@@ -33,7 +34,8 @@ const DEFAULT_TEAM = [
 ];
 
 export default function Team({ onOpenQuote }) {
-  const [teamMembers, setTeamMembers] = useState(DEFAULT_TEAM);
+  const navigate = useNavigate();
+  const [teamMembers, setTeamMembers] = useState([]);
   const sectionRef = useRef(null);
   const bannerRef = useRef(null);
   const eagleRef = useRef(null);
@@ -42,16 +44,26 @@ export default function Team({ onOpenQuote }) {
 
   useEffect(() => {
     let isMounted = true;
-    apiClient.getTeam().then((members) => {
+    apiClient.getTeam({ featured: true }).then((members) => {
       if (Array.isArray(members) && isMounted) {
-        const mapped = members.map((m) => ({
-          name: m.fullName || m.name,
+        // Filter strictly for members marked as featured ("Show on homepage")
+        const featuredMembers = members.filter(
+          (m) => m.featured === true || m.featured === "true"
+        );
+        // If some are featured, show only them; if none are marked, show top published
+        const membersToShow =
+          featuredMembers.length > 0
+            ? featuredMembers
+            : members.filter((m) => m.published !== false).slice(0, 4);
+
+        const mapped = membersToShow.map((m) => ({
+          name: m.fullName || m.full_name || m.name,
           role: m.designation || m.role || "Project Lead",
           image:
             m.photo ||
             m.image ||
             "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=85",
-          linkedin: m.linkedin || "#team",
+          linkedin: m.linkedin_url || m.linkedinUrl || m.linkedin || "",
         }));
         setTeamMembers(mapped);
       }
@@ -172,7 +184,10 @@ export default function Team({ onOpenQuote }) {
 
               <div>
                 <button
-                  onClick={onOpenQuote}
+                  onClick={() => {
+                    navigate('/team');
+                    window.scrollTo(0, 0);
+                  }}
                   type="button"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-[#142338] bg-[#f0a528] hover:bg-[#e29618] active:scale-95 shadow-sm hover:shadow transition-all cursor-pointer group"
                 >
@@ -185,18 +200,26 @@ export default function Team({ onOpenQuote }) {
             </div>
           </div>
 
-          {/* Right Wing: 4 Team Member Cards */}
+          {/* Right Wing: Team Member Cards */}
           <div
             ref={cardsRef}
-            className="p-3 sm:p-5 lg:py-6 lg:pr-7 lg:pl-4 flex-1 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5 w-full items-center"
+            className={`p-3 sm:p-5 lg:py-6 lg:pr-7 lg:pl-4 min-w-0 flex-1 grid gap-2.5 sm:gap-3.5 w-full items-stretch ${
+              teamMembers.length === 1
+                ? "grid-cols-1 max-w-[220px]"
+                : teamMembers.length === 2
+                ? "grid-cols-2 max-w-[440px]"
+                : teamMembers.length === 3
+                ? "grid-cols-2 sm:grid-cols-3"
+                : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+            }`}
           >
             {teamMembers.map((member) => (
               <div
                 key={member.name}
-                className="bg-white rounded-[18px] p-2.5 border border-[#e1e8f0] shadow-[0_8px_20px_rgba(20,38,60,0.06)] hover:shadow-[0_16px_32px_rgba(20,38,60,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col group"
+                className="bg-white rounded-[18px] p-2.5 sm:p-3 border border-[#e1e8f0] shadow-[0_8px_20px_rgba(20,38,60,0.06)] hover:shadow-[0_16px_32px_rgba(20,38,60,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group min-w-0 overflow-hidden"
               >
                 {/* Photo */}
-                <div className="w-full h-32 sm:h-36 lg:h-[150px] rounded-[13px] overflow-hidden bg-[#e8eef4] relative">
+                <div className="w-full h-32 sm:h-36 lg:h-[150px] rounded-[13px] overflow-hidden bg-[#e8eef4] relative shrink-0">
                   <img
                     src={member.image}
                     alt={member.name}
@@ -206,26 +229,36 @@ export default function Team({ onOpenQuote }) {
                 </div>
 
                 {/* Info row */}
-                <div className="pt-2.5 pb-0.5 px-0.5 flex items-end justify-between gap-1">
-                  <div className="min-w-0">
-                    <h3 className="font-serif font-bold text-xs sm:text-[13px] text-[#142338] leading-tight whitespace-nowrap m-0">
+                <div className="pt-2 pb-0.5 px-0.5 flex items-start justify-between gap-1.5 min-w-0 mt-auto">
+                  <div className="min-w-0 flex-1">
+                    <h3
+                      className="font-serif font-bold text-xs sm:text-[13px] text-[#142338] leading-tight truncate m-0"
+                      title={member.name}
+                    >
                       {member.name}
                     </h3>
-                    <p className="text-[10px] sm:text-[10.5px] text-[#6b7c93] leading-tight mt-0.5 whitespace-nowrap font-medium m-0">
+                    <p
+                      className="text-[10px] sm:text-[10.5px] text-[#6b7c93] leading-tight mt-1 font-medium line-clamp-2 m-0"
+                      title={member.role}
+                    >
                       {member.role}
                     </p>
                   </div>
 
                   {/* LinkedIn Icon Badge */}
-                  <a
-                    href="#team"
-                    aria-label={`${member.name} LinkedIn Profile`}
-                    className="w-5 h-5 rounded flex items-center justify-center shrink-0 hover:scale-110 transition-transform"
-                  >
-                    <svg className="w-4 h-4 fill-[#0a66c2]" viewBox="0 0 24 24">
-                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76c.92 0 1.66-.74 1.66-1.66 0-.92-.74-1.66-1.66-1.66-.92 0-1.66.74-1.66 1.66 0 .92.74 1.66 1.66 1.66m1.39 9.94v-8.37H5.07v8.37h2.78Z" />
-                    </svg>
-                  </a>
+                  {member.linkedin && member.linkedin !== "#" ? (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${member.name} LinkedIn Profile`}
+                      className="w-5 h-5 rounded flex items-center justify-center shrink-0 hover:scale-110 transition-transform mt-0.5 cursor-pointer"
+                    >
+                      <svg className="w-4 h-4 fill-[#0a66c2]" viewBox="0 0 24 24">
+                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76c.92 0 1.66-.74 1.66-1.66 0-.92-.74-1.66-1.66-1.66-.92 0-1.66.74-1.66 1.66 0 .92.74 1.66 1.66 1.66m1.39 9.94v-8.37H5.07v8.37h2.78Z" />
+                      </svg>
+                    </a>
+                  ) : null}
                 </div>
               </div>
             ))}

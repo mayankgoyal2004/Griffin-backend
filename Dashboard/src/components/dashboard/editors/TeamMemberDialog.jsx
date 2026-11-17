@@ -15,6 +15,7 @@ const BLANK = {
   detailed_bio: "",
   photo: "",
   linkedin_url: "",
+  instagram_url: "",
   email: "",
   experience: "",
   skills: [],
@@ -34,7 +35,14 @@ export default function TeamMemberDialog({ open, onOpenChange, memberId, user, o
     if (!memberId) return;
     setLoading(true);
     base44.entities.TeamMember.get(memberId)
-      .then((record) => setForm({ ...BLANK, ...record }))
+      .then((record) =>
+        setForm({
+          ...BLANK,
+          ...record,
+          linkedin_url: record.linkedin_url || record.linkedinUrl || record.linkedin || "",
+          instagram_url: record.instagram_url || record.instagramUrl || record.instagram || "",
+        })
+      )
       .catch(() => toast.error("Could not load that team member."))
       .finally(() => setLoading(false));
   }, [open, memberId]);
@@ -48,7 +56,15 @@ export default function TeamMemberDialog({ open, onOpenChange, memberId, user, o
     }
     setSaving(true);
     try {
-      const payload = { ...form, full_name: form.full_name.trim(), designation: form.designation.trim() };
+      const payload = {
+        ...form,
+        full_name: form.full_name.trim(),
+        designation: form.designation.trim(),
+        linkedin_url: form.linkedin_url || "",
+        linkedinUrl: form.linkedin_url || "",
+        instagram_url: form.instagram_url || "",
+        instagramUrl: form.instagram_url || "",
+      };
       if (memberId) {
         await base44.entities.TeamMember.update(memberId, payload);
         await logActivity({ action: "updated", entity_type: "Team member", entity_title: payload.full_name, user });
@@ -84,7 +100,8 @@ export default function TeamMemberDialog({ open, onOpenChange, memberId, user, o
               <Field label="Designation" required value={form.designation} onChange={(v) => set("designation", v)} />
               <Field label="Experience" value={form.experience} onChange={(v) => set("experience", v)} placeholder="14 years" />
               <Field label="Email (optional)" type="email" value={form.email} onChange={(v) => set("email", v)} />
-              <Field label="LinkedIn URL" value={form.linkedin_url} onChange={(v) => set("linkedin_url", v)} className="sm:col-span-2" />
+              <Field label="LinkedIn URL" value={form.linkedin_url} onChange={(v) => set("linkedin_url", v)} placeholder="https://linkedin.com/in/username" />
+              <Field label="Instagram URL" value={form.instagram_url} onChange={(v) => set("instagram_url", v)} placeholder="https://instagram.com/username" />
             </div>
             <Field
               label="Skills"

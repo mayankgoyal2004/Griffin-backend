@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { apiClient } from "../api/client";
+import { usePageSeo } from "../hooks/usePageSeo";
 import {
   Home,
   Truck,
@@ -843,6 +844,9 @@ export default function ServicesPage({ onOpenQuote }) {
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   const cachedSettings = apiClient.getCachedSettings();
+  const [pageData, setPageData] = useState(null);
+
+  usePageSeo(pageData, 'Our Services', pageData?.subtitle);
   const [showProjects, setShowProjects] = useState(() => {
     if (cachedSettings) {
       return Boolean(cachedSettings.show_projects ?? cachedSettings.showProjects ?? false);
@@ -852,6 +856,10 @@ export default function ServicesPage({ onOpenQuote }) {
 
   useEffect(() => {
     let isMounted = true;
+    apiClient.getPage("services").then((p) => {
+      if (isMounted && p) setPageData(p);
+    }).catch(() => {});
+
     apiClient.getServices().then((items) => {
       if (Array.isArray(items) && isMounted) {
         setDbServices(items);
@@ -939,7 +947,7 @@ export default function ServicesPage({ onOpenQuote }) {
         {/* Panoramic Cityscape Artwork with Golden Griffin */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
           <img
-            src="/Golden-Riverside-Castle.png"
+            src={pageData?.heroImage || pageData?.hero_image || "/Golden-Riverside-Castle.png"}
             alt="Griffin Services Banner"
             className="w-full h-full object-cover object-[85%_top] sm:object-[right_top] md:object-[right_top]"
             onError={(e) => {
@@ -977,6 +985,13 @@ export default function ServicesPage({ onOpenQuote }) {
             <p className="text-xs sm:text-sm md:text-[15px] text-[#556477] leading-relaxed max-w-[460px]">
               {service.tagline}
             </p>
+
+            {/* Description (from CMS) */}
+            {pageData?.description && (
+              <p className="text-xs sm:text-sm text-[#718296] leading-relaxed max-w-[480px] mt-2.5 pt-2.5 border-t border-[#ece4d6]">
+                {pageData.description}
+              </p>
+            )}
           </div>
         </div>
       </section>

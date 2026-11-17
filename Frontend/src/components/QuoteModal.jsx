@@ -83,7 +83,6 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
       role="dialog"
       aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain"
-      onWheel={(e) => e.stopPropagation()}
     >
       {/* Backdrop */}
       <div
@@ -95,7 +94,6 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
       <div
         data-lenis-prevent
         className="relative bg-[#fffdfa] rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-[#e8e2d8] shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200"
-        onWheel={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button

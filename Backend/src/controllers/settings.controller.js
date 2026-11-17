@@ -3,6 +3,55 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { normalizeSiteSettings } from "../utils/serializer.js";
 
+export async function resolveGoogleMapsEmbed(mapsLink) {
+  if (!mapsLink) return null;
+  const link = mapsLink.trim();
+
+  // If iframe tag was pasted
+  if (link.includes("<iframe") && link.includes("src=")) {
+    const match = link.match(/src=["']([^"']+)["']/);
+    if (match) return match[1];
+  }
+
+  // If already embed URL
+  if (link.includes("output=embed") || link.includes("/maps/embed")) {
+    return link;
+  }
+
+  let targetUrl = link;
+  // If shortlink (maps.app.goo.gl or goo.gl/maps)
+  if (link.includes("maps.app.goo.gl") || link.includes("goo.gl/maps")) {
+    try {
+      const res = await fetch(link, { redirect: "manual" });
+      const loc = res.headers.get("location");
+      if (loc) targetUrl = loc;
+    } catch (e) {
+      console.warn("Could not resolve Google Maps shortlink:", e.message);
+    }
+  }
+
+  // Extract !3dlat!4dlng (exact pin coordinates)
+  const dMatch = targetUrl.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  if (dMatch) {
+    return `https://maps.google.com/maps?q=${dMatch[1]},${dMatch[2]}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  }
+
+  // Extract @lat,lng
+  const atMatch = targetUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (atMatch) {
+    return `https://maps.google.com/maps?q=${atMatch[1]},${atMatch[2]}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  }
+
+  // Extract place name
+  const placeMatch = targetUrl.match(/\/place\/([^/@?]+)/);
+  if (placeMatch) {
+    const name = decodeURIComponent(placeMatch[1].replace(/\+/g, " "));
+    return `https://maps.google.com/maps?q=${encodeURIComponent(name)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  }
+
+  return null;
+}
+
 function parseSettingsData(body) {
   const data = {};
   if (body.companyName !== undefined || body.company_name !== undefined) {
@@ -15,6 +64,12 @@ function parseSettingsData(body) {
   }
   if (body.email !== undefined) data.email = body.email;
   if (body.address !== undefined) data.address = body.address;
+  if (body.mapsLink !== undefined || body.maps_link !== undefined) {
+    data.mapsLink = body.mapsLink ?? body.maps_link;
+  }
+  if (body.mapEmbedUrl !== undefined || body.map_embed_url !== undefined) {
+    data.mapEmbedUrl = body.mapEmbedUrl ?? body.map_embed_url;
+  }
   if (body.workingHours !== undefined || body.working_hours !== undefined) {
     data.workingHours = body.workingHours ?? body.working_hours;
   }
@@ -61,6 +116,10 @@ export const getSiteSettings = asyncHandler(async (req, res) => {
 
 export const updateSiteSettings = asyncHandler(async (req, res) => {
   const data = parseSettingsData(req.body);
+  if (data.mapsLink && (!data.mapEmbedUrl || data.mapEmbedUrl === "")) {
+    const autoEmbed = await resolveGoogleMapsEmbed(data.mapsLink);
+    if (autoEmbed) data.mapEmbedUrl = autoEmbed;
+  }
   const updated = await prisma.siteSettings.upsert({
     where: { id: "settings_global" },
     update: data,

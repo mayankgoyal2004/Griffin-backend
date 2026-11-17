@@ -11,6 +11,7 @@ import {
   Inbox,
   LayoutTemplate,
   LogOut,
+  Mail,
   Search,
   Settings,
   ShieldCheck,
@@ -39,7 +40,10 @@ const GROUPS = [
   },
   {
     label: "Communication",
-    items: [{ label: "Contact Inquiries", to: "/dashboard/inquiries", icon: Inbox }],
+    items: [
+      { label: "Contact Inquiries", to: "/dashboard/inquiries", icon: Inbox },
+      { label: "Newsletter Subscribers", to: "/dashboard/newsletter", icon: Mail },
+    ],
   },
   {
     label: "Assets",

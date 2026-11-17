@@ -60,13 +60,13 @@ export default function ImageField({ label, value, onChange, folder = "General",
           setDragging(false);
           upload(e.dataTransfer.files?.[0]);
         }}
-        className={`flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center ${
+        className={`flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-start ${
           dragging ? "border-accent bg-accent/5" : "border-border bg-white"
         }`}
       >
         <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
           {value ? (
-            <Image src={value} alt="" className="h-full w-full" fittingType="fill" />
+            <Image src={value} alt="" className="h-full w-full object-cover" fittingType="fill" />
           ) : (
             <span className="flex h-full w-full items-center justify-center text-muted-foreground">
               <ImagePlus className="h-5 w-5" />
@@ -80,18 +80,33 @@ export default function ImageField({ label, value, onChange, folder = "General",
             placeholder="Paste an image URL or upload a file"
             className="h-9 text-xs"
           />
-          <div className="flex items-center gap-2">
-            <Button type="button" size="sm" variant="outline" onClick={() => inputRef.current?.click()} disabled={uploading}>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => inputRef.current?.click()}
+              disabled={uploading}
+              className="h-8 text-xs shrink-0"
+            >
               {uploading ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Upload className="mr-1.5 h-3.5 w-3.5" />}
               Upload
             </Button>
             {value && (
-              <Button type="button" size="sm" variant="ghost" className="text-destructive" onClick={() => onChange("")}>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                onClick={() => onChange("")}
+              >
                 <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Remove
               </Button>
             )}
-            <span className="text-[11px] text-muted-foreground">{hint || "JPG, PNG, WebP, SVG · max 8 MB"}</span>
           </div>
+          <p className="text-[11px] text-muted-foreground leading-normal break-words">
+            {hint || "JPG, PNG, WebP, SVG · max 8 MB"}
+          </p>
         </div>
         <input
           ref={inputRef}

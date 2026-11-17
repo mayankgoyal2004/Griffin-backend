@@ -146,8 +146,10 @@ model TeamMember {
   fullName     String
   designation  String
   shortBio     String?  @db.Text
+  detailedBio  String?  @db.Text
   photo        String?
   linkedinUrl  String?
+  instagramUrl String?
   email        String?
   experience   String?  // e.g. "20+ Years"
   skills       Json?    @default("[]") // Array of strings
@@ -163,21 +165,29 @@ model TeamMember {
 }
 
 model WebsitePage {
-  id             String   @id @default(uuid())
-  slug           String   @unique // home, about, contact, privacy-policy, terms
-  title          String
-  pageType       String   @default("general") // home, about, contact, legal
-  heading        String?
-  subtitle       String?  @db.Text
-  ctaText        String?
-  ctaLink        String?
-  seoTitle       String?
-  seoDescription String?  @db.Text
-  sections       Json?    @default("[]")
-  stats          Json?    @default("[]")
-  advantages     Json?    @default("[]")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                 String   @id @default(uuid())
+  slug               String   @unique // home, about, services, projects, team, blog, contact, privacy-policy, terms
+  title              String
+  pageType           String   @default("general") // home, about, services, projects, team, blog, contact, legal
+  heading            String?
+  subtitle           String?  @db.Text
+  description        String?  @db.Text
+  heroImage          String?  @db.Text
+  heroSecondaryImage String?  @db.Text
+  ctaText            String?
+  ctaLink            String?
+  seoTitle           String?
+  seoDescription     String?  @db.Text
+  canonicalUrl       String?
+  ogImage            String?  @db.Text
+  robotsIndex        Boolean  @default(true)
+  sections           Json?    @default("[]")
+  stats              Json?    @default("[]")
+  advantages         Json?    @default("[]")
+  lastRevised        String?
+  published          Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@map("website_pages")
 }
@@ -190,6 +200,8 @@ model SiteSettings {
   phoneDisplay      String?  @default("+91 123 456 7890")
   email             String?  @default("contact@griffinconstruction.in")
   address           String?  @default("Mohali, Punjab – 160055, India")
+  mapsLink          String?  @db.Text
+  mapEmbedUrl       String?  @db.Text
   workingHours      String?  @default("Mon - Sat: 9:00 AM - 7:00 PM")
   websiteUrl        String?  @default("https://griffinconstruction.in")
   headerCtaText     String?  @default("Get a Quote")
@@ -237,5 +249,18 @@ model ActivityLog {
   @@index([entityType])
   @@index([createdAt])
   @@map("activity_logs")
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  status    String   @default("SUBSCRIBED") // SUBSCRIBED, UNSUBSCRIBED
+  source    String   @default("blog")       // blog, footer, modal
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("newsletter_subscribers")
 }
 

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '../api/client';
+import { usePageSeo } from '../hooks/usePageSeo';
 import {
   Layers,
   ShieldCheck,
@@ -18,11 +20,28 @@ import {
 
 export default function AboutPage({ onOpenQuote }) {
   const navigate = useNavigate();
+  const [pageData, setPageData] = useState(null);
+
+  usePageSeo(pageData, 'About Us', pageData?.subtitle);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage('about').then((data) => {
+      if (data && isMounted) setPageData(data);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleContactClick = () => {
     navigate('/contact');
     window.scrollTo(0, 0);
   };
+
+  const bannerImg = pageData?.heroImage || pageData?.hero_image || '/Golden-Riverside-Castle.png';
+  const pageHeading = pageData?.heading || 'About Us';
+  const pageSubtitle = pageData?.subtitle || 'Building spaces that create lasting value for people, businesses, and communities.';
 
   return (
     <div className="relative w-full pt-[68px] bg-[#faf7f2] text-[#111d2c] min-h-[calc(100vh-68px)]">
@@ -31,8 +50,8 @@ export default function AboutPage({ onOpenQuote }) {
         {/* Panoramic Cityscape Artwork with Griffin */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
           <img
-            src="/Golden-Riverside-Castle.png"
-            alt="Griffin About Us Banner"
+            src={bannerImg}
+            alt={pageHeading}
             className="w-full h-full object-cover object-[85%_top] sm:object-[right_top] md:object-[right_top]"
             onError={(e) => {
               e.currentTarget.src = '/Golden-Riverside-Castle.png';
@@ -62,13 +81,20 @@ export default function AboutPage({ onOpenQuote }) {
 
             {/* Heading: About Us */}
             <h1 className="font-serif font-extrabold text-3xl sm:text-4xl md:text-[44px] text-[#0c1f38] tracking-tight leading-[1.12] mb-3">
-              About Us
+              {pageHeading}
             </h1>
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm md:text-[15px] text-[#556477] leading-relaxed max-w-[430px]">
-              Building spaces that create lasting value for people, businesses, and communities.
+              {pageSubtitle}
             </p>
+
+            {/* Description (from CMS) */}
+            {pageData?.description && (
+              <p className="text-xs sm:text-sm text-[#718296] leading-relaxed max-w-[480px] mt-2.5 pt-2.5 border-t border-[#ece4d6]">
+                {pageData.description}
+              </p>
+            )}
           </div>
         </div>
       </section>

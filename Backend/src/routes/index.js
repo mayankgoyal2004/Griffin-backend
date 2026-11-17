@@ -11,6 +11,7 @@ import serviceRoutes from "./service.routes.js";
 import settingsRoutes from "./settings.routes.js";
 import teamRoutes from "./team.routes.js";
 import userRoutes from "./user.routes.js";
+import newsletterRoutes from "./newsletter.routes.js";
 import { getRobots, getSitemap } from "../controllers/seo.controller.js";
 
 const apiRouter = Router();
@@ -43,6 +44,7 @@ apiRouter.use("/pages", pageRoutes);
 apiRouter.use("/settings", settingsRoutes);
 apiRouter.use("/media", mediaRoutes);
 apiRouter.use("/activity", activityRoutes);
+apiRouter.use("/newsletter", newsletterRoutes);
 
 export default apiRouter;
 

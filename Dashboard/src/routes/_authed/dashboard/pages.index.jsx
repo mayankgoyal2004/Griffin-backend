@@ -78,9 +78,14 @@ function PagesPage() {
                           </Link>
                         </Button>
                         <Button asChild size="sm" variant="ghost">
-                          <Link to={PAGE_ROUTES[page.slug] || "/"}>
+                          <a
+                            href={`http://localhost:5173${PAGE_ROUTES[page.slug] || `/${page.slug}`}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            title="View page on website"
+                          >
                             <ExternalLink className="h-3.5 w-3.5" />
-                          </Link>
+                          </a>
                         </Button>
                       </div>
                     </td>

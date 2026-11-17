@@ -138,6 +138,12 @@ export const apiClient = {
     const res = await api.post('/inquiries', inquiryData);
     return res.data || res;
   },
+
+  // Subscribe to Newsletter
+  subscribeNewsletter: async (email, source = 'blog') => {
+    const res = await api.post('/newsletter/subscribe', { email, source });
+    return res;
+  },
 };
 
 export default apiClient;

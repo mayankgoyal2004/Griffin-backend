@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Image } from "@/components/ui/image";
-import { Linkedin, Pencil, Plus, Search, Star, Trash2, UserRound } from "lucide-react";
+import { Instagram, Linkedin, Pencil, Plus, Search, Star, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authed/dashboard/team")({
@@ -89,11 +89,18 @@ function TeamPage() {
                   {member.featured && <Star className="h-3.5 w-3.5 fill-gold text-gold-dark" />}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">{member.designation}</p>
-                {member.linkedin_url && (
-                  <a href={member.linkedin_url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-[11px] text-gold-dark">
-                    <Linkedin className="h-3 w-3" /> LinkedIn
-                  </a>
-                )}
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  {member.linkedin_url && (
+                    <a href={member.linkedin_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11px] text-gold-dark hover:underline">
+                      <Linkedin className="h-3 w-3" /> LinkedIn
+                    </a>
+                  )}
+                  {member.instagram_url && (
+                    <a href={member.instagram_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11px] text-gold-dark hover:underline">
+                      <Instagram className="h-3 w-3" /> Instagram
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-between border-t border-border px-4 py-2.5">
