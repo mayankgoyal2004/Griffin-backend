@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   User,
@@ -14,9 +14,23 @@ import {
   Lock,
 } from "lucide-react";
 import { companyInfo } from "../data/websiteData";
+import { apiClient } from "../api/client";
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate();
+  const [pageData, setPageData] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage("privacy-policy").then((data) => {
+      if (data && isMounted) {
+        setPageData(data);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleLink = (path, hash) => {
     if (path === location.pathname && !hash) {
@@ -97,13 +111,13 @@ export default function PrivacyPolicy() {
 
             {/* Heading: Privacy Policy */}
             <h1 className="font-serif font-extrabold text-3xl sm:text-4xl md:text-[44px] text-[#0c1f38] tracking-tight leading-[1.12] mb-3">
-              Privacy Policy
+              {pageData?.heading || pageData?.title || "Privacy Policy"}
             </h1>
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm md:text-[15px] text-[#556477] leading-relaxed max-w-[460px]">
-              Your privacy matters to us. This Privacy Policy explains how we
-              collect, use, and protect your information.
+              {pageData?.subtitle ||
+                "Your privacy matters to us. This Privacy Policy explains how we collect, use, and protect your information."}
             </p>
           </div>
         </div>

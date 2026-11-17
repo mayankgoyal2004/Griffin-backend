@@ -4,14 +4,25 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { normalizeInquiry } from "../utils/serializer.js";
 
+const STATUS_MAP = {
+  new: "NEW",
+  contacted: "CONTACTED",
+  "in progress": "IN_PROGRESS",
+  in_progress: "IN_PROGRESS",
+  converted: "RESOLVED",
+  resolved: "RESOLVED",
+  closed: "ARCHIVED",
+  archived: "ARCHIVED",
+};
+
 export const getInquiries = asyncHandler(async (req, res) => {
   const { status, projectType, project_type, search, page = 1, limit = 50 } = req.query;
 
   const where = {};
   if (status && status !== "all") {
-    const s = String(status).toUpperCase();
-    if (["NEW", "IN_PROGRESS", "CONTACTED", "RESOLVED", "ARCHIVED"].includes(s)) {
-      where.status = s;
+    const mapped = STATUS_MAP[String(status).toLowerCase()] || String(status).toUpperCase().replace(/\s+/g, "_");
+    if (["NEW", "IN_PROGRESS", "CONTACTED", "RESOLVED", "ARCHIVED"].includes(mapped)) {
+      where.status = mapped;
     }
   }
   const pType = projectType || project_type;
@@ -68,15 +79,22 @@ export const getInquiryById = asyncHandler(async (req, res) => {
 });
 
 export const createInquiry = asyncHandler(async (req, res) => {
-  const { fullName, full_name, email, phone, subject, projectType, project_type, message } = req.body;
+  const { name, fullName, full_name, email, phone, subject, projectType, project_type, message } = req.body;
+
+  const resolvedName = (name || fullName || full_name || "Website Visitor").trim();
+  const resolvedType = projectType || project_type || "General";
+  const resolvedSubject = (
+    subject ||
+    `${resolvedType !== "General" ? resolvedType : "Project"} Consultation - ${resolvedName}`
+  ).trim();
 
   const inquiry = await prisma.contactInquiry.create({
     data: {
-      fullName: fullName || full_name || "Anonymous",
-      email: email.toLowerCase(),
-      phone,
-      subject: subject || "Inquiry",
-      projectType: projectType || project_type || null,
+      fullName: resolvedName,
+      email: email.toLowerCase().trim(),
+      phone: phone ? String(phone).trim() : null,
+      subject: resolvedSubject,
+      projectType: resolvedType,
       message: message || "",
       status: "NEW",
     },
@@ -107,9 +125,9 @@ export const updateInquiryStatus = asyncHandler(async (req, res) => {
 
   const updateData = {};
   if (status) {
-    const s = String(status).toUpperCase().replace(/\s+/g, "_");
-    if (["NEW", "IN_PROGRESS", "CONTACTED", "RESOLVED", "ARCHIVED"].includes(s)) {
-      updateData.status = s;
+    const mapped = STATUS_MAP[String(status).toLowerCase()] || String(status).toUpperCase().replace(/\s+/g, "_");
+    if (["NEW", "IN_PROGRESS", "CONTACTED", "RESOLVED", "ARCHIVED"].includes(mapped)) {
+      updateData.status = mapped;
     }
   }
   if (assignedTo !== undefined || assigned_to !== undefined) {

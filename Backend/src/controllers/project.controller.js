@@ -32,8 +32,8 @@ function parseProjectData(body) {
   if (body.fullDescription !== undefined || body.full_description !== undefined) {
     data.fullDescription = body.fullDescription ?? body.full_description;
   }
-  if (body.coverImage !== undefined || body.cover_image !== undefined) {
-    data.coverImage = body.coverImage ?? body.cover_image;
+  if (body.cover_image !== undefined || body.coverImage !== undefined) {
+    data.coverImage = body.cover_image !== undefined ? body.cover_image : body.coverImage;
   }
   if (body.gallery !== undefined) data.gallery = body.gallery;
   if (body.displayOrder !== undefined || body.display_order !== undefined) {
@@ -55,8 +55,16 @@ export const getProjects = asyncHandler(async (req, res) => {
       where.status = s;
     }
   }
-  if (featured !== undefined && featured !== "all") where.featured = featured === "true";
-  if (published !== undefined && published !== "all") where.published = published === "true";
+  if (featured !== undefined && featured !== "all") {
+    where.featured = featured === "true" || featured === true;
+  }
+
+  const hasAuth = Boolean(req.headers.authorization);
+  if (published !== undefined && published !== "all") {
+    where.published = published === "true" || published === true;
+  } else if (!hasAuth && (published === undefined || published === "")) {
+    where.published = true;
+  }
 
   if (search) {
     where.OR = [
@@ -166,6 +174,15 @@ export const updateProject = asyncHandler(async (req, res) => {
   });
   if (!existing) {
     throw new ApiError(404, "Project not found to update.");
+  }
+
+  if (data.slug && data.slug !== existing.slug) {
+    const slugExists = await prisma.project.findFirst({
+      where: { slug: data.slug, id: { not: existing.id } },
+    });
+    if (slugExists) {
+      throw new ApiError(409, "That URL slug is already used by another project.");
+    }
   }
 
   const updated = await prisma.project.update({

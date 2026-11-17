@@ -19,31 +19,32 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { companyInfo } from '../data/websiteData';
+import { apiClient } from '../api/client';
 
 export const SERVICES_DROPDOWN_ITEMS = [
   {
     title: 'Real Estate Development',
-    slug: 'real-estate',
+    slug: 'real-estate-development',
     desc: 'Residential & commercial spaces',
     icon: Building2,
   },
   {
     title: 'Transport & Logistics',
-    slug: 'transport',
+    slug: 'transport-and-logistics',
     desc: 'Fleet & heavy material transit',
     icon: Truck,
   },
   {
-    title: 'Site Inspections',
-    slug: 'inspections',
-    desc: 'Quality, safety & compliance audits',
-    icon: Wrench,
+    title: 'Architectural Planning & Design',
+    slug: 'architectural-planning-and-design',
+    desc: 'BIM 3D modeling & master blueprints',
+    icon: Building2,
   },
   {
-    title: 'Websites & Digital',
-    slug: 'websites',
-    desc: 'Modern web platforms & digital branding',
-    icon: Globe,
+    title: 'Infrastructure & Civil Works',
+    slug: 'infrastructure-and-civil-works',
+    desc: 'Bridges, arterial roadways & civic projects',
+    icon: Wrench,
   },
 ];
 
@@ -73,6 +74,36 @@ export default function Header() {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [sitePhone, setSitePhone] = useState(companyInfo.phone);
+  const [servicesList, setServicesList] = useState(SERVICES_DROPDOWN_ITEMS);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getSettings().then((settings) => {
+      if (settings?.phone && isMounted) {
+        setSitePhone(settings.phone);
+      }
+    });
+    apiClient.getServices().then((data) => {
+      const items = Array.isArray(data) ? data : data?.items;
+      if (isMounted && items && items.length > 0) {
+        const publishedOnly = items.filter((s) => s.published !== false);
+        if (publishedOnly.length > 0) {
+          setServicesList(
+            publishedOnly.map((s) => ({
+              title: s.title,
+              slug: s.slug,
+              desc: s.short_description || s.shortDescription || '',
+              icon: Building2,
+            }))
+          );
+        }
+      }
+    }).catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const dropdownTimerRef = useRef(null);
 
@@ -335,7 +366,7 @@ export default function Header() {
                     >
                       <div className="bg-[#081626]/98 backdrop-blur-xl rounded-xl p-1.5 border border-white/12 shadow-[0_15px_35px_rgba(0,0,0,0.55)]">
                         <div className="flex flex-col gap-0.5">
-                          {SERVICES_DROPDOWN_ITEMS.map((item) => {
+                          {servicesList.map((item) => {
                             const isItemActive = location.pathname === `/services/${item.slug}`;
                             return (
                               <button
@@ -399,11 +430,11 @@ export default function Header() {
           {/* Right Action: Mobile / Phone Number with warm frosted glass pill */}
           <div className="hidden sm:flex items-center">
             <a
-              href={`tel:${companyInfo.phone.replace(/[^0-9+]/g, '')}`}
+              href={`tel:${sitePhone.replace(/[^0-9+]/g, '')}`}
               className="group inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-[13px] font-bold text-white bg-black/35 hover:bg-[#f2ae38] hover:text-[#061220] border border-white/20 hover:border-[#f2ae38] backdrop-blur-md transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.35)]"
             >
               <Phone className="w-3.5 h-3.5 text-[#f2ae38] transition-colors group-hover:text-[#061220]" />
-              <span className="tracking-wide drop-shadow-sm">{companyInfo.phone}</span>
+              <span className="tracking-wide drop-shadow-sm">{sitePhone}</span>
             </a>
           </div>
 
@@ -469,7 +500,7 @@ export default function Header() {
                         {/* Mobile Services Accordion */}
                         {mobileServicesOpen && (
                           <div className="pl-3 pr-1 py-1 mt-1 space-y-0.5 bg-black/20 rounded-xl border border-white/5">
-                            {SERVICES_DROPDOWN_ITEMS.map((sub) => {
+                            {servicesList.map((sub) => {
                               const isCurrent = location.pathname === `/services/${sub.slug}`;
                               return (
                                 <button
@@ -514,7 +545,7 @@ export default function Header() {
 
             <div className="pt-6 border-t border-white/10">
               <a
-                href={`tel:${companyInfo.phone.replace(/[^0-9+]/g, '')}`}
+                href={`tel:${sitePhone.replace(/[^0-9+]/g, '')}`}
                 className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-[#d88918] to-[#f2ae38] text-[#071322] font-bold text-xs uppercase tracking-wider shadow-lg"
               >
                 <Phone className="w-4 h-4" />

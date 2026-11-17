@@ -121,7 +121,13 @@ function ServicesPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="h-11 w-16 shrink-0 overflow-hidden rounded border border-border bg-muted">
-                          {service.card_image && <Image src={service.card_image} alt="" className="h-full w-full" />}
+                          {(service.card_image || service.cardImage) && (
+                            <Image
+                              src={service.card_image || service.cardImage}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          )}
                         </div>
                         <div className="min-w-0">
                           <p className="truncate font-medium text-primary">{service.title}</p>

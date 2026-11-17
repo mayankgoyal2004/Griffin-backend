@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { X, Send, Sparkles, CheckCircle, Phone, Mail } from 'lucide-react';
-import confetti from 'canvas-confetti';
-import { companyInfo } from '../data/websiteData';
+import React, { useState, useEffect } from "react";
+import { X, Send, Sparkles, CheckCircle, Phone, Mail, AlertCircle, Loader2 } from "lucide-react";
+import confetti from "canvas-confetti";
+import { companyInfo } from "../data/websiteData";
+import { apiClient } from "../api/client";
 
 export default function QuoteModal({ isOpen, onClose, initialData }) {
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    projectType: 'residential',
-    area: '',
-    budget: '',
-    message: '',
+    name: "",
+    phone: "",
+    email: "",
+    projectType: "residential",
+    area: "",
+    budget: "",
+    message: "",
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (initialData) {
@@ -22,7 +25,9 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
         ...prev,
         projectType: initialData.projectType || prev.projectType,
         area: initialData.area || prev.area,
-        budget: initialData.estimatedCost ? `Est. ${initialData.estimatedCost}` : prev.budget,
+        budget: initialData.estimatedCost
+          ? `Est. ${initialData.estimatedCost}`
+          : prev.budget,
         message: initialData.packageTier
           ? `Interested in ${initialData.packageTier.toUpperCase()} specification tier (${initialData.floors} floors).`
           : prev.message,
@@ -32,22 +37,39 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage("");
 
-    // Launch celebratory confetti
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#f2ae38', '#091726', '#ffc15a', '#ffffff'],
-    });
+    try {
+      await apiClient.submitInquiry({
+        fullName: formData.name,
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        projectType: formData.projectType || "General Consultation",
+        subject: `Quote Request: ${formData.projectType || 'Project'} (${formData.area || 'Site'}) - ${formData.name}`,
+        message: `Estimated Area: ${formData.area || 'Not specified'}\nTarget Budget: ${formData.budget || 'Not specified'}\n\nClient Notes:\n${formData.message || 'No additional notes provided.'}`,
+      });
 
-    setTimeout(() => {
-      // Auto close after 4 seconds
-      // onClose();
-    }, 4500);
+      setIsSubmitting(false);
+      setSubmitted(true);
+
+      // Launch celebratory confetti
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#f2ae38", "#091726", "#ffc15a", "#ffffff"],
+      });
+    } catch (err) {
+      console.error("Quote inquiry failed:", err);
+      setIsSubmitting(false);
+      setErrorMessage(
+        err.message || "Failed to submit quote request. Please try again or reach out directly."
+      );
+    }
   };
 
   const handleReset = () => {
@@ -86,9 +108,20 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
                 Request a Detailed Quote
               </h3>
               <p className="text-xs text-[#667487] mt-1">
-                Share your site details and our project directors will prepare an architectural feasibility summary and cost estimate.
+                Share your site details and our project directors will prepare
+                an architectural feasibility summary and cost estimate.
               </p>
             </div>
+
+            {errorMessage && (
+              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-start gap-2 text-xs">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold">Error: </span>
+                  {errorMessage}
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -101,7 +134,9 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
                     required
                     placeholder="e.g. Ramesh Patel"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#cbd5e1] focus:border-[#d88918] bg-white text-xs text-[#091726] focus:outline-none transition-colors"
                   />
                 </div>
@@ -115,7 +150,9 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
                     required
                     placeholder="+91 98765 43210"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#cbd5e1] focus:border-[#d88918] bg-white text-xs text-[#091726] focus:outline-none transition-colors"
                   />
                 </div>
@@ -131,7 +168,9 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
                     required
                     placeholder="name@example.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#cbd5e1] focus:border-[#d88918] bg-white text-xs text-[#091726] focus:outline-none transition-colors"
                   />
                 </div>
@@ -142,13 +181,23 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
                   </label>
                   <select
                     value={formData.projectType}
-                    onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, projectType: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#cbd5e1] focus:border-[#d88918] bg-white text-xs text-[#091726] focus:outline-none transition-colors"
                   >
-                    <option value="residential">Residential Construction / Villa</option>
-                    <option value="commercial">Commercial Tower / Retail Park</option>
-                    <option value="industrial">Industrial Shed / Factory / Warehouse</option>
-                    <option value="renovation">Renovation / Structural Remodeling</option>
+                    <option value="residential">
+                      Residential Construction / Villa
+                    </option>
+                    <option value="commercial">
+                      Commercial Tower / Retail Park
+                    </option>
+                    <option value="industrial">
+                      Industrial Shed / Factory / Warehouse
+                    </option>
+                    <option value="renovation">
+                      Renovation / Structural Remodeling
+                    </option>
                   </select>
                 </div>
               </div>
@@ -162,7 +211,9 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
                     type="text"
                     placeholder="e.g. 2,500 sq. ft."
                     value={formData.area}
-                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, area: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#cbd5e1] focus:border-[#d88918] bg-white text-xs text-[#091726] focus:outline-none transition-colors"
                   />
                 </div>
@@ -175,7 +226,9 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
                     type="text"
                     placeholder="e.g. ₹50 Lakh - ₹1 Crore"
                     value={formData.budget}
-                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, budget: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#cbd5e1] focus:border-[#d88918] bg-white text-xs text-[#091726] focus:outline-none transition-colors"
                   />
                 </div>
@@ -189,17 +242,29 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
                   rows="3"
                   placeholder="Share details regarding site location, timeline preferences, or specific architectural needs..."
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, message: e.target.value })
+                  }
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#cbd5e1] focus:border-[#d88918] bg-white text-xs text-[#091726] focus:outline-none transition-colors"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider text-[#091726] bg-gradient-to-r from-[#f2ae38] to-[#ffc15a] hover:from-[#d88918] hover:to-[#f2ae38] hover:text-white shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                disabled={isSubmitting}
+                className="w-full py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider text-[#091726] bg-gradient-to-r from-[#f2ae38] to-[#ffc15a] hover:from-[#d88918] hover:to-[#f2ae38] hover:text-white shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
               >
-                <Send className="w-4 h-4" />
-                <span>Submit Consultation Request</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-[#091726]" />
+                    <span>Transmitting to Griffin PMO...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Submit Consultation Request</span>
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -214,7 +279,11 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
             </h3>
 
             <p className="text-xs text-[#64748b] max-w-md mx-auto leading-relaxed">
-              Thank you, <strong className="text-[#091726]">{formData.name}</strong>. Our project management office has received your project briefing. Mayank Goyal and our engineering team will review the parameters and reach out within 24 business hours.
+              Thank you,{" "}
+              <strong className="text-[#091726]">{formData.name}</strong>. Our
+              project management office has received your project briefing.
+              Admin and our engineering team will review the parameters and
+              reach out within 24 business hours.
             </p>
 
             <div className="pt-4 flex justify-center gap-3">
@@ -232,4 +301,3 @@ export default function QuoteModal({ isOpen, onClose, initialData }) {
     </div>
   );
 }
-

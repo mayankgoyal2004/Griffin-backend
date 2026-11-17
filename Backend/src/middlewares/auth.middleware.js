@@ -33,7 +33,11 @@ export const authenticate = asyncHandler(async (req, res, next) => {
         email: true,
         fullName: true,
         role: true,
+        phone: true,
+        avatar: true,
         isActive: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 

@@ -117,44 +117,52 @@ export const logout = asyncHandler(async (req, res) => {
 });
 
 export const updateProfile = asyncHandler(async (req, res) => {
-  const { fullName, phone, avatar, currentPassword, newPassword } = req.body;
+  const name = req.body.fullName || req.body.full_name;
+  const phone = req.body.phone;
+  const avatar = req.body.avatar;
+  const currPass = req.body.currentPassword || req.body.current_password;
+  const newPass = req.body.newPassword || req.body.new_password;
   const userId = req.user.id;
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw new ApiError(404, "User not found.");
 
   const updateData = {};
-  if (fullName) updateData.fullName = fullName;
-  if (phone !== undefined) updateData.phone = phone;
-  if (avatar !== undefined) updateData.avatar = avatar;
+  if (name && name.trim().length > 0) updateData.fullName = name.trim();
+  if (phone !== undefined) updateData.phone = phone ? phone.trim() : null;
+  if (avatar !== undefined) updateData.avatar = avatar ? avatar.trim() : null;
 
-  if (newPassword) {
-    if (!currentPassword) {
+  if (newPass) {
+    if (!currPass) {
       throw new ApiError(400, "Current password is required to set a new password.");
     }
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    const isMatch = await bcrypt.compare(currPass, user.password);
     if (!isMatch) {
       throw new ApiError(400, "Incorrect current password.");
     }
     const salt = await bcrypt.genSalt(10);
-    updateData.password = await bcrypt.hash(newPassword, salt);
+    updateData.password = await bcrypt.hash(newPass, salt);
   }
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: updateData,
-    select: {
-      id: true,
-      email: true,
-      fullName: true,
-      role: true,
-      phone: true,
-      avatar: true,
+  });
+
+  // Log activity
+  await prisma.activityLog.create({
+    data: {
+      action: "updated",
+      entityType: "User",
+      entityTitle: updatedUser.fullName,
+      userEmail: updatedUser.email,
+      userName: updatedUser.fullName,
+      userId: updatedUser.id,
     },
   });
 
   return res.status(200).json(
-    new ApiResponse(200, updatedUser, "Profile updated successfully.")
+    new ApiResponse(200, normalizeUser(updatedUser), "Profile updated successfully.")
   );
 });
 

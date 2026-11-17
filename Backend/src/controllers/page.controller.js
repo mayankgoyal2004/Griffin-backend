@@ -2,12 +2,13 @@ import { prisma } from "../config/db.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { normalizeWebsitePage } from "../utils/serializer.js";
 
 export const getPages = asyncHandler(async (req, res) => {
   const pages = await prisma.websitePage.findMany({
     orderBy: { slug: "asc" },
   });
-  return res.status(200).json(new ApiResponse(200, pages, "Pages fetched successfully."));
+  return res.status(200).json(new ApiResponse(200, pages.map(normalizeWebsitePage), "Pages fetched successfully."));
 });
 
 export const getPageBySlug = asyncHandler(async (req, res) => {
@@ -18,7 +19,7 @@ export const getPageBySlug = asyncHandler(async (req, res) => {
     throw new ApiError(404, `Page '${slug}' not found.`);
   }
 
-  return res.status(200).json(new ApiResponse(200, page, "Page content fetched successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeWebsitePage(page), "Page content fetched successfully."));
 });
 
 export const updatePage = asyncHandler(async (req, res) => {
@@ -46,6 +47,6 @@ export const updatePage = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(200).json(new ApiResponse(200, page, "Page updated successfully."));
+  return res.status(200).json(new ApiResponse(200, normalizeWebsitePage(page), "Page updated successfully."));
 });
 

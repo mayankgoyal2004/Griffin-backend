@@ -104,7 +104,7 @@ model BlogPost {
   slug            String    @unique
   excerpt         String?   @db.Text
   content         String    @db.Text
-  author          String    @default("Mayank Goyal")
+  author          String    @default("Admin")
   category        String    @default("Industry Insights")
   tags            Json?     @default("[]") // Array of string tags
   featuredImage   String?

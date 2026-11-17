@@ -44,9 +44,16 @@ if (ENV.NODE_ENV !== "test") {
 }
 
 // Body parsers
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser(ENV.COOKIE_SECRET));
+
+// SEO Sitemap & robots routes for direct public/browser access
+import { getSitemap, getRobots } from "./controllers/seo.controller.js";
+app.get("/api/sitemap", getSitemap);
+app.get("/api/robots", getRobots);
+app.get("/sitemap.xml", getSitemap);
+app.get("/robots.txt", getRobots);
 
 // Root landing route
 app.get("/", (req, res) => {

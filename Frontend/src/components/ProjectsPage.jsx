@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -14,6 +14,7 @@ import {
   Construction,
 } from "lucide-react";
 import ProjectDetailModal from "./ProjectDetailModal";
+import { apiClient } from "../api/client";
 
 export const ALL_PROJECTS = [
   {
@@ -166,16 +167,50 @@ const CATEGORIES = [
 export default function ProjectsPage({ onSelectProject, onOpenQuote }) {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("all");
+  const [projectsList, setProjectsList] = useState(ALL_PROJECTS);
   const [visibleCount, setVisibleCount] = useState(6);
   const [selectedModalProject, setSelectedModalProject] = useState(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getProjects().then((items) => {
+      if (Array.isArray(items) && isMounted) {
+        const mapped = items.map((p) => ({
+          id: p.id || p.slug,
+          title: p.title || p.name,
+          category: p.category || "Residential",
+          location: p.location || `${p.category || 'Project'} · Mohali`,
+          image:
+            p.coverImage ||
+            p.cover_image ||
+            p.image ||
+            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80",
+          description: p.description || p.shortDescription || "",
+          scope: p.scope || `${p.category || 'Turnkey'} Construction`,
+          duration: p.timeline || "24 Months",
+          highlights: Array.isArray(p.specifications) && p.specifications.length > 0
+            ? p.specifications
+            : [
+                "Full compliance with Indian Green Building Council (IGBC) norms",
+                "Advanced BIM 3D clash-detection and structural modeling",
+                "Dedicated quality inspection logs and on-time handover warranty",
+              ],
+        }));
+        setProjectsList(mapped);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const filteredProjects = useMemo(() => {
-    if (activeCategory === "all") return ALL_PROJECTS;
-    return ALL_PROJECTS.filter(
+    if (activeCategory === "all") return projectsList;
+    return projectsList.filter(
       (p) => p.category.toLowerCase() === activeCategory.toLowerCase(),
     );
-  }, [activeCategory]);
+  }, [activeCategory, projectsList]);
 
   const displayedProjects = filteredProjects.slice(0, visibleCount);
   const hasMore = visibleCount < filteredProjects.length;

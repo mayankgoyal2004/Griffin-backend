@@ -29,18 +29,56 @@ function parseTeamData(body) {
 }
 
 export const getTeamMembers = asyncHandler(async (req, res) => {
-  const { featured, published } = req.query;
+  const { featured, published, search, page = 1, limit = 50 } = req.query;
 
   const where = {};
-  if (featured !== undefined && featured !== "all") where.featured = featured === "true";
-  if (published !== undefined && published !== "all") where.published = published === "true";
+  if (featured !== undefined && featured !== "all") {
+    where.featured = featured === "true" || featured === true;
+  }
 
-  const members = await prisma.teamMember.findMany({
-    where,
-    orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
-  });
+  const hasAuth = Boolean(req.headers.authorization);
+  if (published !== undefined && published !== "all") {
+    where.published = published === "true" || published === true;
+  } else if (!hasAuth && (published === undefined || published === "")) {
+    where.published = true;
+  }
+  if (search) {
+    where.OR = [
+      { fullName: { contains: search, mode: "insensitive" } },
+      { designation: { contains: search, mode: "insensitive" } },
+    ];
+  }
 
-  return res.status(200).json(new ApiResponse(200, members.map(normalizeTeamMember), "Team members fetched successfully."));
+  const take = parseInt(limit, 10);
+  const skip = (parseInt(page, 10) - 1) * take;
+
+  const [total, members] = await Promise.all([
+    prisma.teamMember.count({ where }),
+    prisma.teamMember.findMany({
+      where,
+      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+      skip,
+      take,
+    }),
+  ]);
+
+  const items = members.map(normalizeTeamMember);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        items,
+        pagination: {
+          total,
+          page: parseInt(page, 10),
+          limit: take,
+          totalPages: Math.ceil(total / take),
+        },
+      },
+      "Team members fetched successfully."
+    )
+  );
 });
 
 export const getTeamMemberById = asyncHandler(async (req, res) => {

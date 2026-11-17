@@ -14,8 +14,8 @@ function parseBlogData(body) {
   if (body.author !== undefined) data.author = body.author;
   if (body.category !== undefined) data.category = body.category;
   if (body.tags !== undefined) data.tags = body.tags;
-  if (body.featuredImage !== undefined || body.featured_image !== undefined) {
-    data.featuredImage = body.featuredImage ?? body.featured_image;
+  if (body.featured_image !== undefined || body.featuredImage !== undefined) {
+    data.featuredImage = body.featured_image !== undefined ? body.featured_image : body.featuredImage;
   }
   if (body.readingTime !== undefined || body.reading_time !== undefined) {
     data.readingTime = parseInt(body.readingTime ?? body.reading_time ?? 5, 10);
@@ -34,8 +34,17 @@ export const getBlogPosts = asyncHandler(async (req, res) => {
 
   const where = {};
   if (category && category !== "all") where.category = category;
-  if (featured !== undefined && featured !== "all") where.featured = featured === "true";
-  if (published !== undefined && published !== "all") where.published = published === "true";
+  if (featured !== undefined && featured !== "all") {
+    where.featured = featured === "true" || featured === true;
+  }
+
+  const hasAuth = Boolean(req.headers.authorization);
+  if (published !== undefined && published !== "all") {
+    where.published = published === "true" || published === true;
+  } else if (!hasAuth && (published === undefined || published === "")) {
+    // Public unauthenticated requests strictly receive published articles only
+    where.published = true;
+  }
 
   if (search) {
     where.OR = [
@@ -142,6 +151,15 @@ export const updateBlogPost = asyncHandler(async (req, res) => {
   });
   if (!existing) {
     throw new ApiError(404, "Blog post not found to update.");
+  }
+
+  if (data.slug && data.slug !== existing.slug) {
+    const slugExists = await prisma.blogPost.findFirst({
+      where: { slug: data.slug, id: { not: existing.id } },
+    });
+    if (slugExists) {
+      throw new ApiError(409, "That URL slug is already used by another article.");
+    }
   }
 
   const updated = await prisma.blogPost.update({

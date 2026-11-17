@@ -69,7 +69,30 @@ export default function ServiceEditor({ serviceId, user }) {
       if (serviceId) {
         try {
           const record = await base44.entities.Service.get(serviceId);
-          if (active) setForm({ ...BLANK, ...record });
+          if (active) {
+            const card_image = record.card_image ?? record.cardImage ?? "";
+            const hero_image = record.hero_image ?? record.heroImage ?? "";
+            const overview_image = record.overview_image ?? record.overviewImage ?? "";
+            const short_description = record.short_description ?? record.shortDescription ?? "";
+            const full_description = record.full_description ?? record.fullDescription ?? "";
+            const display_order = record.display_order ?? record.displayOrder ?? 0;
+            setForm({
+              ...BLANK,
+              ...record,
+              card_image,
+              cardImage: card_image,
+              hero_image,
+              heroImage: hero_image,
+              overview_image,
+              overviewImage: overview_image,
+              short_description,
+              shortDescription: short_description,
+              full_description,
+              fullDescription: full_description,
+              display_order,
+              displayOrder: display_order,
+            });
+          }
         } catch {
           toast.error("That service could not be loaded.");
           navigate({ to: "/dashboard/services" });
@@ -82,7 +105,21 @@ export default function ServiceEditor({ serviceId, user }) {
     };
   }, [serviceId, navigate]);
 
-  const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+  const set = (key, value) => {
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === "card_image") next.cardImage = value;
+      if (key === "cardImage") next.card_image = value;
+      if (key === "hero_image") next.heroImage = value;
+      if (key === "heroImage") next.hero_image = value;
+      if (key === "overview_image") next.overviewImage = value;
+      if (key === "overviewImage") next.overview_image = value;
+      if (key === "short_description") next.shortDescription = value;
+      if (key === "full_description") next.fullDescription = value;
+      if (key === "display_order") next.displayOrder = value;
+      return next;
+    });
+  };
 
   const save = async (publishValue) => {
     if (!form.title.trim()) {
@@ -90,18 +127,33 @@ export default function ServiceEditor({ serviceId, user }) {
       return;
     }
     const finalSlug = slugify(form.slug || form.title);
-    const duplicates = await base44.entities.Service.filter({ slug: finalSlug }, { limit: 5 });
-    if (duplicates.items.some((row) => row.id !== serviceId)) {
+    const duplicates = await base44.entities.Service.filter({ slug: finalSlug }, { limit: 50 });
+    if (duplicates.items.some((row) => row.id !== serviceId && row.slug === finalSlug)) {
       toast.error("That URL slug is already used by another service.");
       return;
     }
 
     setSaving(true);
     try {
+      const finalCardImage = form.card_image || form.cardImage || "";
+      const finalHeroImage = form.hero_image || form.heroImage || "";
+      const finalOverviewImage = form.overview_image || form.overviewImage || "";
       const payload = {
         ...form,
         slug: finalSlug,
         title: form.title.trim(),
+        card_image: finalCardImage,
+        cardImage: finalCardImage,
+        hero_image: finalHeroImage,
+        heroImage: finalHeroImage,
+        overview_image: finalOverviewImage,
+        overviewImage: finalOverviewImage,
+        short_description: form.short_description || form.shortDescription || "",
+        shortDescription: form.short_description || form.shortDescription || "",
+        full_description: form.full_description || form.fullDescription || "",
+        fullDescription: form.full_description || form.fullDescription || "",
+        display_order: Number(form.display_order ?? form.displayOrder ?? 0),
+        displayOrder: Number(form.display_order ?? form.displayOrder ?? 0),
         published: publishValue === undefined ? !!form.published : publishValue,
       };
       if (serviceId) {

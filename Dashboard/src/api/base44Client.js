@@ -35,26 +35,31 @@ const SEED_DATA = {
       title: "Home Page",
       page_type: "home",
       heading: "Building Tomorrow's Landmarks With Griffin",
-      subtitle: "Residential, commercial and infrastructure projects delivered with uncompromising precision — from first survey to final handover.",
+      subtitle:
+        "Residential, commercial and infrastructure projects delivered with uncompromising precision — from first survey to final handover.",
       cta_text: "View All Projects",
       cta_link: "/dashboard/projects",
       seo_title: "Griffin Construction — Building Tomorrow's Landmarks",
-      seo_description: "Premier construction, real estate development and civil engineering partner.",
+      seo_description:
+        "Premier construction, real estate development and civil engineering partner.",
       sections: [
         {
           key: "about",
           heading: "Two decades of building with intent",
-          description: "Griffin Construction began as a single-site contractor and grew into a full-service development partner. We plan carefully, build honestly and hand over work we are proud to sign.",
+          description:
+            "Griffin Construction began as a single-site contractor and grew into a full-service development partner. We plan carefully, build honestly and hand over work we are proud to sign.",
         },
         {
           key: "services",
           heading: "Comprehensive Construction & Development Services",
-          description: "From conceptual design through turnkey handover, our multidisciplinary teams deliver excellence across every square foot.",
+          description:
+            "From conceptual design through turnkey handover, our multidisciplinary teams deliver excellence across every square foot.",
         },
         {
           key: "final-cta",
           heading: "Have a project in mind?",
-          description: "Speak with our principal engineers and project leaders to turn your vision into enduring reality.",
+          description:
+            "Speak with our principal engineers and project leaders to turn your vision into enduring reality.",
           cta_text: "Contact Our Team",
           cta_link: "/contact",
         },
@@ -65,9 +70,21 @@ const SEED_DATA = {
         { value: "96%", label: "Repeat clients" },
       ],
       advantages: [
-        { title: "Precision Engineering", description: "Rigorous quality control and zero tolerance for defect margins." },
-        { title: "Transparent Timelines", description: "Milestone-driven project scheduling with real-time stakeholder reporting." },
-        { title: "Sustainable Methods", description: "Energy-efficient architecture, eco-friendly concrete, and green ratings." },
+        {
+          title: "Precision Engineering",
+          description:
+            "Rigorous quality control and zero tolerance for defect margins.",
+        },
+        {
+          title: "Transparent Timelines",
+          description:
+            "Milestone-driven project scheduling with real-time stakeholder reporting.",
+        },
+        {
+          title: "Sustainable Methods",
+          description:
+            "Energy-efficient architecture, eco-friendly concrete, and green ratings.",
+        },
       ],
     },
     {
@@ -76,7 +93,8 @@ const SEED_DATA = {
       title: "About Us",
       page_type: "about",
       heading: "Engineering Excellence with Griffin Strength",
-      subtitle: "Delivering world-class residential, commercial, and industrial landmarks across the country.",
+      subtitle:
+        "Delivering world-class residential, commercial, and industrial landmarks across the country.",
       sections: [],
     },
     {
@@ -85,7 +103,8 @@ const SEED_DATA = {
       title: "Contact Us",
       page_type: "contact",
       heading: "Get in Touch With Our Team",
-      subtitle: "We are ready to discuss your next construction or development project.",
+      subtitle:
+        "We are ready to discuss your next construction or development project.",
       sections: [],
     },
     {
@@ -114,16 +133,26 @@ const SEED_DATA = {
       title: "Real Estate Development",
       slug: "real-estate-development",
       category: "Commercial",
-      short_description: "End-to-end property development with modern design and high investment yield.",
-      full_description: "Comprehensive real estate development services from land acquisition and site feasibility to architectural planning, regulatory clearances, construction execution, and sales facilitation.",
+      short_description:
+        "End-to-end property development with modern design and high investment yield.",
+      full_description:
+        "Comprehensive real estate development services from land acquisition and site feasibility to architectural planning, regulatory clearances, construction execution, and sales facilitation.",
       icon: "Home",
-      card_image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-      hero_image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=80",
-      overview_image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      card_image:
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      hero_image:
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=80",
+      overview_image:
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
       display_order: 1,
       featured: true,
       published: true,
-      key_features: ["Master-planned residential & commercial complexes", "Land feasibility & regulatory approvals", "Turnkey construction management", "Investment lifecycle advisory"],
+      key_features: [
+        "Master-planned residential & commercial complexes",
+        "Land feasibility & regulatory approvals",
+        "Turnkey construction management",
+        "Investment lifecycle advisory",
+      ],
       updated_date: "2026-03-10T12:00:00.000Z",
     },
     {
@@ -131,16 +160,26 @@ const SEED_DATA = {
       title: "Transport & Logistics",
       slug: "transport-and-logistics",
       category: "Industrial",
-      short_description: "Reliable heavy transport, specialized construction fleet, and on-site logistics management.",
-      full_description: "Heavy haulage, ready-mix logistics, aggregate transport, and smart supply chain coordination tailored to large-scale infrastructure and industrial job sites.",
+      short_description:
+        "Reliable heavy transport, specialized construction fleet, and on-site logistics management.",
+      full_description:
+        "Heavy haulage, ready-mix logistics, aggregate transport, and smart supply chain coordination tailored to large-scale infrastructure and industrial job sites.",
       icon: "Truck",
-      card_image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
-      hero_image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80",
-      overview_image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
+      card_image:
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
+      hero_image:
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80",
+      overview_image:
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
       display_order: 2,
       featured: true,
       published: true,
-      key_features: ["Heavy construction machinery haulage", "Real-time GPS fleet tracking", "Bulk material logistics", "On-site warehousing coordination"],
+      key_features: [
+        "Heavy construction machinery haulage",
+        "Real-time GPS fleet tracking",
+        "Bulk material logistics",
+        "On-site warehousing coordination",
+      ],
       updated_date: "2026-03-09T10:00:00.000Z",
     },
     {
@@ -148,16 +187,26 @@ const SEED_DATA = {
       title: "Architectural Planning & Design",
       slug: "architectural-planning-and-design",
       category: "Commercial",
-      short_description: "Award-winning architectural concepts, BIM 3D modeling, and structural blueprinting.",
-      full_description: "BIM 3D modeling, sustainable green building design, seismic structural planning, and interior architectural detailing for modern urban spaces.",
+      short_description:
+        "Award-winning architectural concepts, BIM 3D modeling, and structural blueprinting.",
+      full_description:
+        "BIM 3D modeling, sustainable green building design, seismic structural planning, and interior architectural detailing for modern urban spaces.",
       icon: "Building2",
-      card_image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
-      hero_image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80",
-      overview_image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+      card_image:
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+      hero_image:
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80",
+      overview_image:
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
       display_order: 3,
       featured: true,
       published: true,
-      key_features: ["Full BIM 3D visual integration", "LEED green building certification guidance", "Seismic structural stability analysis", "Ergonomic interior space planning"],
+      key_features: [
+        "Full BIM 3D visual integration",
+        "LEED green building certification guidance",
+        "Seismic structural stability analysis",
+        "Ergonomic interior space planning",
+      ],
       updated_date: "2026-03-08T09:00:00.000Z",
     },
     {
@@ -165,16 +214,26 @@ const SEED_DATA = {
       title: "Infrastructure & Civil Works",
       slug: "infrastructure-and-civil-works",
       category: "Infrastructure",
-      short_description: "Bridges, arterial roadways, grade-separated flyovers, and urban civic infrastructure.",
-      full_description: "High-load civil infrastructure, grade-separated flyovers, stormwater drainage, and arterial road networks built to withstand demanding loads.",
+      short_description:
+        "Bridges, arterial roadways, grade-separated flyovers, and urban civic infrastructure.",
+      full_description:
+        "High-load civil infrastructure, grade-separated flyovers, stormwater drainage, and arterial road networks built to withstand demanding loads.",
       icon: "HardHat",
-      card_image: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=800&q=80",
-      hero_image: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1600&q=80",
-      overview_image: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1200&q=80",
+      card_image:
+        "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=800&q=80",
+      hero_image:
+        "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1600&q=80",
+      overview_image:
+        "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1200&q=80",
       display_order: 4,
       featured: false,
       published: true,
-      key_features: ["Municipal and arterial road paving", "Heavy bridge and culvert construction", "Underground utility networks", "Earthworks and slope stabilization"],
+      key_features: [
+        "Municipal and arterial road paving",
+        "Heavy bridge and culvert construction",
+        "Underground utility networks",
+        "Earthworks and slope stabilization",
+      ],
       updated_date: "2026-03-07T14:00:00.000Z",
     },
   ],
@@ -190,9 +249,12 @@ const SEED_DATA = {
       status: "Ongoing",
       start_date: "2024-03-01",
       completion_date: "2026-12-31",
-      short_description: "Twin 28-storey luxury residential towers with panoramic city views and gold-rated green efficiency.",
-      full_description: "A prestigious residential project featuring earthquake-resistant reinforced RCC framing, sky lounges, rooftop infinity pool, and gold-rated green building efficiency.",
-      cover_image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      short_description:
+        "Twin 28-storey luxury residential towers with panoramic city views and gold-rated green efficiency.",
+      full_description:
+        "A prestigious residential project featuring earthquake-resistant reinforced RCC framing, sky lounges, rooftop infinity pool, and gold-rated green building efficiency.",
+      cover_image:
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
       gallery: [
         "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
@@ -212,9 +274,12 @@ const SEED_DATA = {
       status: "Completed",
       start_date: "2022-06-15",
       completion_date: "2025-01-20",
-      short_description: "State-of-the-art corporate headquarters spanning 450,000 sq ft with integrated HVAC automation.",
-      full_description: "Modern commercial glass-facade tower incorporating multi-level underground parking, high-speed smart elevators, and integrated HVAC automation.",
-      cover_image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+      short_description:
+        "State-of-the-art corporate headquarters spanning 450,000 sq ft with integrated HVAC automation.",
+      full_description:
+        "Modern commercial glass-facade tower incorporating multi-level underground parking, high-speed smart elevators, and integrated HVAC automation.",
+      cover_image:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
       display_order: 2,
       featured: true,
       published: true,
@@ -230,9 +295,12 @@ const SEED_DATA = {
       status: "Completed",
       start_date: "2023-01-10",
       completion_date: "2024-08-30",
-      short_description: "Prefabricated steel warehouse and multi-modal freight terminal with laser-screed flooring.",
-      full_description: "Engineered pre-engineered building (PEB) structure with laser-screed flooring, heavy-duty dock levellers, and solar PV roof installation.",
-      cover_image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
+      short_description:
+        "Prefabricated steel warehouse and multi-modal freight terminal with laser-screed flooring.",
+      full_description:
+        "Engineered pre-engineered building (PEB) structure with laser-screed flooring, heavy-duty dock levellers, and solar PV roof installation.",
+      cover_image:
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
       display_order: 3,
       featured: true,
       published: true,
@@ -248,9 +316,12 @@ const SEED_DATA = {
       status: "Completed",
       start_date: "2021-09-01",
       completion_date: "2023-11-15",
-      short_description: "Gated community of 35 bespoke luxury hill villas with artisan stone masonry.",
-      full_description: "Custom artisan stone masonry combined with contemporary timber engineering, landscaped terraced gardens, and private solar heating systems.",
-      cover_image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      short_description:
+        "Gated community of 35 bespoke luxury hill villas with artisan stone masonry.",
+      full_description:
+        "Custom artisan stone masonry combined with contemporary timber engineering, landscaped terraced gardens, and private solar heating systems.",
+      cover_image:
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
       display_order: 4,
       featured: false,
       published: true,
@@ -263,24 +334,29 @@ const SEED_DATA = {
       id: "post_1",
       title: "Sustainable Construction: Trends Defining 2026",
       slug: "sustainable-construction-trends-2026",
-      excerpt: "How low-carbon concrete, circular materials, and solar facades are revolutionizing modern commercial builds.",
-      content: "<p>The construction sector is experiencing a monumental shift towards decarbonization and sustainable building practices. From low-carbon geopolymer concrete to smart glass facades, the projects rising today must balance durability with environmental responsibility.</p><p>At Griffin Construction, every new blueprint integrates passive cooling, rainwater harvesting, and recycled structural materials.</p>",
-      author: "Mayank Goyal",
+      excerpt:
+        "How low-carbon concrete, circular materials, and solar facades are revolutionizing modern commercial builds.",
+      content:
+        "<p>The construction sector is experiencing a monumental shift towards decarbonization and sustainable building practices. From low-carbon geopolymer concrete to smart glass facades, the projects rising today must balance durability with environmental responsibility.</p><p>At Griffin Construction, every new blueprint integrates passive cooling, rainwater harvesting, and recycled structural materials.</p>",
+      author: "Admin",
       category: "Industry Insights",
       tags: ["Sustainability", "Materials", "Green Building"],
       publication_date: "2026-02-15",
       reading_time: 5,
       featured: true,
       published: true,
-      featured_image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=80",
+      featured_image:
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=80",
       updated_date: "2026-03-10T14:30:00.000Z",
     },
     {
       id: "post_2",
       title: "Innovations in High-Rise Structural Engineering",
       slug: "innovations-high-rise-structural-engineering",
-      excerpt: "Exploring tuned mass dampers, composite steel columns, and seismic mitigation systems.",
-      content: "<p>Taller towers demand bolder engineering. By utilizing computational stress modeling and composite materials, today's engineers can build structures that gracefully absorb wind and seismic pressures.</p>",
+      excerpt:
+        "Exploring tuned mass dampers, composite steel columns, and seismic mitigation systems.",
+      content:
+        "<p>Taller towers demand bolder engineering. By utilizing computational stress modeling and composite materials, today's engineers can build structures that gracefully absorb wind and seismic pressures.</p>",
       author: "Er. Vikram Malhotra",
       category: "Engineering",
       tags: ["Structural", "High-Rise", "Technology"],
@@ -288,7 +364,8 @@ const SEED_DATA = {
       reading_time: 4,
       featured: false,
       published: true,
-      featured_image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80",
+      featured_image:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80",
       updated_date: "2026-03-05T11:00:00.000Z",
     },
   ],
@@ -301,9 +378,10 @@ const SEED_DATA = {
       phone: "+91 98140 22334",
       subject: "Commercial Office Park Development Quote",
       project_type: "Commercial",
-      message: "We are planning a 120,000 sq ft office campus in Mohali and would like to review Griffin's portfolio and discuss scheduling an initial feasibility survey.",
+      message:
+        "We are planning a 120,000 sq ft office campus in Mohali and would like to review Griffin's portfolio and discuss scheduling an initial feasibility survey.",
       status: "New",
-      assigned_to: "Mayank Goyal",
+      assigned_to: "Admin",
       created_date: "2026-03-10T10:30:00.000Z",
       updated_date: "2026-03-10T10:30:00.000Z",
     },
@@ -314,7 +392,8 @@ const SEED_DATA = {
       phone: "+91 98765 43210",
       subject: "Logistics Hub Civil Contracting",
       project_type: "Industrial",
-      message: "Inquiry regarding specialized grade-slab concrete flooring and steel framing contractors for our warehouse expansion in Ludhiana.",
+      message:
+        "Inquiry regarding specialized grade-slab concrete flooring and steel framing contractors for our warehouse expansion in Ludhiana.",
       status: "In Progress",
       assigned_to: "Er. Vikram Malhotra",
       created_date: "2026-03-08T14:15:00.000Z",
@@ -327,9 +406,10 @@ const SEED_DATA = {
       phone: "+91 94170 55667",
       subject: "Luxury Hillside Villa Construction",
       project_type: "Residential",
-      message: "Looking for an end-to-end design and construction partner for a 6,500 sq ft custom villa in Pinjore hills.",
+      message:
+        "Looking for an end-to-end design and construction partner for a 6,500 sq ft custom villa in Pinjore hills.",
       status: "Contacted",
-      assigned_to: "Mayank Goyal",
+      assigned_to: "Admin",
       created_date: "2026-03-05T09:45:00.000Z",
       updated_date: "2026-03-06T16:00:00.000Z",
     },
@@ -338,14 +418,20 @@ const SEED_DATA = {
   TeamMember: [
     {
       id: "team_1",
-      full_name: "Mayank Goyal",
+      full_name: "Admin",
       designation: "Managing Director & CEO",
-      short_bio: "20+ years steering landmark civil, commercial, and residential developments across North India.",
-      photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+      short_bio:
+        "20+ years steering landmark civil, commercial, and residential developments across North India.",
+      photo:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
       linkedin_url: "https://linkedin.com",
       email: "mayank@griffinconstruction.in",
       experience: "20+ Years",
-      skills: ["Project Leadership", "Real Estate Development", "Infrastructure Strategy"],
+      skills: [
+        "Project Leadership",
+        "Real Estate Development",
+        "Infrastructure Strategy",
+      ],
       featured: true,
       published: true,
       display_order: 1,
@@ -355,8 +441,10 @@ const SEED_DATA = {
       id: "team_2",
       full_name: "Ar. Sunita Rao",
       designation: "Chief Architect & Head of Design",
-      short_bio: "Master of Architecture specializing in biophilic design, smart urbanism, and green high-rises.",
-      photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+      short_bio:
+        "Master of Architecture specializing in biophilic design, smart urbanism, and green high-rises.",
+      photo:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
       linkedin_url: "https://linkedin.com",
       email: "sunita.rao@griffinconstruction.in",
       experience: "15+ Years",
@@ -370,8 +458,10 @@ const SEED_DATA = {
       id: "team_3",
       full_name: "Er. Vikram Malhotra",
       designation: "Director of Structural Engineering",
-      short_bio: "Expert in deep foundation systems, earthquake-resistant RCC frameworks, and pre-engineered steel buildings.",
-      photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
+      short_bio:
+        "Expert in deep foundation systems, earthquake-resistant RCC frameworks, and pre-engineered steel buildings.",
+      photo:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
       linkedin_url: "https://linkedin.com",
       email: "vikram@griffinconstruction.in",
       experience: "18+ Years",
@@ -399,7 +489,8 @@ const SEED_DATA = {
       facebook: "https://facebook.com",
       instagram: "https://instagram.com",
       linkedin: "https://linkedin.com",
-      footer_description: "A premier construction and real estate development partner delivering residential, commercial and infrastructure landmarks with uncompromising precision.",
+      footer_description:
+        "A premier construction and real estate development partner delivering residential, commercial and infrastructure landmarks with uncompromising precision.",
       copyright_text: "© 2026 Griffin Construction. All rights reserved.",
       updated_date: "2026-03-10T10:00:00.000Z",
     },
@@ -409,7 +500,8 @@ const SEED_DATA = {
     {
       id: "media_1",
       name: "Griffin-Skyview-Tower.jpg",
-      file_url: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      file_url:
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
       file_type: "Image",
       mime_type: "image/jpeg",
       size: 1420500,
@@ -421,7 +513,8 @@ const SEED_DATA = {
     {
       id: "media_2",
       name: "Riverside-Complex-Render.jpg",
-      file_url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+      file_url:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
       file_type: "Image",
       mime_type: "image/jpeg",
       size: 2120000,
@@ -438,7 +531,7 @@ const SEED_DATA = {
       action: "updated",
       entity_type: "Project",
       entity_title: "Griffin Skyview Heights",
-      user_email: "admin@griffinconstruction.in",
+      user_email: "admin@gmail.com",
       user_name: "Admin User",
       created_date: "2026-03-11T09:00:00.000Z",
     },
@@ -447,7 +540,7 @@ const SEED_DATA = {
       action: "published",
       entity_type: "BlogPost",
       entity_title: "Sustainable Construction: Trends Defining 2026",
-      user_email: "admin@griffinconstruction.in",
+      user_email: "admin@gmail.com",
       user_name: "Admin User",
       created_date: "2026-03-10T14:30:00.000Z",
     },
@@ -465,7 +558,7 @@ const SEED_DATA = {
   User: [
     {
       id: "user_admin_1",
-      email: "admin@griffinconstruction.in",
+      email: "admin@gmail.com",
       full_name: "Admin User",
       role: "admin",
       created_date: "2026-01-01T00:00:00.000Z",
@@ -506,18 +599,30 @@ function sortItems(items, sort) {
       const cmp = va.localeCompare(String(vb));
       return isDesc ? -cmp : cmp;
     }
-    return isDesc ? (vb > va ? 1 : vb < va ? -1 : 0) : (va > vb ? 1 : va < vb ? -1 : 0);
+    return isDesc
+      ? vb > va
+        ? 1
+        : vb < va
+          ? -1
+          : 0
+      : va > vb
+        ? 1
+        : va < vb
+          ? -1
+          : 0;
   });
 }
 
 // Client Auth Store
 const AUTH_SESSION_KEY = "griffin_auth_session";
 const AUTH_TOKEN_KEY = "griffin_auth_token";
-const API_BASE_URL = (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_BASE_URL) || "/api/v1";
+const API_BASE_URL =
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_BASE_URL) ||
+  "/api/v1";
 
 const DEFAULT_USER = {
   id: "user_admin_1",
-  email: "admin@griffinconstruction.in",
+  email: "admin@gmail.com",
   full_name: "Admin User",
   fullName: "Admin User",
   role: "admin",
@@ -562,7 +667,7 @@ const ENTITY_ENDPOINTS = {
   SiteSettings: "/settings",
   MediaAsset: "/media",
   ActivityLog: "/activity",
-  User: "/auth",
+  User: "/users",
 };
 
 function createEntityStore(entityName, defaults) {
@@ -578,10 +683,12 @@ function createEntityStore(entityName, defaults) {
         try {
           const query = new URLSearchParams();
           if (limit) query.set("limit", String(limit));
-          if (skip && limit) query.set("page", String(Math.floor(skip / limit) + 1));
+          if (skip && limit)
+            query.set("page", String(Math.floor(skip / limit) + 1));
           const res = await apiFetch(`${endpoint}?${query.toString()}`);
           if (Array.isArray(res)) return res;
           if (res?.items && Array.isArray(res.items)) return res.items;
+          if (res && typeof res === "object" && res.id) return [res];
         } catch {
           // Graceful fallback to local cache
         }
@@ -599,23 +706,46 @@ function createEntityStore(entityName, defaults) {
         try {
           const params = new URLSearchParams();
           if (options.limit) params.set("limit", String(options.limit));
-          if (query.category && query.category !== "all") params.set("category", query.category);
-          if (query.status && query.status !== "all") params.set("status", String(query.status));
+          if (query.category && query.category !== "all")
+            params.set("category", query.category);
+          if (query.status && query.status !== "all")
+            params.set("status", String(query.status));
+          if (query.folder && query.folder !== "all")
+            params.set("folder", query.folder);
+          if (query.action && query.action !== "all")
+            params.set("action", query.action);
+          if (query.file_type && query.file_type !== "all")
+            params.set("type", query.file_type);
           if (query.published !== undefined && query.published !== "all") {
             params.set("published", String(query.published));
           }
           if (query.featured !== undefined && query.featured !== "all") {
             params.set("featured", String(query.featured));
           }
-          const searchVal = query.name?.$regex || query.title?.$regex || query.search;
+          const searchVal =
+            query.name?.$regex ||
+            query.title?.$regex ||
+            query.entity_title?.$regex ||
+            query.search;
           if (searchVal) params.set("search", String(searchVal));
 
           const res = await apiFetch(`${endpoint}?${params.toString()}`);
-          if (res && res.items) {
+          let returnedList = null;
+          if (res && res.items && Array.isArray(res.items)) {
+            returnedList = res.items;
+          } else if (Array.isArray(res)) {
+            returnedList = res;
+          }
+
+          if (returnedList) {
+            // Apply in-memory matching if specific filters (like slug) weren't handled by query string
+            if (Object.keys(query).length > 0) {
+              returnedList = returnedList.filter((item) => matchesQuery(item, query));
+            }
             return {
-              items: res.items,
-              total: res.pagination?.total ?? res.items.length,
-              has_more: res.pagination ? res.pagination.page < res.pagination.totalPages : false,
+              items: returnedList,
+              total: returnedList.length,
+              has_more: res?.pagination ? res.pagination.page < res.pagination.totalPages : false,
               next_cursor: null,
             };
           }
@@ -640,7 +770,10 @@ function createEntityStore(entityName, defaults) {
       const paginated = items.slice(startIndex, startIndex + limit);
       const nextIndex = startIndex + limit;
       const has_more = nextIndex < items.length;
-      const next_cursor = has_more && paginated.length > 0 ? paginated[paginated.length - 1].id : null;
+      const next_cursor =
+        has_more && paginated.length > 0
+          ? paginated[paginated.length - 1].id
+          : null;
 
       return {
         items: paginated,
@@ -677,7 +810,10 @@ function createEntityStore(entityName, defaults) {
             body: JSON.stringify(data),
           });
         } catch (err) {
-          console.warn(`[Backend API] create ${entityName} offline/failed, falling back to local storage:`, err.message);
+          console.warn(
+            `[Backend API] create ${entityName} offline/failed, falling back to local storage:`,
+            err.message,
+          );
         }
       }
 
@@ -685,7 +821,9 @@ function createEntityStore(entityName, defaults) {
       const now = new Date().toISOString();
       const newItem = created || {
         ...data,
-        id: data.id || `${entityName.toLowerCase()}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        id:
+          data.id ||
+          `${entityName.toLowerCase()}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
         created_date: now,
         updated_date: now,
       };
@@ -699,16 +837,25 @@ function createEntityStore(entityName, defaults) {
       if (endpoint) {
         try {
           // For inquiry status updates or standard PUT
-          const url = entityName === "ContactInquiry" && data.status && Object.keys(data).length <= 3
-            ? `${endpoint}/${id}/status`
-            : `${endpoint}/${id}`;
-          const method = entityName === "ContactInquiry" && url.endsWith("/status") ? "PATCH" : "PUT";
+          const url =
+            entityName === "ContactInquiry" &&
+            data.status &&
+            Object.keys(data).length <= 3
+              ? `${endpoint}/${id}/status`
+              : `${endpoint}/${id}`;
+          const method =
+            entityName === "ContactInquiry" && url.endsWith("/status")
+              ? "PATCH"
+              : "PUT";
           updated = await apiFetch(url, {
             method,
             body: JSON.stringify(data),
           });
         } catch (err) {
-          console.warn(`[Backend API] update ${entityName} offline/failed, falling back to local storage:`, err.message);
+          console.warn(
+            `[Backend API] update ${entityName} offline/failed, falling back to local storage:`,
+            err.message,
+          );
         }
       }
 
@@ -734,7 +881,10 @@ function createEntityStore(entityName, defaults) {
         try {
           await apiFetch(`${endpoint}/${id}`, { method: "DELETE" });
         } catch (err) {
-          console.warn(`[Backend API] delete ${entityName} offline/failed:`, err.message);
+          console.warn(
+            `[Backend API] delete ${entityName} offline/failed:`,
+            err.message,
+          );
         }
       }
 
@@ -745,10 +895,38 @@ function createEntityStore(entityName, defaults) {
     },
 
     async count(query = {}) {
-      if (entityName === "Project" && (!query || Object.keys(query).length === 0)) {
+      if (endpoint) {
+        try {
+          const params = new URLSearchParams();
+          if (query.published !== undefined && query.published !== "all") {
+            params.set("published", String(query.published));
+          }
+          if (query.featured !== undefined && query.featured !== "all") {
+            params.set("featured", String(query.featured));
+          }
+          if (query.status && query.status !== "all") {
+            params.set("status", String(query.status));
+          }
+          params.set("limit", "1");
+          const res = await apiFetch(`${endpoint}?${params.toString()}`);
+          if (res?.pagination?.total !== undefined) {
+            return res.pagination.total;
+          }
+          if (Array.isArray(res)) return res.length;
+          if (Array.isArray(res?.items)) return res.items.length;
+        } catch {
+          // Fallback to local
+        }
+      }
+
+      if (
+        entityName === "Project" &&
+        (!query || Object.keys(query).length === 0)
+      ) {
         try {
           const summary = await apiFetch("/dashboard/summary");
-          if (summary?.stats?.totalProjects !== undefined) return summary.stats.totalProjects;
+          if (summary?.stats?.totalProjects !== undefined)
+            return summary.stats.totalProjects;
         } catch {
           // Fallback
         }
@@ -804,7 +982,11 @@ const authStore = {
     if (!isBrowser) return false;
     const token = localStorage.getItem(AUTH_TOKEN_KEY);
     // Real JWT token check: must exist, not empty, and not the dummy "admin-session-active"
-    if (!token || token === "admin-session-active" || token.trim().length === 0) {
+    if (
+      !token ||
+      token === "admin-session-active" ||
+      token.trim().length === 0
+    ) {
       if (token === "admin-session-active") {
         localStorage.removeItem(AUTH_TOKEN_KEY);
         localStorage.removeItem(AUTH_SESSION_KEY);
@@ -817,7 +999,11 @@ const authStore = {
   async me() {
     if (!isBrowser) return null;
     const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    if (!token || token === "admin-session-active" || token.trim().length === 0) {
+    if (
+      !token ||
+      token === "admin-session-active" ||
+      token.trim().length === 0
+    ) {
       localStorage.removeItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(AUTH_SESSION_KEY);
       return null;
@@ -850,8 +1036,9 @@ const authStore = {
   },
 
   async loginWithPassword({ email, password }) {
-    const cleanEmail = (email || "admin@griffinconstruction.in").trim();
-    const cleanPassword = (password && password !== "••••••••••••") ? password : "Admin@12345";
+    const cleanEmail = (email || "admin@gmail.com").trim();
+    const cleanPassword =
+      password && password !== "••••••••••••" ? password : "Admin@12345";
 
     const res = await apiFetch("/auth/login", {
       method: "POST",
@@ -943,13 +1130,67 @@ const integrationsStore = {
   Core: {
     async UploadPublicFile({ file }) {
       if (!file) throw new Error("No file provided");
-      return new Promise((resolve) => {
+
+      // If browser environment and file is an image, optimize it to prevent massive payload issues
+      if (
+        typeof window !== "undefined" &&
+        file.type &&
+        file.type.startsWith("image/") &&
+        file.type !== "image/svg+xml"
+      ) {
+        try {
+          const optimized = await new Promise((resolve) => {
+            const img = new Image();
+            const objectUrl = URL.createObjectURL(file);
+            img.onload = () => {
+              URL.revokeObjectURL(objectUrl);
+              const maxDim = 1600;
+              let width = img.width;
+              let height = img.height;
+              if (width > maxDim || height > maxDim) {
+                if (width > height) {
+                  height = Math.round((height * maxDim) / width);
+                  width = maxDim;
+                } else {
+                  width = Math.round((width * maxDim) / height);
+                  height = maxDim;
+                }
+              }
+              const canvas = document.createElement("canvas");
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext("2d");
+              if (!ctx) {
+                return resolve(null);
+              }
+              ctx.drawImage(img, 0, 0, width, height);
+              // For large images, use jpeg with quality 0.85
+              const mime =
+                file.type === "image/png" && file.size < 1.5 * 1024 * 1024
+                  ? "image/png"
+                  : "image/jpeg";
+              const dataUrl = canvas.toDataURL(mime, 0.85);
+              resolve({ file_url: dataUrl });
+            };
+            img.onerror = () => {
+              URL.revokeObjectURL(objectUrl);
+              resolve(null);
+            };
+            img.src = objectUrl;
+          });
+          if (optimized) return optimized;
+        } catch {
+          // Fall through to standard FileReader
+        }
+      }
+
+      return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => {
           resolve({ file_url: reader.result });
         };
         reader.onerror = () => {
-          resolve({ file_url: URL.createObjectURL(file) });
+          reject(new Error("Failed to read file"));
         };
         reader.readAsDataURL(file);
       });
@@ -960,24 +1201,55 @@ const integrationsStore = {
 // User store (invites)
 const usersStore = {
   async inviteUser(email, role = "user") {
-    const userStore = createEntityStore("User", SEED_DATA.User);
-    const user = await userStore.create({
-      email,
-      full_name: email.split("@")[0].replace(/\./g, " "),
-      role,
-    });
-    return user;
+    try {
+      const user = await apiFetch("/users/invite", {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          role,
+          full_name: email.split("@")[0].replace(/\./g, " "),
+        }),
+      });
+      return user;
+    } catch {
+      const userStore = createEntityStore("User", SEED_DATA.User);
+      const user = await userStore.create({
+        email,
+        full_name: email.split("@")[0].replace(/\./g, " "),
+        role,
+      });
+      return user;
+    }
   },
 };
 
 export const base44 = {
   auth: authStore,
+  http: {
+    get: (url, opts) => apiFetch(url, { method: "GET", ...opts }),
+    post: (url, body, opts) =>
+      apiFetch(url, {
+        method: "POST",
+        body: typeof body === "string" ? body : JSON.stringify(body),
+        ...opts,
+      }),
+    put: (url, body, opts) =>
+      apiFetch(url, {
+        method: "PUT",
+        body: typeof body === "string" ? body : JSON.stringify(body),
+        ...opts,
+      }),
+    delete: (url, opts) => apiFetch(url, { method: "DELETE", ...opts }),
+  },
   entities: {
     WebsitePage: createEntityStore("WebsitePage", SEED_DATA.WebsitePage),
     Service: createEntityStore("Service", SEED_DATA.Service),
     Project: createEntityStore("Project", SEED_DATA.Project),
     BlogPost: createEntityStore("BlogPost", SEED_DATA.BlogPost),
-    ContactInquiry: createEntityStore("ContactInquiry", SEED_DATA.ContactInquiry),
+    ContactInquiry: createEntityStore(
+      "ContactInquiry",
+      SEED_DATA.ContactInquiry,
+    ),
     TeamMember: createEntityStore("TeamMember", SEED_DATA.TeamMember),
     SiteSettings: createEntityStore("SiteSettings", SEED_DATA.SiteSettings),
     MediaAsset: createEntityStore("MediaAsset", SEED_DATA.MediaAsset),

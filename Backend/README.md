@@ -115,7 +115,7 @@ npm run prisma:seed
 ```
 
 > **Default Admin Account:**
-> - **Email**: `admin@griffinconstruction.in`
+> - **Email**: `admin@gmail.com`
 > - **Password**: `Admin@12345`
 
 ### 4. Start the Server

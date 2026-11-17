@@ -1,15 +1,65 @@
-import React, { useRef, useEffect } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useRef, useEffect, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { apiClient } from "../api/client";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const DEFAULT_TEAM = [
+  {
+    name: "Admin",
+    role: "Founder & CEO",
+    image:
+      "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=85",
+  },
+  {
+    name: "Priya Sharma",
+    role: "Project Director",
+    image:
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=85",
+  },
+  {
+    name: "Rahul Verma",
+    role: "Chief Engineer",
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=85",
+  },
+  {
+    name: "Amit Khanna",
+    role: "Operations Head",
+    image:
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=85",
+  },
+];
+
 export default function Team({ onOpenQuote }) {
+  const [teamMembers, setTeamMembers] = useState(DEFAULT_TEAM);
   const sectionRef = useRef(null);
   const bannerRef = useRef(null);
   const eagleRef = useRef(null);
   const introRef = useRef(null);
   const cardsRef = useRef(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getTeam().then((members) => {
+      if (Array.isArray(members) && isMounted) {
+        const mapped = members.map((m) => ({
+          name: m.fullName || m.name,
+          role: m.designation || m.role || "Project Lead",
+          image:
+            m.photo ||
+            m.image ||
+            "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=85",
+          linkedin: m.linkedin || "#team",
+        }));
+        setTeamMembers(mapped);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -21,12 +71,12 @@ export default function Team({ onOpenQuote }) {
             opacity: 1,
             y: 0,
             duration: 0.85,
-            ease: 'power3.out',
+            ease: "power3.out",
             scrollTrigger: {
               trigger: bannerRef.current,
-              start: 'top 85%',
+              start: "top 85%",
             },
-          }
+          },
         );
       }
 
@@ -39,12 +89,12 @@ export default function Team({ onOpenQuote }) {
             x: 0,
             scale: 1,
             duration: 0.9,
-            ease: 'power3.out',
+            ease: "power3.out",
             scrollTrigger: {
               trigger: bannerRef.current,
-              start: 'top 85%',
+              start: "top 85%",
             },
-          }
+          },
         );
       }
 
@@ -58,41 +108,18 @@ export default function Team({ onOpenQuote }) {
             scale: 1,
             duration: 0.65,
             stagger: 0.08,
-            ease: 'power3.out',
+            ease: "power3.out",
             scrollTrigger: {
               trigger: bannerRef.current,
-              start: 'top 85%',
+              start: "top 85%",
             },
-          }
+          },
         );
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
-
-  const teamMembers = [
-    {
-      name: 'Mayank Goyal',
-      role: 'Founder & CEO',
-      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=85',
-    },
-    {
-      name: 'Priya Sharma',
-      role: 'Project Director',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=85',
-    },
-    {
-      name: 'Rahul Verma',
-      role: 'Chief Engineer',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=85',
-    },
-    {
-      name: 'Amit Khanna',
-      role: 'Operations Head',
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=85',
-    },
-  ];
+  }, [teamMembers]);
 
   return (
     <section
@@ -133,11 +160,14 @@ export default function Team({ onOpenQuote }) {
               </div>
 
               <h2 className="font-serif font-bold text-2xl sm:text-[26px] lg:text-[29px] leading-[1.14] text-[#142338] tracking-tight mb-2">
-                The People Behind<br />Gryfno Szajka
+                The People Behind
+                <br />
+                Gryfno Szajka
               </h2>
 
               <p className="text-xs text-[#52637a] leading-[1.65] mb-4 max-w-[260px]">
-                A team of experienced professionals, engineers, and project managers who turn vision into reality.
+                A team of experienced professionals, engineers, and project
+                managers who turn vision into reality.
               </p>
 
               <div>
@@ -147,7 +177,9 @@ export default function Team({ onOpenQuote }) {
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-[#142338] bg-[#f0a528] hover:bg-[#e29618] active:scale-95 shadow-sm hover:shadow transition-all cursor-pointer group"
                 >
                   <span>Meet Our Team</span>
-                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
                 </button>
               </div>
             </div>
@@ -190,10 +222,7 @@ export default function Team({ onOpenQuote }) {
                     aria-label={`${member.name} LinkedIn Profile`}
                     className="w-5 h-5 rounded flex items-center justify-center shrink-0 hover:scale-110 transition-transform"
                   >
-                    <svg
-                      className="w-4 h-4 fill-[#0a66c2]"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-4 h-4 fill-[#0a66c2]" viewBox="0 0 24 24">
                       <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76c.92 0 1.66-.74 1.66-1.66 0-.92-.74-1.66-1.66-1.66-.92 0-1.66.74-1.66 1.66 0 .92.74 1.66 1.66 1.66m1.39 9.94v-8.37H5.07v8.37h2.78Z" />
                     </svg>
                   </a>

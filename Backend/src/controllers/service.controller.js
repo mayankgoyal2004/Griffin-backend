@@ -17,14 +17,14 @@ function parseServiceData(body) {
     data.fullDescription = body.fullDescription ?? body.full_description;
   }
   if (body.icon !== undefined) data.icon = body.icon;
-  if (body.cardImage !== undefined || body.card_image !== undefined) {
-    data.cardImage = body.cardImage ?? body.card_image;
+  if (body.card_image !== undefined || body.cardImage !== undefined) {
+    data.cardImage = body.card_image !== undefined ? body.card_image : body.cardImage;
   }
-  if (body.heroImage !== undefined || body.hero_image !== undefined) {
-    data.heroImage = body.heroImage ?? body.hero_image;
+  if (body.hero_image !== undefined || body.heroImage !== undefined) {
+    data.heroImage = body.hero_image !== undefined ? body.hero_image : body.heroImage;
   }
-  if (body.overviewImage !== undefined || body.overview_image !== undefined) {
-    data.overviewImage = body.overviewImage ?? body.overview_image;
+  if (body.overview_image !== undefined || body.overviewImage !== undefined) {
+    data.overviewImage = body.overview_image !== undefined ? body.overview_image : body.overviewImage;
   }
   if (body.keyFeatures !== undefined || body.key_features !== undefined) {
     data.keyFeatures = body.keyFeatures ?? body.key_features;
@@ -38,12 +38,20 @@ function parseServiceData(body) {
 }
 
 export const getServices = asyncHandler(async (req, res) => {
-  const { category, featured, published, search } = req.query;
+  const { category, featured, published, search, page = 1, limit = 50 } = req.query;
 
   const where = {};
   if (category && category !== "all") where.category = category;
-  if (featured !== undefined && featured !== "all") where.featured = featured === "true";
-  if (published !== undefined && published !== "all") where.published = published === "true";
+  if (featured !== undefined && featured !== "all") {
+    where.featured = featured === "true" || featured === true;
+  }
+
+  const hasAuth = Boolean(req.headers.authorization);
+  if (published !== undefined && published !== "all") {
+    where.published = published === "true" || published === true;
+  } else if (!hasAuth && (published === undefined || published === "")) {
+    where.published = true;
+  }
 
   if (search) {
     where.OR = [
@@ -52,12 +60,36 @@ export const getServices = asyncHandler(async (req, res) => {
     ];
   }
 
-  const services = await prisma.service.findMany({
-    where,
-    orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
-  });
+  const take = parseInt(limit, 10);
+  const skip = (parseInt(page, 10) - 1) * take;
 
-  return res.status(200).json(new ApiResponse(200, services.map(normalizeService), "Services fetched successfully."));
+  const [total, services] = await Promise.all([
+    prisma.service.count({ where }),
+    prisma.service.findMany({
+      where,
+      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+      skip,
+      take,
+    }),
+  ]);
+
+  const items = services.map(normalizeService);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        items,
+        pagination: {
+          total,
+          page: parseInt(page, 10),
+          limit: take,
+          totalPages: Math.ceil(total / take),
+        },
+      },
+      "Services fetched successfully."
+    )
+  );
 });
 
 export const getServiceBySlug = asyncHandler(async (req, res) => {
@@ -124,6 +156,15 @@ export const updateService = asyncHandler(async (req, res) => {
   });
   if (!existing) {
     throw new ApiError(404, "Service not found to update.");
+  }
+
+  if (data.slug && data.slug !== existing.slug) {
+    const slugExists = await prisma.service.findFirst({
+      where: { slug: data.slug, id: { not: existing.id } },
+    });
+    if (slugExists) {
+      throw new ApiError(409, "That URL slug is already used by another service.");
+    }
   }
 
   const updated = await prisma.service.update({

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search,
   HardHat,
@@ -18,6 +18,7 @@ import {
   Bookmark,
   Sparkles,
 } from 'lucide-react';
+import { apiClient } from '../api/client';
 
 export const BLOG_POSTS = [
   {
@@ -227,6 +228,8 @@ const CATEGORIES = [
 ];
 
 export default function Blog() {
+  const [postsList, setPostsList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All Articles');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -234,11 +237,70 @@ export default function Blog() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getBlogPosts().then((posts) => {
+      if (!isMounted) return;
+      if (Array.isArray(posts)) {
+        const mapped = posts.map((post) => {
+          let catIcon = HardHat;
+          const cat = (post.category || '').toLowerCase();
+          if (cat.includes('real estate')) catIcon = Building2;
+          else if (cat.includes('project')) catIcon = Layers;
+          else if (cat.includes('trend')) catIcon = TrendingUp;
+          else if (cat.includes('sustain')) catIcon = Leaf;
+
+          return {
+            id: post.id || post.slug,
+            title: post.title,
+            slug: post.slug,
+            category: post.category || 'Construction',
+            categoryIcon: catIcon,
+            date: post.publication_date
+              ? new Date(post.publication_date).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })
+              : 'Recent',
+            readTime: `${post.reading_time || 5} min read`,
+            featured: post.featured || false,
+            popular: post.featured || false,
+            image:
+              post.featured_image ||
+              post.featuredImage ||
+              'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
+            excerpt: post.excerpt || '',
+            content: post.content || '',
+            author:
+              typeof post.author === 'object' && post.author !== null
+                ? post.author
+                : {
+                    name: post.author || 'Elena Rostova',
+                    role: 'Griffin Engineering Specialist',
+                    avatar:
+                      'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
+                  },
+          };
+        });
+        setPostsList(mapped);
+      } else {
+        setPostsList(BLOG_POSTS);
+      }
+      setLoading(false);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Filter posts based on category and search query
   const filteredPosts = useMemo(() => {
-    return BLOG_POSTS.filter((post) => {
+    return postsList.filter((post) => {
       const matchesCategory =
-        activeCategory === 'All Articles' || post.category.toLowerCase() === activeCategory.toLowerCase();
+        activeCategory === 'All Articles' ||
+        post.category.toLowerCase().includes(activeCategory.toLowerCase()) ||
+        activeCategory.toLowerCase().includes(post.category.toLowerCase());
       const matchesSearch =
         !searchQuery.trim() ||
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -246,11 +308,46 @@ export default function Blog() {
         post.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, postsList]);
 
-  const featuredPost = BLOG_POSTS.find((p) => p.featured) || BLOG_POSTS[0];
-  const gridPosts = filteredPosts.filter((p) => p.id !== featuredPost.id);
-  const popularPosts = BLOG_POSTS.filter((p) => p.popular).slice(0, 3);
+  // Dynamic Categories with accurate live article counts
+  const displayCategories = useMemo(() => {
+    return CATEGORIES.map((cat) => {
+      let count = 0;
+      if (cat.label === 'All Articles') {
+        count = postsList.length;
+      } else {
+        count = postsList.filter((p) =>
+          (p.category || '').toLowerCase().includes(cat.label.toLowerCase()) ||
+          cat.label.toLowerCase().includes((p.category || '').toLowerCase())
+        ).length;
+      }
+      return { ...cat, count };
+    });
+  }, [postsList]);
+
+  // When filtering or searching, don't pin a separate featured card
+  const isFiltering = activeCategory !== 'All Articles' || searchQuery.trim().length > 0;
+  const featuredPost = !isFiltering
+    ? filteredPosts.find((p) => p.featured) || (filteredPosts.length > 0 ? filteredPosts[0] : null)
+    : null;
+
+  const gridPosts = featuredPost
+    ? filteredPosts.filter((p) => p.id !== featuredPost.id)
+    : filteredPosts;
+
+  const ITEMS_PER_PAGE = 6;
+  const totalPages = Math.max(1, Math.ceil(gridPosts.length / ITEMS_PER_PAGE));
+  const paginatedGridPosts = gridPosts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const popularPosts = useMemo(() => {
+    const featuredOrPopular = postsList.filter((p) => p.popular || p.featured);
+    if (featuredOrPopular.length >= 2) return featuredOrPopular.slice(0, 3);
+    return postsList.slice(0, 3);
+  }, [postsList]);
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
@@ -316,7 +413,7 @@ export default function Blog() {
       <div className="border-b border-[#ece4d6] bg-[#faf7f2]/95 backdrop-blur-md sticky top-[68px] z-30">
         <div className="max-w-[1240px] mx-auto px-5 sm:px-8 py-3.5 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar scroll-smooth">
-            {CATEGORIES.map((cat) => {
+            {displayCategories.map((cat) => {
               const Icon = cat.icon;
               const isActive = activeCategory.toLowerCase() === cat.label.toLowerCase();
               return (
@@ -335,6 +432,11 @@ export default function Blog() {
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#d88918]'}`} />
                   <span>{cat.label}</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    isActive ? 'bg-white/20 text-white' : 'bg-[#e7decfa0] text-[#718298]'
+                  }`}>
+                    {cat.count}
+                  </span>
                 </button>
               );
             })}
@@ -347,193 +449,214 @@ export default function Blog() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* ================= LEFT COLUMN: ARTICLES (8 COLS) ================= */}
           <div className="lg:col-span-8 space-y-10">
-            {/* A. FEATURED ARTICLE CARD (Horizontal Hero Card matching reference) */}
-            {(!searchQuery || featuredPost.title.toLowerCase().includes(searchQuery.toLowerCase())) && (
-              <div className="bg-white rounded-2xl border border-[#e8dfd3] shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden group hover:shadow-[0_16px_40px_rgba(216,137,24,0.12)] transition-all duration-300">
-                <div className="grid grid-cols-1 md:grid-cols-12 items-stretch">
-                  {/* Featured Card Image */}
-                  <div className="md:col-span-6 relative overflow-hidden min-h-[220px] md:min-h-[280px]">
-                    <img
-                      src={featuredPost.image}
-                      alt={featuredPost.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80';
-                      }}
-                    />
-                    {/* Featured Badge */}
-                    <div className="absolute top-4 left-4 bg-[#d88918] text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1.5 uppercase tracking-wider">
-                      <Sparkles className="w-3 h-3 fill-white" />
-                      <span>Featured</span>
-                    </div>
-                  </div>
-
-                  {/* Featured Card Content */}
-                  <div className="md:col-span-6 p-6 sm:p-7 flex flex-col justify-between">
-                    <div>
-                      {/* Category & Date */}
-                      <div className="flex items-center gap-2 text-xs text-[#718298] font-medium mb-2.5">
-                        <span className="flex items-center gap-1 text-[#d88918] font-semibold">
-                          <HardHat className="w-3.5 h-3.5 stroke-[2.2]" />
-                          <span>{featuredPost.category}</span>
-                        </span>
-                        <span>•</span>
-                        <span>{featuredPost.date}</span>
+            {loading ? (
+              <div className="space-y-6">
+                <div className="h-64 rounded-2xl bg-slate-200/60 animate-pulse" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                  <div className="h-56 rounded-2xl bg-slate-200/60 animate-pulse" />
+                  <div className="h-56 rounded-2xl bg-slate-200/60 animate-pulse" />
+                  <div className="h-56 rounded-2xl bg-slate-200/60 animate-pulse" />
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* A. FEATURED ARTICLE CARD (Horizontal Hero Card matching reference) */}
+                {featuredPost && (
+                  <div className="bg-white rounded-2xl border border-[#e8dfd3] shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden group hover:shadow-[0_16px_40px_rgba(216,137,24,0.12)] transition-all duration-300">
+                    <div className="grid grid-cols-1 md:grid-cols-12 items-stretch">
+                      {/* Featured Card Image */}
+                      <div className="md:col-span-6 relative overflow-hidden min-h-[220px] md:min-h-[280px]">
+                        <img
+                          src={featuredPost.image}
+                          alt={featuredPost.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80';
+                          }}
+                        />
+                        {/* Featured Badge */}
+                        <div className="absolute top-4 left-4 bg-[#d88918] text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1.5 uppercase tracking-wider">
+                          <Sparkles className="w-3 h-3 fill-white" />
+                          <span>Featured</span>
+                        </div>
                       </div>
 
-                      {/* Title */}
-                      <h2 className="font-serif font-extrabold text-xl sm:text-2xl text-[#0c1f38] leading-tight mb-3 group-hover:text-[#d88918] transition-colors">
-                        {featuredPost.title}
-                      </h2>
-
-                      {/* Excerpt */}
-                      <p className="text-xs sm:text-sm text-[#556477] leading-relaxed mb-6">
-                        {featuredPost.excerpt}
-                      </p>
-                    </div>
-
-                    {/* Button */}
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedArticle(featuredPost)}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#d88918] text-white text-xs sm:text-sm font-semibold hover:bg-[#c27912] shadow-[0_4px_14px_rgba(216,137,24,0.35)] transition-all cursor-pointer group-hover:gap-3"
-                      >
-                        <span>Read Full Article</span>
-                        <ArrowRight className="w-4 h-4 stroke-[2.2]" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* B. LATEST ARTICLES SECTION */}
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="font-serif font-extrabold text-2xl sm:text-[26px] text-[#0c1f38] tracking-tight">
-                  Latest Articles
-                </h2>
-                <span className="text-xs text-[#718298] font-medium">
-                  Showing {filteredPosts.length} {filteredPosts.length === 1 ? 'article' : 'articles'}
-                </span>
-              </div>
-
-              {filteredPosts.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-[#e8dfd3] p-10 text-center">
-                  <p className="text-sm text-[#718298] mb-3">No articles match your search criteria.</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setActiveCategory('All Articles');
-                    }}
-                    className="text-xs font-semibold text-[#d88918] underline hover:text-[#b46e0e]"
-                  >
-                    Clear filters &amp; view all articles
-                  </button>
-                </div>
-              ) : (
-                /* Grid of 6 Cards (2 cols on sm, 3 cols on md/lg) matching reference */
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-                  {gridPosts.map((post) => {
-                    const CategoryIcon = post.categoryIcon || HardHat;
-                    return (
-                      <article
-                        key={post.id}
-                        className="bg-white rounded-2xl border border-[#e8dfd3] shadow-[0_4px_16px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col justify-between hover:shadow-[0_12px_28px_rgba(216,137,24,0.12)] hover:border-[#dfceb8] transition-all duration-300 group"
-                      >
+                      {/* Featured Card Content */}
+                      <div className="md:col-span-6 p-6 sm:p-7 flex flex-col justify-between">
                         <div>
-                          {/* Card Thumbnail */}
-                          <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
-                            <img
-                              src={post.image}
-                              alt={post.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              loading="lazy"
-                              onError={(e) => {
-                                e.currentTarget.src = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80';
-                              }}
-                            />
+                          {/* Category & Date */}
+                          <div className="flex items-center gap-2 text-xs text-[#718298] font-medium mb-2.5">
+                            <span className="flex items-center gap-1 text-[#d88918] font-semibold">
+                              <HardHat className="w-3.5 h-3.5 stroke-[2.2]" />
+                              <span>{featuredPost.category}</span>
+                            </span>
+                            <span>•</span>
+                            <span>{featuredPost.date}</span>
                           </div>
 
-                          {/* Card Body */}
-                          <div className="p-4 sm:p-5">
-                            {/* Meta: Category & Date */}
-                            <div className="flex items-center gap-1.5 text-[11px] text-[#718298] font-medium mb-2">
-                              <span className="flex items-center gap-1 text-[#d88918] font-semibold">
-                                <CategoryIcon className="w-3 h-3 stroke-[2.2]" />
-                                <span>{post.category}</span>
-                              </span>
-                              <span>•</span>
-                              <span>{post.date}</span>
-                            </div>
+                          {/* Title */}
+                          <h2 className="font-serif font-extrabold text-xl sm:text-2xl text-[#0c1f38] leading-tight mb-3 group-hover:text-[#d88918] transition-colors">
+                            {featuredPost.title}
+                          </h2>
 
-                            {/* Title */}
-                            <h3 className="font-serif font-bold text-sm sm:text-base text-[#0c1f38] leading-snug mb-2 group-hover:text-[#d88918] transition-colors line-clamp-2">
-                              {post.title}
-                            </h3>
-
-                            {/* Excerpt */}
-                            <p className="text-xs text-[#556477] leading-relaxed line-clamp-3">
-                              {post.excerpt}
-                            </p>
-                          </div>
+                          {/* Excerpt */}
+                          <p className="text-xs sm:text-sm text-[#556477] leading-relaxed mb-6">
+                            {featuredPost.excerpt}
+                          </p>
                         </div>
 
-                        {/* Read More Link */}
-                        <div className="px-4 sm:px-5 pb-4 pt-1">
+                        {/* Button */}
+                        <div>
                           <button
                             type="button"
-                            onClick={() => setSelectedArticle(post)}
-                            className="inline-flex items-center gap-1 text-xs font-bold text-[#d88918] hover:text-[#b46e0e] transition-colors group-hover:gap-2 cursor-pointer"
+                            onClick={() => setSelectedArticle(featuredPost)}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#d88918] text-white text-xs sm:text-sm font-semibold hover:bg-[#c27912] shadow-[0_4px_14px_rgba(216,137,24,0.35)] transition-all cursor-pointer group-hover:gap-3"
                           >
-                            <span>Read More</span>
-                            <ArrowRight className="w-3.5 h-3.5 stroke-[2.2]" />
+                            <span>Read Full Article</span>
+                            <ArrowRight className="w-4 h-4 stroke-[2.2]" />
                           </button>
                         </div>
-                      </article>
-                    );
-                  })}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* B. LATEST ARTICLES SECTION */}
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="font-serif font-extrabold text-2xl sm:text-[26px] text-[#0c1f38] tracking-tight">
+                      Latest Articles
+                    </h2>
+                    <span className="text-xs text-[#718298] font-medium">
+                      Showing {gridPosts.length} {gridPosts.length === 1 ? 'article' : 'articles'}
+                    </span>
+                  </div>
+
+                  {gridPosts.length === 0 ? (
+                    <div className="bg-white rounded-2xl border border-[#e8dfd3] p-10 text-center">
+                      <p className="text-sm text-[#718298] mb-3">
+                        {featuredPost
+                          ? 'All matching articles are highlighted above.'
+                          : 'No articles match your current selection.'}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setActiveCategory('All Articles');
+                        }}
+                        className="text-xs font-semibold text-[#d88918] underline hover:text-[#b46e0e]"
+                      >
+                        Clear filters &amp; view all articles
+                      </button>
+                    </div>
+                  ) : (
+                    /* Grid of Cards */
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                      {paginatedGridPosts.map((post) => {
+                        const CategoryIcon = post.categoryIcon || HardHat;
+                        return (
+                          <article
+                            key={post.id}
+                            className="bg-white rounded-2xl border border-[#e8dfd3] shadow-[0_4px_16px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col justify-between hover:shadow-[0_12px_28px_rgba(216,137,24,0.12)] hover:border-[#dfceb8] transition-all duration-300 group"
+                          >
+                            <div>
+                              {/* Card Thumbnail */}
+                              <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                                <img
+                                  src={post.image}
+                                  alt={post.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                  loading="lazy"
+                                  onError={(e) => {
+                                    e.currentTarget.src = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80';
+                                  }}
+                                />
+                              </div>
+
+                              {/* Card Body */}
+                              <div className="p-4 sm:p-5">
+                                {/* Meta: Category & Date */}
+                                <div className="flex items-center gap-1.5 text-[11px] text-[#718298] font-medium mb-2">
+                                  <span className="flex items-center gap-1 text-[#d88918] font-semibold">
+                                    <CategoryIcon className="w-3 h-3 stroke-[2.2]" />
+                                    <span>{post.category}</span>
+                                  </span>
+                                  <span>•</span>
+                                  <span>{post.date}</span>
+                                </div>
+
+                                {/* Title */}
+                                <h3 className="font-serif font-bold text-sm sm:text-base text-[#0c1f38] leading-snug mb-2 group-hover:text-[#d88918] transition-colors line-clamp-2">
+                                  {post.title}
+                                </h3>
+
+                                {/* Excerpt */}
+                                <p className="text-xs text-[#556477] leading-relaxed line-clamp-3">
+                                  {post.excerpt}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Read More Link */}
+                            <div className="px-4 sm:px-5 pb-4 pt-1">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedArticle(post)}
+                                className="inline-flex items-center gap-1 text-xs font-bold text-[#d88918] hover:text-[#b46e0e] transition-colors group-hover:gap-2 cursor-pointer"
+                              >
+                                <span>Read More</span>
+                                <ArrowRight className="w-3.5 h-3.5 stroke-[2.2]" />
+                              </button>
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* C. PAGINATION CONTROLS matching reference screenshot */}
-            <div className="flex items-center justify-center gap-2 pt-4">
-              <button
-                type="button"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="w-9 h-9 rounded-xl border border-[#e8ded0] bg-white text-[#718298] hover:bg-[#f4efe5] hover:text-[#0c1f38] flex items-center justify-center transition-colors cursor-pointer text-xs font-semibold shadow-sm"
-                aria-label="Previous page"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
+                {/* C. PAGINATION CONTROLS: Only show if totalPages > 1 */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-4">
+                    <button
+                      type="button"
+                      disabled={currentPage <= 1}
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      className="w-9 h-9 rounded-xl border border-[#e8ded0] bg-white text-[#718298] hover:bg-[#f4efe5] hover:text-[#0c1f38] flex items-center justify-center transition-colors cursor-pointer text-xs font-semibold shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                      aria-label="Previous page"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
 
-              {[1, 2, 3].map((page) => (
-                <button
-                  key={page}
-                  type="button"
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${
-                    currentPage === page
-                      ? 'bg-[#d88918] text-white shadow-[0_4px_12px_rgba(216,137,24,0.35)]'
-                      : 'bg-white text-[#4b5c70] border border-[#e8ded0] hover:bg-[#f4efe5]'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        type="button"
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${
+                          currentPage === page
+                            ? 'bg-[#d88918] text-white shadow-[0_4px_12px_rgba(216,137,24,0.35)]'
+                            : 'bg-white text-[#4b5c70] border border-[#e8ded0] hover:bg-[#f4efe5]'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
 
-              <button
-                type="button"
-                onClick={() => setCurrentPage((p) => Math.min(3, p + 1))}
-                className="w-9 h-9 rounded-xl border border-[#e8ded0] bg-white text-[#718298] hover:bg-[#f4efe5] hover:text-[#0c1f38] flex items-center justify-center transition-colors cursor-pointer text-xs font-semibold shadow-sm"
-                aria-label="Next page"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+                    <button
+                      type="button"
+                      disabled={currentPage >= totalPages}
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      className="w-9 h-9 rounded-xl border border-[#e8ded0] bg-white text-[#718298] hover:bg-[#f4efe5] hover:text-[#0c1f38] flex items-center justify-center transition-colors cursor-pointer text-xs font-semibold shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                      aria-label="Next page"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           {/* ================= RIGHT COLUMN: SIDEBAR WIDGETS (4 COLS) ================= */}
@@ -567,7 +690,7 @@ export default function Blog() {
                 Categories
               </h3>
               <div className="space-y-2">
-                {CATEGORIES.slice(1).map((cat) => {
+                {displayCategories.slice(1).map((cat) => {
                   const Icon = cat.icon;
                   const isActive = activeCategory.toLowerCase() === cat.label.toLowerCase();
                   return (

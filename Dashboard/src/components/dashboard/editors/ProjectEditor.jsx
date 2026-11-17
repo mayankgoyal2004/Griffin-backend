@@ -52,7 +52,15 @@ export default function ProjectEditor({ projectId, user }) {
       if (projectId) {
         try {
           const record = await base44.entities.Project.get(projectId);
-          if (active) setForm({ ...BLANK, ...record });
+          if (active) {
+            const cover_image = record.cover_image ?? record.coverImage ?? "";
+            setForm({
+              ...BLANK,
+              ...record,
+              cover_image,
+              coverImage: cover_image,
+            });
+          }
         } catch {
           toast.error("That project could not be loaded.");
           navigate({ to: "/dashboard/projects" });
@@ -65,7 +73,14 @@ export default function ProjectEditor({ projectId, user }) {
     };
   }, [projectId, navigate]);
 
-  const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+  const set = (key, value) => {
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === "cover_image") next.coverImage = value;
+      if (key === "coverImage") next.cover_image = value;
+      return next;
+    });
+  };
 
   const save = async (publishValue) => {
     if (!form.name.trim()) {
@@ -73,18 +88,21 @@ export default function ProjectEditor({ projectId, user }) {
       return;
     }
     const finalSlug = slugify(form.slug || form.name);
-    const duplicates = await base44.entities.Project.filter({ slug: finalSlug }, { limit: 5 });
-    if (duplicates.items.some((row) => row.id !== projectId)) {
+    const duplicates = await base44.entities.Project.filter({ slug: finalSlug }, { limit: 50 });
+    if (duplicates.items.some((row) => row.id !== projectId && row.slug === finalSlug)) {
       toast.error("That URL slug is already used by another project.");
       return;
     }
 
     setSaving(true);
     try {
+      const finalCoverImage = form.cover_image || form.coverImage || "";
       const payload = {
         ...form,
         slug: finalSlug,
         name: form.name.trim(),
+        cover_image: finalCoverImage,
+        coverImage: finalCoverImage,
         published: publishValue === undefined ? !!form.published : publishValue,
       };
       if (projectId) {

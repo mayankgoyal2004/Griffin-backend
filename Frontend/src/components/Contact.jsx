@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MapPin,
   Phone,
@@ -8,8 +8,11 @@ import {
   ChevronDown,
   CheckCircle,
   Building,
+  AlertCircle,
+  Loader2,
 } from 'lucide-react';
 import { companyInfo } from '../data/websiteData';
+import { apiClient } from '../api/client';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -20,20 +23,56 @@ export default function Contact() {
     message: '',
   });
 
+  const [contactInfo, setContactInfo] = useState({
+    address: companyInfo.address,
+    phone: companyInfo.phone,
+    email: companyInfo.email,
+    hours: companyInfo.hours,
+  });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getSettings().then((settings) => {
+      if (settings && isMounted) {
+        setContactInfo({
+          address: settings.address || companyInfo.address,
+          phone: settings.phone || companyInfo.phone,
+          email: settings.email || companyInfo.email,
+          hours: settings.workingHours || companyInfo.hours,
+        });
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errorMessage) setErrorMessage('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage('');
 
-    // Simulate sending message with brief realistic delay
-    setTimeout(() => {
+    try {
+      await apiClient.submitInquiry({
+        fullName: formData.name,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        projectType: formData.projectType || 'General Inquiry',
+        subject: `${formData.projectType || 'Website Inquiry'} - ${formData.name}`,
+        message: formData.message,
+      });
+
       setIsSubmitting(false);
       setSubmitted(true);
       setFormData({
@@ -43,7 +82,13 @@ export default function Contact() {
         projectType: '',
         message: '',
       });
-    }, 800);
+    } catch (err) {
+      console.error('Inquiry submission error:', err);
+      setIsSubmitting(false);
+      setErrorMessage(
+        err.message || 'Unable to submit your inquiry at this moment. Please check your network or try again.'
+      );
+    }
   };
 
   return (
@@ -123,7 +168,7 @@ export default function Contact() {
                 <div>
                   <h3 className="text-sm font-bold text-[#0c1f38] leading-snug">Our Office</h3>
                   <p className="text-xs text-[#556477] mt-1 leading-relaxed">
-                    Mohali, Punjab – 160055, India
+                    {contactInfo.address}
                   </p>
                 </div>
               </div>
@@ -136,10 +181,10 @@ export default function Contact() {
                 <div>
                   <h3 className="text-sm font-bold text-[#0c1f38] leading-snug">Phone</h3>
                   <a
-                    href="tel:+919876543210"
+                    href={`tel:${contactInfo.phone.replace(/[^0-9+]/g, '')}`}
                     className="text-xs text-[#556477] mt-1 leading-relaxed inline-block hover:text-[#d88918] transition-colors font-medium"
                   >
-                    +91 98765 43210
+                    {contactInfo.phone}
                   </a>
                 </div>
               </div>
@@ -152,10 +197,10 @@ export default function Contact() {
                 <div>
                   <h3 className="text-sm font-bold text-[#0c1f38] leading-snug">Email</h3>
                   <a
-                    href="mailto:info@griffinconstruction.in"
+                    href={`mailto:${contactInfo.email}`}
                     className="text-xs text-[#556477] mt-1 leading-relaxed inline-block hover:text-[#d88918] transition-colors font-medium"
                   >
-                    info@griffinconstruction.in
+                    {contactInfo.email}
                   </a>
                 </div>
               </div>
@@ -168,7 +213,7 @@ export default function Contact() {
                 <div>
                   <h3 className="text-sm font-bold text-[#0c1f38] leading-snug">Working Hours</h3>
                   <p className="text-xs text-[#556477] mt-1 leading-relaxed">
-                    Mon – Sat: 9:00 AM – 6:00 PM
+                    {contactInfo.hours}
                   </p>
                 </div>
               </div>
@@ -181,6 +226,16 @@ export default function Contact() {
               <h2 className="font-serif font-bold text-2xl sm:text-[26px] text-[#0c1f38] mb-6">
                 Send Us a Message
               </h2>
+
+              {errorMessage && (
+                <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-start gap-2.5 text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold">Submission failed: </span>
+                    {errorMessage}
+                  </div>
+                </div>
+              )}
 
               {submitted ? (
                 <div className="py-12 text-center flex flex-col items-center">
@@ -268,10 +323,10 @@ export default function Contact() {
                           <option value="" disabled>
                             Select project type
                           </option>
-                          <option value="Real Estate">Real Estate Development</option>
+                          <option value="Real Estate Development">Real Estate Development</option>
                           <option value="Transport & Logistics">Transport & Logistics</option>
-                          <option value="Site Inspections">Site Inspections</option>
-                          <option value="Websites & Digital">Websites & Digital</option>
+                          <option value="Architectural Planning & Design">Architectural Planning & Design</option>
+                          <option value="Infrastructure & Civil Works">Infrastructure & Civil Works</option>
                           <option value="Residential Construction">Residential Construction</option>
                           <option value="Commercial Infrastructure">
                             Commercial Infrastructure
@@ -304,8 +359,17 @@ export default function Contact() {
                     disabled={isSubmitting}
                     className="w-full py-3.5 sm:py-4 px-6 rounded-xl bg-gradient-to-r from-[#d88918] via-[#e49a21] to-[#d88918] hover:from-[#c77a10] hover:to-[#d88918] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md hover:shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] disabled:opacity-60"
                   >
-                    <span>{isSubmitting ? 'Sending Message...' : 'Send Message'}</span>
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Submitting to Griffin PMO...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send Message</span>
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      </>
+                    )}
                   </button>
                 </form>
               )}

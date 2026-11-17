@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Layers,
@@ -17,9 +17,23 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { companyInfo } from "../data/websiteData";
+import { apiClient } from "../api/client";
 
 export default function TermsAndConditions() {
   const navigate = useNavigate();
+  const [pageData, setPageData] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage("terms").then((data) => {
+      if (data && isMounted) {
+        setPageData(data);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleContactClick = () => {
     navigate("/contact");
@@ -89,13 +103,13 @@ export default function TermsAndConditions() {
 
             {/* Heading: Terms & Conditions */}
             <h1 className="font-serif font-extrabold text-3xl sm:text-4xl md:text-[44px] text-[#0c1f38] tracking-tight leading-[1.12] mb-3">
-              Terms &amp; Conditions
+              {pageData?.heading || pageData?.title || "Terms & Conditions"}
             </h1>
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm md:text-[15px] text-[#556477] leading-relaxed max-w-[480px]">
-              Please read these Terms &amp; Conditions carefully before using
-              our website and services.
+              {pageData?.subtitle ||
+                "Please read these Terms & Conditions carefully before using our website and services."}
             </p>
           </div>
         </div>

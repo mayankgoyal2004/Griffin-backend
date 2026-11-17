@@ -20,7 +20,7 @@ export function LoginPage() {
   const returnTo = safeReturnTo();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("admin@griffinconstruction.in");
+  const [email, setEmail] = useState("admin@gmail.com");
   const [password, setPassword] = useState("••••••••••••");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -44,7 +44,10 @@ export function LoginPage() {
         window.location.href = "/dashboard";
       }
     } catch (err) {
-      setError(err?.message || "Invalid credentials. Please verify your email and password.");
+      setError(
+        err?.message ||
+          "Invalid credentials. Please verify your email and password.",
+      );
       setBusy(false);
     }
   }
@@ -126,13 +129,15 @@ export function LoginPage() {
             Welcome to <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3C469] via-[#E5A83B] to-[#D49020] italic font-semibold">
               Griffin
-            </span> <br />
+            </span>{" "}
+            <br />
             Construction
           </h1>
 
           {/* Paragraph */}
           <p className="mt-3 xl:mt-4 text-slate-300 text-xs sm:text-sm leading-relaxed max-w-md font-normal drop-shadow">
-            Manage your website, projects, services and digital presence from one powerful dashboard.
+            Manage your website, projects, services and digital presence from
+            one powerful dashboard.
           </p>
 
           {/* 3 Value Badges */}
@@ -330,7 +335,9 @@ export function LoginPage() {
               {busy ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-[#E5A83B]" />
-                  <span className="font-serif font-bold text-sm sm:text-base text-white">Signing In...</span>
+                  <span className="font-serif font-bold text-sm sm:text-base text-white">
+                    Signing In...
+                  </span>
                 </>
               ) : (
                 <>

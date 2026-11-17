@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/AuthContext";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,12 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ExternalLink, LogOut, Menu, UserCircle } from "lucide-react";
 
-const ROLE_LABEL = { admin: "Administrator", user: "Editor" };
+const ROLE_LABEL = { admin: "Administrator", user: "Editor", editor: "Editor" };
 
 export default function Topbar({ onMenu }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const initials = (user?.full_name || user?.email || "G").slice(0, 2).toUpperCase();
+  const displayName = user?.fullName || user?.full_name || user?.email || "Griffin Admin";
+  const initials = displayName.slice(0, 2).toUpperCase();
+  const roleName = ROLE_LABEL[user?.role?.toLowerCase()] || user?.role || "Administrator";
 
   const handleLogout = async () => {
     await logout();
@@ -52,11 +54,12 @@ export default function Topbar({ onMenu }) {
           <DropdownMenuTrigger asChild>
             <button type="button" className="flex items-center gap-2 rounded-full border border-border py-1 pl-1 pr-3 hover:bg-muted">
               <Avatar className="h-8 w-8">
+                {user?.avatar && <AvatarImage src={user.avatar} alt={displayName} />}
                 <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">{initials}</AvatarFallback>
               </Avatar>
               <span className="hidden text-left sm:block">
-                <span className="block text-xs font-semibold text-primary">{user?.full_name || "Griffin admin"}</span>
-                <span className="block text-[10px] text-muted-foreground">{ROLE_LABEL[user?.role] || "Editor"}</span>
+                <span className="block text-xs font-semibold text-primary">{displayName}</span>
+                <span className="block text-[10px] text-muted-foreground">{roleName}</span>
               </span>
             </button>
           </DropdownMenuTrigger>

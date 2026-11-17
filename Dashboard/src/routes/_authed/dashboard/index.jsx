@@ -66,86 +66,124 @@ function DashboardOverview() {
   useEffect(() => {
     let active = true;
 
-    (async () => {
-      const [
-        pages,
-        servicesPublished,
-        servicesDraft,
-        projects,
-        team,
-        blogPublished,
-        blogDraft,
-        inquiriesNew,
-        inquiriesPending,
-        recentProjects,
-        recentServices,
-        recentPosts,
-        recentInquiries,
-        allInquiries,
-        allPosts,
-        projectAgg,
-        recentLogs,
-      ] = await Promise.all([
-        base44.entities.WebsitePage.count(),
-        base44.entities.Service.count({ published: true }),
-        base44.entities.Service.count({ published: false }),
-        base44.entities.Project.count(),
-        base44.entities.TeamMember.count(),
-        base44.entities.BlogPost.count({ published: true }),
-        base44.entities.BlogPost.count({ published: false }),
-        base44.entities.ContactInquiry.count({ status: "New" }),
-        base44.entities.ContactInquiry.count({ status: { $in: ["New", "Contacted", "In Progress"] } }),
-        base44.entities.Project.list("-updated_date", 4),
-        base44.entities.Service.list("-updated_date", 4),
-        base44.entities.BlogPost.list("-updated_date", 4),
-        base44.entities.ContactInquiry.list("-created_date", 4),
-        base44.entities.ContactInquiry.list("-created_date", 300),
-        base44.entities.BlogPost.list("-created_date", 200),
-        base44.entities.Project.aggregate({ query: {}, groupBy: "category" }),
-        base44.entities.ActivityLog.list("-created_date", 6),
-      ]);
+    async function loadDashboard() {
+      // 1. Direct dynamic fetch from backend /dashboard/summary
+      try {
+        const summary = await base44.http.get("/dashboard/summary");
+        if (!active) return;
+        if (summary) {
+          setData({
+            pages: summary.pages ?? 0,
+            servicesPublished: summary.servicesPublished ?? 0,
+            servicesDraft: summary.servicesDraft ?? 0,
+            projects: summary.projects ?? 0,
+            team: summary.team ?? 0,
+            blogPublished: summary.blogPublished ?? 0,
+            blogDraft: summary.blogDraft ?? 0,
+            inquiriesNew: summary.inquiriesNew ?? 0,
+            inquiriesPending: summary.inquiriesPending ?? 0,
+            recentProjects: summary.recentProjects || [],
+            recentServices: summary.recentServices || [],
+            recentPosts: summary.recentPosts || [],
+            recentInquiries: summary.recentInquiries || [],
+            inquiryTrend: summary.inquiryTrend || [],
+            blogTrend: summary.blogTrend || [],
+            categories: summary.categories || [],
+            recentLogs: summary.recentLogs || [],
+            statusMix: summary.statusMix || [],
+          });
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.warn("[DashboardOverview] Direct /dashboard/summary failed, trying entity fallback:", err);
+      }
 
-      if (!active) return;
+      // 2. Resilient fallback to individual entity queries
+      try {
+        const [
+          pages,
+          servicesPublished,
+          servicesDraft,
+          projects,
+          team,
+          blogPublished,
+          blogDraft,
+          inquiriesNew,
+          inquiriesPending,
+          recentProjects,
+          recentServices,
+          recentPosts,
+          recentInquiries,
+          allInquiries,
+          allPosts,
+          projectAgg,
+          recentLogs,
+        ] = await Promise.all([
+          base44.entities.WebsitePage.count(),
+          base44.entities.Service.count({ published: true }),
+          base44.entities.Service.count({ published: false }),
+          base44.entities.Project.count(),
+          base44.entities.TeamMember.count(),
+          base44.entities.BlogPost.count({ published: true }),
+          base44.entities.BlogPost.count({ published: false }),
+          base44.entities.ContactInquiry.count({ status: "New" }),
+          base44.entities.ContactInquiry.count({ status: { $in: ["New", "Contacted", "In Progress"] } }),
+          base44.entities.Project.list("-updated_date", 4),
+          base44.entities.Service.list("-updated_date", 4),
+          base44.entities.BlogPost.list("-updated_date", 4),
+          base44.entities.ContactInquiry.list("-created_date", 4),
+          base44.entities.ContactInquiry.list("-created_date", 300),
+          base44.entities.BlogPost.list("-created_date", 200),
+          base44.entities.Project.aggregate({ query: {}, groupBy: "category" }),
+          base44.entities.ActivityLog.list("-created_date", 6),
+        ]);
 
-      const months = lastMonths(6);
-      const inquiryTrend = months.map((month) => ({
-        month: month.label,
-        inquiries: allInquiries.filter((row) => monthKey(row.created_date) === month.key).length,
-      }));
-      const blogTrend = months.map((month) => ({
-        month: month.label,
-        articles: allPosts.filter((row) => monthKey(row.publication_date || row.created_date) === month.key).length,
-      }));
-      const categories = (projectAgg?.rows || []).map((row) => ({
-        name: row.category || row._id || row.key || "Uncategorised",
-        value: row.count || 0,
-      }));
+        if (!active) return;
 
-      setData({
-        pages,
-        servicesPublished,
-        servicesDraft,
-        projects,
-        team,
-        blogPublished,
-        blogDraft,
-        inquiriesNew,
-        inquiriesPending,
-        recentProjects,
-        recentServices,
-        recentPosts,
-        recentInquiries,
-        inquiryTrend,
-        blogTrend,
-        categories,
-        recentLogs,
-        statusMix: ["New", "Contacted", "In Progress", "Converted", "Closed"].map((status) => ({
-          status,
-          count: allInquiries.filter((row) => (row.status || "New") === status).length,
-        })),
-      });
-      setLoading(false);
-    })();
+        const months = lastMonths(6);
+        const inquiryTrend = months.map((month) => ({
+          month: month.label,
+          inquiries: (allInquiries || []).filter((row) => monthKey(row.created_date) === month.key).length,
+        }));
+        const blogTrend = months.map((month) => ({
+          month: month.label,
+          articles: (allPosts || []).filter((row) => monthKey(row.publication_date || row.created_date) === month.key).length,
+        }));
+        const categories = (projectAgg?.rows || []).map((row) => ({
+          name: row.category || row._id || row.key || "Uncategorised",
+          value: row.count || 0,
+        }));
+
+        setData({
+          pages: pages || 0,
+          servicesPublished: servicesPublished || 0,
+          servicesDraft: servicesDraft || 0,
+          projects: projects || 0,
+          team: team || 0,
+          blogPublished: blogPublished || 0,
+          blogDraft: blogDraft || 0,
+          inquiriesNew: inquiriesNew || 0,
+          inquiriesPending: inquiriesPending || 0,
+          recentProjects: recentProjects || [],
+          recentServices: recentServices || [],
+          recentPosts: recentPosts || [],
+          recentInquiries: recentInquiries || [],
+          inquiryTrend,
+          blogTrend,
+          categories,
+          recentLogs: recentLogs || [],
+          statusMix: ["New", "Contacted", "In Progress", "Converted", "Closed"].map((status) => ({
+            status,
+            count: (allInquiries || []).filter((row) => (row.status || "New") === status).length,
+          })),
+        });
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    loadDashboard();
 
     return () => {
       active = false;
@@ -276,46 +314,65 @@ function DashboardOverview() {
         </div>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid gap-4 lg:grid-cols-2 min-w-0">
         <RecentList
           title="Recently updated projects"
-          items={data.recentProjects.map((row) => ({ id: row.id, label: row.name, meta: row.category, to: `/dashboard/projects/${row.id}` }))}
+          items={data.recentProjects.map((row) => ({
+            id: row.id,
+            label: row.name,
+            sublabel: row.location || null,
+            meta: row.category,
+            to: `/dashboard/projects/${row.id}`,
+          }))}
           emptyText="No projects yet."
         />
         <RecentList
           title="Recently updated services"
-          items={data.recentServices.map((row) => ({ id: row.id, label: row.title, meta: row.published ? "Published" : "Draft", to: `/dashboard/services/${row.id}` }))}
+          items={data.recentServices.map((row) => ({
+            id: row.id,
+            label: row.title,
+            sublabel: row.category || null,
+            meta: row.published ? "Published" : "Draft",
+            to: `/dashboard/services/${row.id}`,
+          }))}
           emptyText="No services yet."
         />
         <RecentList
           title="Latest blog posts"
-          items={data.recentPosts.map((row) => ({ id: row.id, label: row.title, meta: formatDate(row.publication_date), to: `/dashboard/blog/${row.id}` }))}
+          items={data.recentPosts.map((row) => ({
+            id: row.id,
+            label: row.title,
+            sublabel: row.category || null,
+            meta: formatDate(row.publication_date || row.created_date),
+            to: `/dashboard/blog/${row.id}`,
+          }))}
           emptyText="No articles yet."
         />
         <RecentList
           title="Latest contact inquiries"
           items={data.recentInquiries.map((row) => ({
             id: row.id,
-            label: row.full_name,
-            meta: `${row.subject || "General"} · ${formatDateTime(row.created_date)}`,
+            label: row.full_name || row.fullName || row.email || "Contact inquiry",
+            sublabel: row.subject || (row.project_type ? `${row.project_type} inquiry` : "General inquiry"),
+            meta: formatDateTime(row.created_date || row.createdAt),
             to: "/dashboard/inquiries",
           }))}
           emptyText="No inquiries yet."
         />
       </div>
 
-      <div className="gc-card mt-4 p-5">
-        <h2 className="font-heading text-base font-semibold text-primary">Recent admin activity</h2>
-        <ul className="mt-3 divide-y divide-border text-sm">
+      <div className="gc-card mt-4 min-w-0 overflow-hidden p-5">
+        <h2 className="font-heading text-base font-semibold text-primary truncate">Recent admin activity</h2>
+        <ul className="mt-3 divide-y divide-border text-sm min-w-0">
           {data.recentLogs.length === 0 && <li className="py-3 text-xs text-muted-foreground">No activity recorded yet.</li>}
           {data.recentLogs.map((log) => (
-            <li key={log.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
-              <span className="text-foreground/85">
+            <li key={log.id} className="flex items-center justify-between gap-3 py-2.5 min-w-0 overflow-hidden">
+              <span className="text-foreground/85 min-w-0 flex-1 truncate">
                 <span className="font-medium text-primary">{log.user_name || log.user_email || "Staff"}</span> {log.action}{" "}
-                {log.entity_type.toLowerCase()}
+                {log.entity_type?.toLowerCase()}
                 {log.entity_title ? ` “${log.entity_title}”` : ""}
               </span>
-              <span className="text-xs text-muted-foreground">{formatDateTime(log.created_date)}</span>
+              <span className="shrink-0 text-xs text-muted-foreground whitespace-nowrap pl-2">{formatDateTime(log.created_date)}</span>
             </li>
           ))}
         </ul>
@@ -326,17 +383,33 @@ function DashboardOverview() {
 
 function RecentList({ title, items, emptyText }) {
   return (
-    <div className="gc-card p-5">
-      <h2 className="font-heading text-base font-semibold text-primary">{title}</h2>
+    <div className="gc-card min-w-0 overflow-hidden p-5">
+      <h2 className="font-heading text-base font-semibold text-primary truncate">{title}</h2>
       {items.length === 0 ? (
         <p className="mt-3 text-xs text-muted-foreground">{emptyText}</p>
       ) : (
-        <ul className="mt-3 divide-y divide-border">
+        <ul className="mt-3 divide-y divide-border min-w-0">
           {items.map((item) => (
-            <li key={item.id}>
-              <Link to={item.to} className="flex items-center justify-between gap-3 py-2.5 text-sm hover:text-gold-dark">
-                <span className="truncate font-medium text-foreground/90">{item.label}</span>
-                <span className="shrink-0 text-xs text-muted-foreground">{item.meta}</span>
+            <li key={item.id} className="min-w-0">
+              <Link 
+                to={item.to} 
+                className="group flex items-center justify-between gap-3 py-2.5 text-sm hover:text-gold-dark min-w-0 overflow-hidden"
+              >
+                <div className="min-w-0 flex-1 overflow-hidden">
+                  <p className="truncate font-medium text-foreground/90 group-hover:text-gold-dark transition-colors">
+                    {item.label}
+                  </p>
+                  {item.sublabel && (
+                    <p className="truncate text-xs text-muted-foreground mt-0.5">
+                      {item.sublabel}
+                    </p>
+                  )}
+                </div>
+                {item.meta && (
+                  <span className="shrink-0 text-xs text-muted-foreground whitespace-nowrap pl-2">
+                    {item.meta}
+                  </span>
+                )}
               </Link>
             </li>
           ))}

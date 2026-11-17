@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Users,
@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Mail,
 } from 'lucide-react';
+import { apiClient } from '../api/client';
 
 export const TEAM_MEMBERS = [
   {
@@ -86,6 +87,28 @@ export const TEAM_MEMBERS = [
 
 export default function TeamPage({ onOpenQuote }) {
   const navigate = useNavigate();
+  const [teamList, setTeamList] = useState(TEAM_MEMBERS);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getTeam().then((members) => {
+      if (Array.isArray(members) && isMounted) {
+        const mapped = members.map((m) => ({
+          name: m.fullName || m.name,
+          role: m.designation || m.role || 'Project Lead',
+          bio: m.shortBio || m.bio || 'Contributing expertise and excellence to Griffin Construction developments.',
+          image: m.photo || m.image || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80',
+          linkedin: m.linkedin || '#',
+          instagram: m.instagram || '#',
+          email: m.email || 'contact@griffinconstruction.in',
+        }));
+        setTeamList(mapped);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleCareerClick = () => {
     navigate('/contact');
@@ -163,7 +186,7 @@ export default function TeamPage({ onOpenQuote }) {
 
           {/* 8 Team Member Cards (4 columns x 2 rows) matching reference */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-            {TEAM_MEMBERS.map((member) => (
+            {teamList.map((member) => (
               <div
                 key={member.name}
                 className="bg-[#fffdfa] rounded-2xl p-5 border border-[#e8dfd3] shadow-[0_4px_16px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_28px_rgba(216,137,24,0.12)] hover:border-[#dfceb8] transition-all duration-300 flex flex-col justify-between group"

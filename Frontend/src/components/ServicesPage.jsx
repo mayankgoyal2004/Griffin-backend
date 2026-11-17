@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { apiClient } from "../api/client";
 import {
   Home,
   Truck,
@@ -530,29 +531,384 @@ export const SERVICES_CONFIG = {
       },
     ],
   },
+  "architectural-planning": {
+    id: "architectural-planning",
+    slug: "architectural-planning-and-design",
+    title: "Architectural Planning & Design",
+    tagline:
+      "Award-winning architectural concepts, BIM 3D modeling, and structural blueprinting engineered for sustainable modern living.",
+    heroCharacter: "/services/real-estate.png",
+    badge: "Architecture & BIM",
+    badgeBg: "#c85a17",
+    icon: Building2,
+    overview: {
+      title: "Visionary Architecture & Precision Engineering",
+      description:
+        "Griffin Construction blends artistic design excellence with precision engineering. From conceptual master planning and 3D Building Information Modeling (BIM) to sustainable green building and structural drafting, we create functional, awe-inspiring environments.",
+      image:
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=900&q=80",
+      badges: [
+        { label: "BIM 3D Modeling", icon: Layers },
+        { label: "Conceptual Design", icon: Palette },
+        { label: "Structural Drafting", icon: Building2 },
+        { label: "Green Building", icon: Sparkles },
+      ],
+    },
+    offerings: [
+      {
+        title: "Conceptual Architecture",
+        desc: "Creative master planning and architectural designs balancing elegance, utility, and modern urban context.",
+        icon: Palette,
+      },
+      {
+        title: "BIM 3D Visualization",
+        desc: "End-to-end clash detection, photorealistic walkthroughs, and precise coordinate-based digital modeling.",
+        icon: Layers,
+      },
+      {
+        title: "Structural & MEP Engineering",
+        desc: "Comprehensive structural load calculations, seismic modeling, and mechanical-electrical-plumbing integration.",
+        icon: HardHat,
+      },
+      {
+        title: "Permits & Municipal Sanctions",
+        desc: "Rigorous statutory adherence ensuring seamless municipal clearances and environmental approvals.",
+        icon: FileText,
+      },
+    ],
+    process: {
+      title: "Our Architectural Design Process",
+      steps: [
+        {
+          num: "01",
+          title: "Design Discovery",
+          desc: "Site analysis, client vision scoping, and zoning regulation review.",
+          icon: Compass,
+        },
+        {
+          num: "02",
+          title: "Schematic & 3D Modeling",
+          desc: "Developing schematic designs, spatial zoning, and interactive BIM models.",
+          icon: Layers,
+        },
+        {
+          num: "03",
+          title: "Detailed Blueprinting",
+          desc: "Structural calculations, material schedules, and MEP coordination.",
+          icon: FileText,
+        },
+        {
+          num: "04",
+          title: "Permit & Execution Support",
+          desc: "Securing statutory sanctions and ongoing site construction review.",
+          icon: CheckCircle2,
+        },
+      ],
+    },
+    advantage: {
+      description:
+        "End-to-end architectural mastery bridging conceptual elegance with constructible precision.",
+      points: [
+        "Certified architects and licensed structural engineers",
+        "Advanced BIM 3D modeling and clash-detection pipelines",
+        "Sustainable LEED-aligned green building principles",
+        "Seamless coordination between design blueprints and on-site crews",
+        "Statutory compliance and swift regulatory clearance",
+      ],
+      image:
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=900&q=80",
+    },
+    relatedProjects: [
+      {
+        title: "Griffin Business Park",
+        location: "Chandigarh, Punjab",
+        image:
+          "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Maple Villas",
+        location: "Mohali, Punjab",
+        image:
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Greenview Residences",
+        location: "Mohali, Punjab",
+        image:
+          "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+      },
+    ],
+    faqs: [
+      {
+        q: "What architectural software and workflows do you use?",
+        a: "We employ industry-leading Autodesk Revit, AutoCAD, BIM 360, and Lumion for photorealistic 3D visualization and error-free clash detection.",
+      },
+      {
+        q: "Do you incorporate green building and energy efficiency?",
+        a: "Yes, our designs emphasize passive solar orientation, rainwater harvesting, energy-efficient building envelopes, and LEED / GRIHA certification readiness.",
+      },
+      {
+        q: "How do you coordinate with on-site construction teams?",
+        a: "Our architects and engineers conduct regular site visits, issue real-time technical clarifications, and provide detailed GFC (Good for Construction) drawings.",
+      },
+      {
+        q: "Can you customize designs based on specific budgets and timelines?",
+        a: "Yes, during our initial discovery and value engineering phase, we tailor spatial allocations and material specifications to match your exact commercial targets.",
+      },
+    ],
+  },
+  "infrastructure": {
+    id: "infrastructure",
+    slug: "infrastructure-and-civil-works",
+    title: "Infrastructure & Civil Works",
+    tagline:
+      "Bridges, arterial roadways, grade-separated flyovers, and resilient urban civic infrastructure built to endure.",
+    heroCharacter: "/services/inspections.png",
+    badge: "Heavy Civil & Infrastructure",
+    badgeBg: "#004d4d",
+    icon: HardHat,
+    overview: {
+      title: "Engineering Foundations for Future Generations",
+      description:
+        "Griffin Construction executes heavy civil works and critical municipal infrastructure. From high-capacity urban flyovers and arterial highways to stormwater systems and industrial grading, our civil engineering teams bring proven technical mastery and rigorous safety protocols.",
+      image:
+        "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=900&q=80",
+      badges: [
+        { label: "Roads & Highways", icon: MapPin },
+        { label: "Bridges & Flyovers", icon: Building2 },
+        { label: "Civic Stormwater", icon: Layers },
+        { label: "Earthworks & Grading", icon: Wrench },
+      ],
+    },
+    offerings: [
+      {
+        title: "Highways & Arterial Roads",
+        desc: "Heavy-duty asphalt and concrete roadway engineering designed for high traffic volumes and long service life.",
+        icon: MapPin,
+      },
+      {
+        title: "Bridges & Overpasses",
+        desc: "Reinforced and prestressed concrete bridges, grade-separated flyovers, and elevated transit corridors.",
+        icon: Building2,
+      },
+      {
+        title: "Utility & Drainage Networks",
+        desc: "Deep stormwater management, municipal sewage conduits, and protected underground service tunnels.",
+        icon: Layers,
+      },
+      {
+        title: "Site Grading & Bulk Earthworks",
+        desc: "Precision cut-and-fill operations, ground stabilization, retaining wall construction, and geotechnical reinforcement.",
+        icon: HardHat,
+      },
+    ],
+    process: {
+      title: "Our Civil Works Execution Methodology",
+      steps: [
+        {
+          num: "01",
+          title: "Geotechnical Survey",
+          desc: "Subsurface soil testing, environmental impact analysis, and hydrological surveys.",
+          icon: Compass,
+        },
+        {
+          num: "02",
+          title: "Structural Engineering",
+          desc: "High-load civil structural design, traffic flow planning, and material selection.",
+          icon: FileText,
+        },
+        {
+          num: "03",
+          title: "Heavy Construction",
+          desc: "Precision earthworks, foundation piling, reinforcement, and concrete pouring.",
+          icon: HardHat,
+        },
+        {
+          num: "04",
+          title: "Testing & Commissioning",
+          desc: "Non-destructive load testing, compaction verification, and municipal handover.",
+          icon: CheckCircle2,
+        },
+      ],
+    },
+    advantage: {
+      description:
+        "Heavy machinery capability, geotechnical precision, and zero-compromise safety standards.",
+      points: [
+        "In-house fleet of heavy civil machinery and automated grading equipment",
+        "Certified civil engineers specializing in high-load structural execution",
+        "Strict adherence to IRC, MoRTH, and international safety codes",
+        "24/7 telematics and on-site quality control laboratories",
+        "On-time delivery on mission-critical public and private projects",
+      ],
+      image:
+        "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=900&q=80",
+    },
+    relatedProjects: [
+      {
+        title: "Mohali Flyover Project",
+        location: "Mohali, Punjab",
+        image:
+          "https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Zirakpur Bypass Arterial",
+        location: "Zirakpur, Punjab",
+        image:
+          "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Industrial Park Infrastructure",
+        location: "Chandigarh, Punjab",
+        image:
+          "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80",
+      },
+    ],
+    faqs: [
+      {
+        q: "What standards and regulations govern your civil works?",
+        a: "All our infrastructure works strictly comply with MoRTH (Ministry of Road Transport and Highways), IRC specifications, and BIS standards.",
+      },
+      {
+        q: "How do you manage traffic and environmental disruption during construction?",
+        a: "We implement comprehensive Traffic Management Plans (TMP), temporary diversions, acoustic dust barriers, and misting machines to minimize public impact.",
+      },
+      {
+        q: "Do you own your heavy machinery and civil equipment?",
+        a: "Yes, we operate an extensive fleet of hydraulic excavators, vibratory soil compactors, sensor pavers, mobile batching plants, and transit mixers.",
+      },
+      {
+        q: "What quality assurance tests are carried out on site?",
+        a: "We operate on-site testing labs performing core compression testing, slump testing, aggregate gradation, California Bearing Ratio (CBR) tests, and ultrasonic integrity tests.",
+      },
+    ],
+  },
 };
+
+// Aliases for seamless URL slug compatibility
+SERVICES_CONFIG["real-estate-development"] = SERVICES_CONFIG["real-estate"];
+SERVICES_CONFIG["transport-and-logistics"] = SERVICES_CONFIG["transport"];
+SERVICES_CONFIG["transport-logistics"] = SERVICES_CONFIG["transport"];
+SERVICES_CONFIG["architectural-planning-and-design"] = SERVICES_CONFIG["architectural-planning"];
+SERVICES_CONFIG["architectural-planning"] = SERVICES_CONFIG["architectural-planning"];
+SERVICES_CONFIG["architecture"] = SERVICES_CONFIG["architectural-planning"];
+SERVICES_CONFIG["infrastructure-and-civil-works"] = SERVICES_CONFIG["infrastructure"];
+SERVICES_CONFIG["infrastructure"] = SERVICES_CONFIG["infrastructure"];
+SERVICES_CONFIG["site-inspections"] = SERVICES_CONFIG["inspections"];
+SERVICES_CONFIG["websites-digital"] = SERVICES_CONFIG["websites"];
+
+export const SERVICE_TABS = [
+  {
+    key: "real-estate",
+    slug: "real-estate-development",
+    label: "Real Estate Development",
+    icon: Home,
+  },
+  {
+    key: "transport",
+    slug: "transport-and-logistics",
+    label: "Transport & Logistics",
+    icon: Truck,
+  },
+  {
+    key: "architectural-planning",
+    slug: "architectural-planning-and-design",
+    label: "Architectural Planning & Design",
+    icon: Building2,
+  },
+  {
+    key: "infrastructure",
+    slug: "infrastructure-and-civil-works",
+    label: "Infrastructure & Civil Works",
+    icon: HardHat,
+  },
+  {
+    key: "inspections",
+    slug: "site-inspections",
+    label: "Site Inspections",
+    icon: Wrench,
+  },
+  {
+    key: "websites",
+    slug: "websites-digital",
+    label: "Websites & Digital",
+    icon: Globe,
+  },
+];
 
 export default function ServicesPage({ onOpenQuote }) {
   const { slug } = useParams();
   const navigate = useNavigate();
-
-  // Normalized service resolution: default to 'real-estate' if slug is unknown or root /services
-  const activeServiceKey =
-    slug === "transport-logistics"
-      ? "transport"
-      : slug === "site-inspections"
-        ? "inspections"
-        : slug === "websites-digital"
-          ? "websites"
-          : slug === "real-estate-development"
-            ? "real-estate"
-            : SERVICES_CONFIG[slug]
-              ? slug
-              : "real-estate";
-
-  const service =
-    SERVICES_CONFIG[activeServiceKey] || SERVICES_CONFIG["real-estate"];
+  const [dbServices, setDbServices] = useState([]);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getServices().then((items) => {
+      if (Array.isArray(items) && isMounted) {
+        setDbServices(items);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
+
+  // Normalized service resolution
+  const resolveKey = (rawSlug) => {
+    if (!rawSlug) return "real-estate";
+    const s = String(rawSlug).toLowerCase().trim();
+    if (s === "real-estate" || s === "real-estate-development") return "real-estate";
+    if (s === "transport" || s === "transport-logistics" || s === "transport-and-logistics") return "transport";
+    if (
+      s === "architectural-planning-and-design" ||
+      s === "architectural-planning" ||
+      s === "architecture" ||
+      s === "architectural-design"
+    ) return "architectural-planning";
+    if (
+      s === "infrastructure-and-civil-works" ||
+      s === "infrastructure" ||
+      s === "civil-works" ||
+      s === "infrastructure-civil-works"
+    ) return "infrastructure";
+    if (s === "site-inspections" || s === "inspections") return "inspections";
+    if (s === "websites-digital" || s === "websites" || s === "web-digital") return "websites";
+
+    if (SERVICES_CONFIG[s]) return s;
+    return "real-estate";
+  };
+
+  const activeServiceKey = resolveKey(slug);
+  const baseConfig = SERVICES_CONFIG[activeServiceKey] || SERVICES_CONFIG["real-estate"];
+
+  // Match live DB record if available
+  const dbMatch = dbServices.find((s) => {
+    const sSlug = (s.slug || "").toLowerCase();
+    return (
+      sSlug === slug ||
+      sSlug === activeServiceKey ||
+      (activeServiceKey === "real-estate" && sSlug.includes("real-estate")) ||
+      (activeServiceKey === "transport" && sSlug.includes("transport")) ||
+      (activeServiceKey === "architectural-planning" && (sSlug.includes("architect") || sSlug.includes("design"))) ||
+      (activeServiceKey === "infrastructure" && (sSlug.includes("infra") || sSlug.includes("civil")))
+    );
+  });
+
+  const service = {
+    ...baseConfig,
+    title: dbMatch?.title || baseConfig.title,
+    tagline: dbMatch?.shortDescription || baseConfig.tagline,
+    overview: {
+      ...baseConfig.overview,
+      description: dbMatch?.fullDescription || baseConfig.overview.description,
+      image: dbMatch?.overviewImage || dbMatch?.heroImage || dbMatch?.cardImage || baseConfig.overview.image,
+    },
+  };
 
   const handleContactClick = () => {
     navigate("/contact");

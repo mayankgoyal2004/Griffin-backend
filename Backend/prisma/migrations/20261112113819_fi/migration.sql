@@ -77,7 +77,7 @@ CREATE TABLE "blog_posts" (
     "slug" TEXT NOT NULL,
     "excerpt" TEXT,
     "content" TEXT NOT NULL,
-    "author" TEXT NOT NULL DEFAULT 'Mayank Goyal',
+    "author" TEXT NOT NULL DEFAULT 'Admin',
     "category" TEXT NOT NULL DEFAULT 'Industry Insights',
     "tags" JSONB DEFAULT '[]',
     "featuredImage" TEXT,

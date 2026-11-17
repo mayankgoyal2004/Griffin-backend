@@ -9,6 +9,7 @@ const router = Router();
 
 router.get("/", getSiteSettings);
 router.put("/", authenticate, authorizeRoles("ADMIN"), updateSiteSettings);
+router.put("/:id", authenticate, authorizeRoles("ADMIN"), updateSiteSettings);
 
 export default router;
 

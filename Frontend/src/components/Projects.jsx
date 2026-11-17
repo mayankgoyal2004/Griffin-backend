@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { projectsData } from '../data/websiteData';
+import { apiClient } from '../api/client';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -8,8 +9,36 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Projects({ onSelectProject }) {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [projectsList, setProjectsList] = useState(projectsData);
   const sectionRef = useRef(null);
   const gridRef = useRef(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getProjects().then((items) => {
+      if (Array.isArray(items) && isMounted) {
+        const mapped = items.map((p) => ({
+          id: p.id || p.slug,
+          title: p.title || p.name,
+          category: (p.category || 'residential').toLowerCase(),
+          location: p.location || `${p.category || 'Project'} · Mohali`,
+          image:
+            p.coverImage ||
+            p.cover_image ||
+            p.image ||
+            'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=85',
+          description: p.description || p.shortDescription || '',
+          area: p.area || 'Custom Scale',
+          timeline: p.timeline || 'Handed Over',
+          specs: p.specifications || [],
+        }));
+        setProjectsList(mapped);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filters = [
     { label: 'All Projects', value: 'all' },
@@ -21,8 +50,8 @@ export default function Projects({ onSelectProject }) {
 
   const filteredProjects =
     activeFilter === 'all'
-      ? projectsData
-      : projectsData.filter((item) => item.category === activeFilter);
+      ? projectsList
+      : projectsList.filter((item) => item.category === activeFilter);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -47,7 +76,7 @@ export default function Projects({ onSelectProject }) {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [activeFilter]);
+  }, [activeFilter, projectsList]);
 
   return (
     <section ref={sectionRef} id="projects" className="py-20 sm:py-24 bg-[#f7f4ee] relative overflow-hidden">

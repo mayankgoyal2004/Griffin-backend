@@ -16,13 +16,13 @@ function DashboardLayout() {
   const isAdmin = user?.role === "admin";
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-cream">
+    <div className="min-h-screen overflow-x-hidden bg-cream">
       <Sidebar open={open} onClose={() => setOpen(false)} isAdmin={isAdmin} />
-      <div className="lg:pl-64">
+      <div className="flex min-h-screen min-w-0 flex-col lg:pl-64">
         <Topbar onMenu={() => setOpen(true)} />
-        <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <main className="mx-auto w-full max-w-[1400px] min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );

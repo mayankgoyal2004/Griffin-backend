@@ -10,6 +10,8 @@ import projectRoutes from "./project.routes.js";
 import serviceRoutes from "./service.routes.js";
 import settingsRoutes from "./settings.routes.js";
 import teamRoutes from "./team.routes.js";
+import userRoutes from "./user.routes.js";
+import { getRobots, getSitemap } from "../controllers/seo.controller.js";
 
 const apiRouter = Router();
 
@@ -24,8 +26,13 @@ apiRouter.get("/health", (req, res) => {
   });
 });
 
+// Sitemap and Robots
+apiRouter.get("/sitemap", getSitemap);
+apiRouter.get("/robots", getRobots);
+
 // Mount modules
 apiRouter.use("/auth", authRoutes);
+apiRouter.use("/users", userRoutes);
 apiRouter.use("/dashboard", dashboardRoutes);
 apiRouter.use("/projects", projectRoutes);
 apiRouter.use("/services", serviceRoutes);

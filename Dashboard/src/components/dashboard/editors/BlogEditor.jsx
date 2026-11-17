@@ -46,7 +46,15 @@ export default function BlogEditor({ postId, user }) {
     let active = true;
     base44.entities.BlogPost.get(postId)
       .then((record) => {
-        if (active) setForm({ ...BLANK, ...record });
+        if (active) {
+          const featured_image = record.featured_image ?? record.featuredImage ?? "";
+          setForm({
+            ...BLANK,
+            ...record,
+            featured_image,
+            featuredImage: featured_image,
+          });
+        }
       })
       .catch(() => {
         toast.error("That article could not be loaded.");
@@ -58,7 +66,14 @@ export default function BlogEditor({ postId, user }) {
     };
   }, [postId, navigate]);
 
-  const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+  const set = (key, value) => {
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === "featured_image") next.featuredImage = value;
+      if (key === "featuredImage") next.featured_image = value;
+      return next;
+    });
+  };
 
   const save = async (publishValue) => {
     if (!form.title.trim()) {
@@ -66,18 +81,21 @@ export default function BlogEditor({ postId, user }) {
       return;
     }
     const finalSlug = slugify(form.slug || form.title);
-    const duplicates = await base44.entities.BlogPost.filter({ slug: finalSlug }, { limit: 5 });
-    if (duplicates.items.some((row) => row.id !== postId)) {
+    const duplicates = await base44.entities.BlogPost.filter({ slug: finalSlug }, { limit: 50 });
+    if (duplicates.items.some((row) => row.id !== postId && row.slug === finalSlug)) {
       toast.error("That URL slug is already used by another article.");
       return;
     }
 
     setSaving(true);
     try {
+      const finalFeaturedImage = form.featured_image || form.featuredImage || "";
       const payload = {
         ...form,
         slug: finalSlug,
         title: form.title.trim(),
+        featured_image: finalFeaturedImage,
+        featuredImage: finalFeaturedImage,
         reading_time: form.reading_time || readingTime(form.content),
         published: publishValue === undefined ? !!form.published : publishValue,
       };

@@ -24,20 +24,46 @@ function parseMediaData(body) {
 }
 
 export const getMediaAssets = asyncHandler(async (req, res) => {
-  const { folder, search } = req.query;
+  const { folder, search, type, file_type, fileType, page = 1, limit = 50 } = req.query;
 
   const where = {};
   if (folder && folder !== "all") where.folder = folder;
+  const fType = type || file_type || fileType;
+  if (fType && fType !== "all") where.fileType = fType;
   if (search) {
     where.name = { contains: search, mode: "insensitive" };
   }
 
-  const assets = await prisma.mediaAsset.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-  });
+  const take = parseInt(limit, 10);
+  const skip = (parseInt(page, 10) - 1) * take;
 
-  return res.status(200).json(new ApiResponse(200, assets.map(normalizeMediaAsset), "Media assets fetched."));
+  const [total, assets] = await Promise.all([
+    prisma.mediaAsset.count({ where }),
+    prisma.mediaAsset.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip,
+      take,
+    }),
+  ]);
+
+  const items = assets.map(normalizeMediaAsset);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        items,
+        pagination: {
+          total,
+          page: parseInt(page, 10),
+          limit: take,
+          totalPages: Math.ceil(total / take),
+        },
+      },
+      "Media assets fetched."
+    )
+  );
 });
 
 export const createMediaAsset = asyncHandler(async (req, res) => {

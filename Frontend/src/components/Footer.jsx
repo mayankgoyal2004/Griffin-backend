@@ -8,11 +8,33 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { companyInfo } from '../data/websiteData';
+import { apiClient } from '../api/client';
 
 export default function Footer() {
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [footerInfo, setFooterInfo] = useState({
+    address: companyInfo.address,
+    phone: companyInfo.phone,
+    email: companyInfo.email,
+  });
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getSettings().then((settings) => {
+      if (settings && isMounted) {
+        setFooterInfo({
+          address: settings.address || companyInfo.address,
+          phone: settings.phone || companyInfo.phone,
+          email: settings.email || companyInfo.email,
+        });
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -220,23 +242,23 @@ export default function Footer() {
               {[
                 {
                   label: 'Real Estate Development',
-                  path: '/services/real-estate',
-                  isActive: location.pathname === '/services/real-estate',
+                  path: '/services/real-estate-development',
+                  isActive: location.pathname.includes('real-estate'),
                 },
                 {
                   label: 'Transport & Logistics',
-                  path: '/services/transport',
-                  isActive: location.pathname === '/services/transport',
+                  path: '/services/transport-and-logistics',
+                  isActive: location.pathname.includes('transport'),
                 },
                 {
-                  label: 'Site Inspections',
-                  path: '/services/inspections',
-                  isActive: location.pathname === '/services/inspections',
+                  label: 'Architectural Planning & Design',
+                  path: '/services/architectural-planning-and-design',
+                  isActive: location.pathname.includes('architectural'),
                 },
                 {
-                  label: 'Websites & Digital',
-                  path: '/services/websites',
-                  isActive: location.pathname === '/services/websites',
+                  label: 'Infrastructure & Civil Works',
+                  path: '/services/infrastructure-and-civil-works',
+                  isActive: location.pathname.includes('infrastructure'),
                 },
               ].map((item) => (
                 <li key={item.path}>
@@ -265,18 +287,18 @@ export default function Footer() {
             <ul className="space-y-3 text-xs text-[#c1cfdb]">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-3.5 h-3.5 text-[#f2ae38] shrink-0 mt-0.5" />
-                <span>{companyInfo.address}</span>
+                <span>{footerInfo.address}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-3.5 h-3.5 text-[#f2ae38] shrink-0" />
-                <a href={`tel:${companyInfo.phone}`} className="hover:text-white transition-colors">
-                  {companyInfo.phone}
+                <a href={`tel:${footerInfo.phone.replace(/[^0-9+]/g, '')}`} className="hover:text-white transition-colors">
+                  {footerInfo.phone}
                 </a>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-3.5 h-3.5 text-[#f2ae38] shrink-0" />
-                <a href={`mailto:${companyInfo.email}`} className="hover:text-white transition-colors">
-                  {companyInfo.email}
+                <a href={`mailto:${footerInfo.email}`} className="hover:text-white transition-colors">
+                  {footerInfo.email}
                 </a>
               </li>
             </ul>
