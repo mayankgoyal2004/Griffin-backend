@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- Deep Royal Navy Gradient -->
+    <linearGradient id="navyBg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#162e49"/>
+      <stop offset="100%" stop-color="#0b1725"/>
+    </linearGradient>
+
+    <!-- Warm Gold Gradient for Emblem -->
+    <linearGradient id="goldEmblem" x1="8" y1="12" x2="56" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffe699"/>
+      <stop offset="35%" stop-color="#f5b338"/>
+      <stop offset="85%" stop-color="#d68310"/>
+      <stop offset="100%" stop-color="#b26304"/>
+    </linearGradient>
+
+    <!-- Subtle Gold Border Gradient -->
+    <linearGradient id="goldBorder" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f5b338" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#d68310" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#f5b338" stop-opacity="0.5"/>
+    </linearGradient>
+
+    <!-- Drop Shadow for dimension -->
+    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect width="64" height="64" rx="16" fill="url(#navyBg)"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="14.5" stroke="url(#goldBorder)" stroke-width="1.5"/>
+
+  <!-- Iconic Griffin Wing Emblem -->
+  <g filter="url(#badgeShadow)">
+    <path d="M9 41.5c7.5-2.8 12.2-9.4 13.1-17.9 3.8 4.7 4.7 9.4 3.8 14.1 7.5-4.7 11.3-13.2 10.3-23.5 7.5 6.6 10.3 16 7.5 25.4 4.7-2.8 7.5-7.5 8.5-13.2 6.6 7.5 6.6 18.8.9 26.3-6.6 8.5-20.7 10.3-32 4.7L9 41.5zm21.6-4.7c-2.8 7.5-8.5 10.3-15 11.3 7.5 5.6 18.8 6.6 27.2.9-4.7-1.9-8.5-5.6-12.2-12.2z" fill="url(#goldEmblem)"/>
+  </g>
+</svg>

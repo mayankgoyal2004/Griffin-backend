@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { logActivity } from "@/lib/activity";
 import { SITE_DEFAULTS } from "@/lib/defaultContent";
+import { invalidateSiteSettings } from "@/lib/useSiteSettings";
 import { Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 
@@ -124,6 +125,7 @@ function SettingsPage() {
       if (form.id) await base44.entities.SiteSettings.update(form.id, payload);
       else await base44.entities.SiteSettings.create(payload);
 
+      invalidateSiteSettings(payload);
       await logActivity({ action: "updated", entity_type: "Website settings", entity_title: "Global settings", user });
       toast.success("Settings saved — the website updates immediately");
     } catch (error) {

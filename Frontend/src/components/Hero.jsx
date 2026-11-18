@@ -152,7 +152,7 @@ export default function Hero({ pageData: initialPageData, onOpenQuote }) {
     pageData?.sections?.hero?.subtitle ??
     pageData?.subtitle ??
     "Construction solutions for residential, commercial and infrastructure projects.";
-  const bgImage = pageData?.heroImage || pageData?.hero_image || "/Griffin-valiue.png";
+  const bgImage = pageData?.heroImage || pageData?.hero_image || "/regal-griffin-hero.png";
 
   return (
     <section

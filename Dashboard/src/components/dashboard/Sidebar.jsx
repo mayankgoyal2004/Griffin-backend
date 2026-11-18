@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/AuthContext";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 import { Image } from "@/components/ui/image";
 import { GRIFFIN_EMBLEM } from "@/lib/defaultContent";
 import {
@@ -62,6 +63,10 @@ const GROUPS = [
 
 export default function Sidebar({ open, onClose, isAdmin }) {
   const { logout } = useAuth();
+  const settings = useSiteSettings();
+  const companyName = settings?.company_name || settings?.companyName || "Griffin";
+  const logo = settings?.logo || settings?.footer_logo || settings?.footerLogo;
+
   return (
     <>
       {open && <div className="fixed inset-0 z-40 bg-navy/50 lg:hidden" onClick={onClose} aria-hidden="true" />}
@@ -71,11 +76,15 @@ export default function Sidebar({ open, onClose, isAdmin }) {
         }`}
       >
         <div className="flex h-16 items-center justify-between border-b border-white/10 px-5">
-          <Link to="/dashboard" className="flex items-center gap-2.5">
-            <Image src={GRIFFIN_EMBLEM} alt="" className="h-8 w-8 rounded" />
-            <span className="leading-tight">
-              <span className="block font-heading text-[15px] font-semibold">Griffin CMS</span>
-              <span className="block text-[9px] uppercase tracking-[0.2em] text-white/45">Construction</span>
+          <Link to="/dashboard" className="flex items-center gap-2.5 min-w-0">
+            {logo ? (
+              <img src={logo} alt={companyName} className="h-8 max-h-8 w-auto max-w-[130px] object-contain rounded" />
+            ) : (
+              <Image src={settings?.favicon || GRIFFIN_EMBLEM} alt="" className="h-8 w-8 rounded shrink-0 object-contain" />
+            )}
+            <span className="leading-tight truncate">
+              <span className="block font-heading text-[14px] font-semibold truncate">{companyName}</span>
+              <span className="block text-[9px] uppercase tracking-[0.2em] text-white/45">CMS Dashboard</span>
             </span>
           </Link>
           <button type="button" onClick={onClose} className="text-white/60 hover:text-white lg:hidden" aria-label="Close menu">

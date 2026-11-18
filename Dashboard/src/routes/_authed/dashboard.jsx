@@ -3,6 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Topbar from "@/components/dashboard/Topbar";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 import { Route as AuthedRoute } from "@/routes/_authed";
 
 export const Route = createFileRoute("/_authed/dashboard")({
@@ -14,6 +15,15 @@ function DashboardLayout() {
   const [open, setOpen] = useState(false);
   const { user } = AuthedRoute.useRouteContext();
   const isAdmin = user?.role === "admin";
+  const settings = useSiteSettings();
+
+  const companyName = settings?.company_name || settings?.companyName || "Griffin Construction";
+  const currentYear = new Date().getFullYear();
+  const copyrightText = settings?.copyright_text || settings?.copyrightText
+    ? (settings.copyright_text || settings.copyrightText).replace("{year}", currentYear)
+    : `© ${currentYear} ${companyName}. All rights reserved.`;
+  const privacyLink = settings?.privacy_link || settings?.privacyLink || "http://localhost:5173/privacy-policy";
+  const termsLink = settings?.terms_link || settings?.termsLink || "http://localhost:5173/terms-and-conditions";
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-cream">
@@ -23,6 +33,20 @@ function DashboardLayout() {
         <main className="mx-auto w-full max-w-[1400px] min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <Outlet />
         </main>
+        <footer className="mt-auto border-t border-border bg-white/70 px-4 py-4 sm:px-6 lg:px-8 text-xs text-muted-foreground">
+          <div className="mx-auto flex max-w-[1400px] flex-col sm:flex-row items-center justify-between gap-2">
+            <p>{copyrightText}</p>
+            <div className="flex items-center gap-3 font-medium">
+              <a href={privacyLink} target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
+                Privacy Policy
+              </a>
+              <span className="text-border">|</span>
+              <a href={termsLink} target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
+                Terms &amp; Conditions
+              </a>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );

@@ -15,10 +15,21 @@ import {
 } from "lucide-react";
 import { loginWithMfa } from "@/lib/authMfa";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 
 export function LoginPage() {
   const returnTo = safeReturnTo();
   const navigate = useNavigate();
+  const settings = useSiteSettings();
+
+  const companyName = settings?.company_name || settings?.companyName || "Griffin Construction";
+  const logo = settings?.logo || settings?.footer_logo || settings?.footerLogo;
+  const currentYear = new Date().getFullYear();
+  const copyrightText = settings?.copyright_text || settings?.copyrightText
+    ? (settings.copyright_text || settings.copyrightText).replace("{year}", currentYear)
+    : `© ${currentYear} ${companyName}. All rights reserved.`;
+  const privacyLink = settings?.privacy_link || settings?.privacyLink || "http://localhost:5173/privacy-policy";
+  const termsLink = settings?.terms_link || settings?.termsLink || "http://localhost:5173/terms-and-conditions";
 
   const [email, setEmail] = useState("admin@gmail.com");
   const [password, setPassword] = useState("••••••••••••");
@@ -84,39 +95,48 @@ export function LoginPage() {
 
         {/* --- Top Brand Logo Header --- */}
         <div className="relative z-20 flex items-center gap-3">
-          {/* Golden Griffin Mythical Beast Emblem Icon */}
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400/20 to-amber-600/10 border border-amber-500/30 p-2 flex items-center justify-center backdrop-blur-md shadow-md shadow-amber-950/30">
-            <svg
-              viewBox="0 0 64 64"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-full text-[#E5A83B] filter drop-shadow"
-            >
-              <path
-                d="M12 44C16 38 24 38 28 34C32 30 31 22 28 17C26 13 21 11 16 13C12 15 10 19 12 24C13 27 16 28 19 28C22 28 24 26 23 23M28 34C34 34 38 38 42 42C46 46 52 46 56 42M28 17C35 15 44 19 46 26C48 33 46 41 42 46M23 23C27 20 32 20 36 23C40 26 42 30 42 35"
-                stroke="currentColor"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M48 18L56 14L52 22"
-                stroke="currentColor"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
+          {logo ? (
+            <img
+              src={logo}
+              alt={companyName}
+              className="h-10 w-auto max-w-[190px] object-contain drop-shadow"
+            />
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400/20 to-amber-600/10 border border-amber-500/30 p-2 flex items-center justify-center backdrop-blur-md shadow-md shadow-amber-950/30">
+                <svg
+                  viewBox="0 0 64 64"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-full h-full text-[#E5A83B] filter drop-shadow"
+                >
+                  <path
+                    d="M12 44C16 38 24 38 28 34C32 30 31 22 28 17C26 13 21 11 16 13C12 15 10 19 12 24C13 27 16 28 19 28C22 28 24 26 23 23M28 34C34 34 38 38 42 42C46 46 52 46 56 42M28 17C35 15 44 19 46 26C48 33 46 41 42 46M23 23C27 20 32 20 36 23C40 26 42 30 42 35"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M48 18L56 14L52 22"
+                    stroke="currentColor"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
 
-          <div className="flex flex-col">
-            <span className="text-white font-serif font-bold text-lg tracking-[0.16em] leading-none drop-shadow-sm">
-              GRIFFIN
-            </span>
-            <span className="text-[#E5A83B] text-[9px] font-bold tracking-[0.28em] uppercase mt-1 leading-none drop-shadow">
-              CONSTRUCTION
-            </span>
-          </div>
+              <div className="flex flex-col">
+                <span className="text-white font-serif font-bold text-lg tracking-[0.16em] leading-none drop-shadow-sm uppercase">
+                  {companyName.split(" ")[0] || "GRIFFIN"}
+                </span>
+                <span className="text-[#E5A83B] text-[9px] font-bold tracking-[0.28em] uppercase mt-1 leading-none drop-shadow">
+                  {companyName.split(" ").slice(1).join(" ") || "CONSTRUCTION"}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* --- Hero Main Message & Value Pillars --- */}
@@ -128,10 +148,8 @@ export function LoginPage() {
           <h1 className="text-3xl sm:text-4xl xl:text-5xl font-serif font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
             Welcome to <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3C469] via-[#E5A83B] to-[#D49020] italic font-semibold">
-              Griffin
-            </span>{" "}
-            <br />
-            Construction
+              {companyName}
+            </span>
           </h1>
 
           {/* Paragraph */}
@@ -366,16 +384,26 @@ export function LoginPage() {
         {/* --- Footer Links & Copyright --- */}
         <div className="text-center pt-3 xl:pt-4 text-xs text-[#334155] space-y-1 z-10">
           <div className="flex items-center justify-center gap-3 font-medium">
-            <span className="hover:text-slate-900 transition-colors cursor-pointer">
+            <a
+              href={privacyLink}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-slate-900 transition-colors cursor-pointer"
+            >
               Privacy Policy
-            </span>
+            </a>
             <span className="text-slate-300">|</span>
-            <span className="hover:text-slate-900 transition-colors cursor-pointer">
+            <a
+              href={termsLink}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-slate-900 transition-colors cursor-pointer"
+            >
               Terms &amp; Conditions
-            </span>
+            </a>
           </div>
           <p className="text-[#475569] text-[11px]">
-            &copy; 2026 Griffin Construction. All rights reserved.
+            {copyrightText}
           </p>
         </div>
       </div>

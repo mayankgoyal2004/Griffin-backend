@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/AuthContext";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +17,10 @@ const ROLE_LABEL = { admin: "Administrator", user: "Editor", editor: "Editor" };
 
 export default function Topbar({ onMenu }) {
   const { user, logout } = useAuth();
+  const settings = useSiteSettings();
   const navigate = useNavigate();
+  const companyName = settings?.company_name || settings?.companyName || "Griffin";
+  const websiteUrl = settings?.website_url || settings?.websiteUrl || "http://localhost:5173";
   const displayName = user?.fullName || user?.full_name || user?.email || "Griffin Admin";
   const initials = displayName.slice(0, 2).toUpperCase();
   const roleName = ROLE_LABEL[user?.role?.toLowerCase()] || user?.role || "Administrator";
@@ -38,14 +42,14 @@ export default function Topbar({ onMenu }) {
           <Menu className="h-5 w-5" />
         </button>
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Griffin CMS</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{companyName} CMS</p>
           <p className="text-sm font-medium text-primary">Content management dashboard</p>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
         <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
-          <a href="http://localhost:5173" target="_blank" rel="noreferrer">
+          <a href={websiteUrl} target="_blank" rel="noreferrer">
             <ExternalLink className="mr-2 h-4 w-4" /> View website
           </a>
         </Button>
