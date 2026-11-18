@@ -31,15 +31,27 @@ import ServiceDetailModal from './components/ServiceDetailModal';
 gsap.registerPlugin(ScrollTrigger);
 
 function HomePage({ handleOpenQuote, setSelectedService, setSelectedProject, showProjects = true }) {
+  const [pageData, setPageData] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.getPage('home').then((data) => {
+      if (data && isMounted) setPageData(data);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <>
-      <Hero onOpenQuote={handleOpenQuote} />
-      <Services onSelectService={(srv) => setSelectedService(srv)} />
-      <About onOpenQuote={handleOpenQuote} />
-      {showProjects && <Projects onSelectProject={(prj) => setSelectedProject(prj)} />}
-      <Team onOpenQuote={handleOpenQuote} />
-      <Advantage />
-      <ContactBanner />
+      <Hero pageData={pageData} onOpenQuote={handleOpenQuote} />
+      <Services pageData={pageData} onSelectService={(srv) => setSelectedService(srv)} />
+      <About pageData={pageData} onOpenQuote={handleOpenQuote} />
+      {showProjects && <Projects pageData={pageData} onSelectProject={(prj) => setSelectedProject(prj)} />}
+      <Team pageData={pageData} onOpenQuote={handleOpenQuote} />
+      <Advantage pageData={pageData} />
+      <ContactBanner pageData={pageData} />
     </>
   );
 }
@@ -70,6 +82,15 @@ export default function App() {
         if (!isMounted || !settings) return;
         const visible = Boolean(settings.show_projects ?? settings.showProjects ?? false);
         setShowProjects(visible);
+        if (settings.favicon) {
+          let link = document.querySelector("link[rel~='icon']");
+          if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.head.appendChild(link);
+          }
+          link.href = settings.favicon;
+        }
       })
       .catch(() => {})
       .finally(() => {

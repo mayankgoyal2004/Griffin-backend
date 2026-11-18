@@ -76,7 +76,13 @@ export default function Header() {
   const [activeSection, setActiveSection] = useState('home');
   const cachedSettings = apiClient.getCachedSettings();
   const [sitePhone, setSitePhone] = useState(
-    cachedSettings?.phone || companyInfo.phone
+    cachedSettings?.phone_display || cachedSettings?.phone || companyInfo.phone
+  );
+  const [siteLogo, setSiteLogo] = useState(
+    cachedSettings?.logo || '/logo.png'
+  );
+  const [companyName, setCompanyName] = useState(
+    cachedSettings?.company_name || cachedSettings?.companyName || 'Griffin Construction'
   );
   const [showProjects, setShowProjects] = useState(() => {
     if (cachedSettings) {
@@ -90,8 +96,23 @@ export default function Header() {
     let isMounted = true;
     apiClient.getSettings().then((settings) => {
       if (!isMounted || !settings) return;
-      if (settings.phone) {
-        setSitePhone(settings.phone);
+      if (settings.phone_display || settings.phone) {
+        setSitePhone(settings.phone_display || settings.phone);
+      }
+      if (settings.logo) {
+        setSiteLogo(settings.logo);
+      }
+      if (settings.company_name || settings.companyName) {
+        setCompanyName(settings.company_name || settings.companyName);
+      }
+      if (settings.favicon) {
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = settings.favicon;
       }
       const visible = Boolean(settings.show_projects ?? settings.showProjects ?? false);
       setShowProjects(visible);
@@ -309,15 +330,15 @@ export default function Header() {
         )}
 
         <div className="max-w-[1280px] w-full mx-auto px-5 sm:px-8 flex items-center justify-between gap-4 relative z-10">
-          {/* Brand Logo: Gryfno Szajka 3 Griffins Logo */}
+          {/* Brand Logo */}
           <a
             href="/"
             onClick={handleLogoClick}
             className="flex items-center group shrink-0 cursor-pointer"
           >
             <img
-              src="/logo.png"
-              alt="Gryfno Szajka"
+              src={siteLogo || "/logo.png"}
+              alt={companyName}
               className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]"
             />
           </a>

@@ -18,7 +18,7 @@ import { apiClient } from '../api/client';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Services({ onSelectService }) {
+export default function Services({ pageData, onSelectService }) {
   const navigate = useNavigate();
   const [servicesList, setServicesList] = useState(servicesData);
   const sectionRef = useRef(null);
@@ -303,19 +303,25 @@ export default function Services({ onSelectService }) {
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8 relative z-10">
         {/* Section Heading */}
         <div ref={headerRef} className="text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center justify-center gap-3 text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#c57e1b] mb-2.5">
-            <span className="w-7 h-[1px] bg-[#c57e1b]" />
-            <span>WHAT WE DO</span>
-            <span className="w-7 h-[1px] bg-[#c57e1b]" />
-          </div>
+          {(pageData?.sections?.services_preview?.kicker ?? "WHAT WE DO") ? (
+            <div className="inline-flex items-center justify-center gap-3 text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#c57e1b] mb-2.5">
+              <span className="w-7 h-[1px] bg-[#c57e1b]" />
+              <span>{pageData?.sections?.services_preview?.kicker ?? "WHAT WE DO"}</span>
+              <span className="w-7 h-[1px] bg-[#c57e1b]" />
+            </div>
+          ) : null}
 
-          <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-[46px] leading-tight tracking-tight text-[#0b1a2d] mb-3">
-            Explore Our Services
-          </h2>
+          {(pageData?.sections?.services_preview?.heading ?? "Explore Our Services") ? (
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-[46px] leading-tight tracking-tight text-[#0b1a2d] mb-3 whitespace-pre-line">
+              {pageData?.sections?.services_preview?.heading ?? "Explore Our Services"}
+            </h2>
+          ) : null}
 
-          <p className="text-xs sm:text-sm text-[#64748b] leading-relaxed max-w-2xl mx-auto">
-            We connect places, people and opportunities through reliable and modern construction solutions.
-          </p>
+          {(pageData?.sections?.services_preview?.subtitle ?? "We connect places, people and opportunities through reliable and modern construction solutions.") ? (
+            <p className="text-xs sm:text-sm text-[#64748b] leading-relaxed max-w-2xl mx-auto whitespace-pre-line">
+              {pageData?.sections?.services_preview?.subtitle ?? "We connect places, people and opportunities through reliable and modern construction solutions."}
+            </p>
+          ) : null}
         </div>
 
         {/* Services Cards */}

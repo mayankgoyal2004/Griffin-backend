@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Projects({ onSelectProject }) {
+export default function Projects({ pageData, onSelectProject }) {
   const [activeFilter, setActiveFilter] = useState('all');
   const [projectsList, setProjectsList] = useState(projectsData);
   const sectionRef = useRef(null);
@@ -84,15 +84,19 @@ export default function Projects({ onSelectProject }) {
         {/* Header & Filter Row */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-[#b46e11]">
-                Our work
-              </span>
-              <span className="w-8 h-[2px] bg-[#d88918]" />
-            </div>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#142b45] tracking-tight">
-              Featured Projects
-            </h2>
+            {(pageData?.sections?.projects_preview?.kicker ?? "Our work") ? (
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-[#b46e11]">
+                  {pageData?.sections?.projects_preview?.kicker ?? "Our work"}
+                </span>
+                <span className="w-8 h-[2px] bg-[#d88918]" />
+              </div>
+            ) : null}
+            {(pageData?.sections?.projects_preview?.heading ?? "Featured Projects") ? (
+              <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#142b45] tracking-tight whitespace-pre-line">
+                {pageData?.sections?.projects_preview?.heading ?? "Featured Projects"}
+              </h2>
+            ) : null}
           </div>
 
           {/* Filter Pills */}

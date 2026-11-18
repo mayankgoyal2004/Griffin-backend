@@ -3,7 +3,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { base44 } from "@/api/base44Client";
 import Field from "@/components/dashboard/Field";
 import ImageField from "@/components/dashboard/ImageField";
-import RepeaterField from "@/components/dashboard/RepeaterField";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -27,13 +26,42 @@ function SettingsPage() {
 
   useEffect(() => {
     base44.entities.SiteSettings.list()
-      .then((rows) => setForm({ ...SITE_DEFAULTS, ...(rows[0] || {}) }))
+      .then((rows) => {
+        const record = rows[0] || {};
+        setForm({ ...SITE_DEFAULTS, ...record });
+      })
       .catch(() => setForm({ ...SITE_DEFAULTS }));
   }, []);
 
   const set = (key, value) => {
     setForm((prev) => {
       const next = { ...prev, [key]: value };
+      if (key === "company_name") next.companyName = value;
+      if (key === "companyName") next.company_name = value;
+      if (key === "company_description") next.companyDescription = value;
+      if (key === "companyDescription") next.company_description = value;
+      if (key === "footer_logo") next.footerLogo = value;
+      if (key === "footerLogo") next.footer_logo = value;
+      if (key === "maps_link") next.mapsLink = value;
+      if (key === "mapsLink") next.maps_link = value;
+      if (key === "map_embed_url") next.mapEmbedUrl = value;
+      if (key === "mapEmbedUrl") next.map_embed_url = value;
+      if (key === "working_hours") next.workingHours = value;
+      if (key === "workingHours") next.working_hours = value;
+      if (key === "website_url") next.websiteUrl = value;
+      if (key === "websiteUrl") next.website_url = value;
+      if (key === "header_cta_text") next.headerCtaText = value;
+      if (key === "headerCtaText") next.header_cta_text = value;
+      if (key === "header_cta_link") next.headerCtaLink = value;
+      if (key === "headerCtaLink") next.header_cta_link = value;
+      if (key === "footer_description") next.footerDescription = value;
+      if (key === "footerDescription") next.footer_description = value;
+      if (key === "copyright_text") next.copyrightText = value;
+      if (key === "copyrightText") next.copyright_text = value;
+      if (key === "privacy_link") next.privacyLink = value;
+      if (key === "privacyLink") next.privacy_link = value;
+      if (key === "terms_link") next.termsLink = value;
+      if (key === "termsLink") next.terms_link = value;
       if (key === "show_projects") next.showProjects = value;
       if (key === "showProjects") next.show_projects = value;
       return next;
@@ -45,18 +73,57 @@ function SettingsPage() {
     try {
       const payload = {
         ...form,
-        companyName: form.company_name || form.companyName || "",
-        company_name: form.company_name || form.companyName || "",
-        mapsLink: form.maps_link || form.mapsLink || "",
-        maps_link: form.maps_link || form.mapsLink || "",
-        mapEmbedUrl: form.map_embed_url || form.mapEmbedUrl || "",
-        map_embed_url: form.map_embed_url || form.mapEmbedUrl || "",
+        companyName: form.company_name ?? form.companyName ?? "",
+        company_name: form.company_name ?? form.companyName ?? "",
+        companyDescription: form.company_description ?? form.companyDescription ?? "",
+        company_description: form.company_description ?? form.companyDescription ?? "",
+        logo: form.logo ?? "",
+        footerLogo: form.footer_logo ?? form.footerLogo ?? "",
+        footer_logo: form.footer_logo ?? form.footerLogo ?? "",
+        favicon: form.favicon ?? "",
+        mapsLink: form.maps_link ?? form.mapsLink ?? "",
+        maps_link: form.maps_link ?? form.mapsLink ?? "",
+        mapEmbedUrl: form.map_embed_url ?? form.mapEmbedUrl ?? "",
+        map_embed_url: form.map_embed_url ?? form.mapEmbedUrl ?? "",
+        websiteUrl: form.website_url ?? form.websiteUrl ?? "",
+        website_url: form.website_url ?? form.websiteUrl ?? "",
+        workingHours: form.working_hours ?? form.workingHours ?? "",
+        working_hours: form.working_hours ?? form.workingHours ?? "",
+        phone: form.phone ?? "",
+        phoneDisplay: form.phone_display ?? form.phoneDisplay ?? form.phone ?? "",
+        phone_display: form.phone_display ?? form.phoneDisplay ?? form.phone ?? "",
+        email: form.email ?? "",
+        address: form.address ?? "",
+        headerCtaText: form.header_cta_text ?? form.headerCtaText ?? "",
+        header_cta_text: form.header_cta_text ?? form.headerCtaText ?? "",
+        headerCtaLink: form.header_cta_link ?? form.headerCtaLink ?? "",
+        header_cta_link: form.header_cta_link ?? form.headerCtaLink ?? "",
+        footerDescription: form.footer_description ?? form.footerDescription ?? "",
+        footer_description: form.footer_description ?? form.footerDescription ?? "",
+        copyrightText: form.copyright_text ?? form.copyrightText ?? "",
+        copyright_text: form.copyright_text ?? form.copyrightText ?? "",
+        privacyLink: form.privacy_link ?? form.privacyLink ?? "",
+        privacy_link: form.privacy_link ?? form.privacyLink ?? "",
+        termsLink: form.terms_link ?? form.termsLink ?? "",
+        terms_link: form.terms_link ?? form.termsLink ?? "",
+        facebook: form.facebook ?? "",
+        instagram: form.instagram ?? "",
+        linkedin: form.linkedin ?? "",
+        twitter: form.twitter ?? "",
+        youtube: form.youtube ?? "",
+        navItems: form.nav_items ?? form.navItems ?? [],
+        nav_items: form.nav_items ?? form.navItems ?? [],
+        footerQuickLinks: form.footer_quick_links ?? form.footerQuickLinks ?? [],
+        footer_quick_links: form.footer_quick_links ?? form.footerQuickLinks ?? [],
+        footerServiceLinks: form.footer_service_links ?? form.footerServiceLinks ?? [],
+        footer_service_links: form.footer_service_links ?? form.footerServiceLinks ?? [],
       };
       if (payload.show_projects !== undefined) {
         payload.showProjects = payload.show_projects;
       }
       if (form.id) await base44.entities.SiteSettings.update(form.id, payload);
       else await base44.entities.SiteSettings.create(payload);
+
       await logActivity({ action: "updated", entity_type: "Website settings", entity_title: "Global settings", user });
       toast.success("Settings saved — the website updates immediately");
     } catch (error) {
@@ -116,35 +183,36 @@ function SettingsPage() {
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Company name" value={form.company_name} onChange={(v) => set("company_name", v)} />
-              <Field label="Website URL" value={form.website_url} onChange={(v) => set("website_url", v)} placeholder="https://griffinconstruction.com" />
+              <Field label="Company name" value={form.company_name ?? ""} onChange={(v) => set("company_name", v)} placeholder="Griffin Construction" />
+              <Field label="Website URL" value={form.website_url ?? ""} onChange={(v) => set("website_url", v)} placeholder="https://griffinconstruction.in" />
             </div>
-            <Field label="Company description" type="textarea" rows={3} value={form.company_description} onChange={(v) => set("company_description", v)} />
-            <ImageField label="Company logo" value={form.logo} folder="Logo" onChange={(v) => set("logo", v)} />
-            <ImageField label="Footer logo" value={form.footer_logo} folder="Logo" onChange={(v) => set("footer_logo", v)} />
-            <ImageField label="Favicon" value={form.favicon} folder="Logo" onChange={(v) => set("favicon", v)} />
+            <Field label="Company description" type="textarea" rows={3} value={form.company_description ?? ""} onChange={(v) => set("company_description", v)} placeholder="Griffin Construction designs, builds and delivers residential..." />
+            <ImageField label="Company logo" value={form.logo ?? ""} folder="Logo" onChange={(v) => set("logo", v)} />
+            <ImageField label="Footer logo" value={form.footer_logo ?? ""} folder="Logo" onChange={(v) => set("footer_logo", v)} />
+            <ImageField label="Favicon" value={form.favicon ?? ""} folder="Logo" onChange={(v) => set("favicon", v)} />
           </div>
         </TabsContent>
 
         <TabsContent value="contact" className="mt-0">
           <div className="gc-card space-y-4 p-5">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Phone number" value={form.phone} onChange={(v) => set("phone", v)} />
-              <Field label="Email address" type="email" value={form.email} onChange={(v) => set("email", v)} />
+              <Field label="Phone number" value={form.phone ?? ""} onChange={(v) => set("phone", v)} placeholder="+91 123 456 7890" />
+              <Field label="Email address" type="email" value={form.email ?? ""} onChange={(v) => set("email", v)} placeholder="contact@griffinconstruction.in" />
             </div>
-            <Field label="Office address" type="textarea" rows={2} value={form.address} onChange={(v) => set("address", v)} />
+            <Field label="Office address" type="textarea" rows={2} value={form.address ?? ""} onChange={(v) => set("address", v)} placeholder="Mohali, Punjab, India" />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
                 label="Google Maps link"
-                value={form.maps_link}
+                value={form.maps_link ?? ""}
                 onChange={(v) => set("maps_link", v)}
+                placeholder="https://maps.app.goo.gl/..."
                 hint="Share link (e.g. https://maps.app.goo.gl/...)"
               />
-              <Field label="Working hours" value={form.working_hours} onChange={(v) => set("working_hours", v)} />
+              <Field label="Working hours" value={form.working_hours ?? ""} onChange={(v) => set("working_hours", v)} placeholder="Mon - Sat: 9:00 AM - 7:00 PM" />
             </div>
             <Field
               label="Map Embed URL or Iframe (Optional)"
-              value={form.map_embed_url}
+              value={form.map_embed_url ?? ""}
               onChange={(v) => set("map_embed_url", v)}
               placeholder="Auto-generated from Google Maps link or paste custom iframe / embed URL"
               hint="Leave blank to automatically generate from your Google Maps link."
@@ -154,57 +222,30 @@ function SettingsPage() {
 
         <TabsContent value="social" className="mt-0">
           <div className="gc-card grid gap-4 p-5 sm:grid-cols-2">
-            <Field label="Facebook URL" value={form.facebook} onChange={(v) => set("facebook", v)} />
-            <Field label="Instagram URL" value={form.instagram} onChange={(v) => set("instagram", v)} />
-            <Field label="LinkedIn URL" value={form.linkedin} onChange={(v) => set("linkedin", v)} />
-            <Field label="YouTube URL" value={form.youtube} onChange={(v) => set("youtube", v)} />
+            <Field label="Facebook URL" value={form.facebook ?? ""} onChange={(v) => set("facebook", v)} placeholder="https://facebook.com/..." />
+            <Field label="Instagram URL" value={form.instagram ?? ""} onChange={(v) => set("instagram", v)} placeholder="https://instagram.com/..." />
+            <Field label="LinkedIn URL" value={form.linkedin ?? ""} onChange={(v) => set("linkedin", v)} placeholder="https://linkedin.com/company/..." />
+            <Field label="YouTube URL" value={form.youtube ?? ""} onChange={(v) => set("youtube", v)} placeholder="https://youtube.com/@..." />
+            <Field label="X (Twitter) URL" value={form.twitter ?? ""} onChange={(v) => set("twitter", v)} placeholder="https://x.com/..." />
           </div>
         </TabsContent>
 
         <TabsContent value="header" className="mt-0">
           <div className="gc-card space-y-4 p-5">
-            <RepeaterField
-              label="Navigation items"
-              items={form.nav_items || []}
-              onChange={(v) => set("nav_items", v)}
-              addLabel="Add navigation item"
-              fields={[
-                { key: "label", label: "Label" },
-                { key: "link", label: "Link", placeholder: "/services" },
-              ]}
-            />
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Header CTA text" value={form.header_cta_text} onChange={(v) => set("header_cta_text", v)} />
-              <Field label="Header CTA link" value={form.header_cta_link} onChange={(v) => set("header_cta_link", v)} />
+              <Field label="Header CTA text" value={form.header_cta_text ?? ""} onChange={(v) => set("header_cta_text", v)} placeholder="Get a Quote" />
+              <Field label="Header CTA link" value={form.header_cta_link ?? ""} onChange={(v) => set("header_cta_link", v)} placeholder="/contact" />
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="footer" className="mt-0">
           <div className="gc-card space-y-4 p-5">
-            <Field label="Footer description" type="textarea" rows={3} value={form.footer_description} onChange={(v) => set("footer_description", v)} />
-            <RepeaterField
-              label="Quick links"
-              items={form.footer_quick_links || []}
-              onChange={(v) => set("footer_quick_links", v)}
-              fields={[
-                { key: "label", label: "Label" },
-                { key: "link", label: "Link" },
-              ]}
-            />
-            <RepeaterField
-              label="Service links"
-              items={form.footer_service_links || []}
-              onChange={(v) => set("footer_service_links", v)}
-              fields={[
-                { key: "label", label: "Label" },
-                { key: "link", label: "Link" },
-              ]}
-            />
+            <Field label="Footer description" type="textarea" rows={3} value={form.footer_description ?? ""} onChange={(v) => set("footer_description", v)} placeholder="A trusted construction and real estate company..." />
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Copyright text" value={form.copyright_text} onChange={(v) => set("copyright_text", v)} hint="Use {year} for the current year." />
-              <Field label="Privacy policy link" value={form.privacy_link} onChange={(v) => set("privacy_link", v)} placeholder="/privacy-policy" />
-              <Field label="Terms link" value={form.terms_link} onChange={(v) => set("terms_link", v)} placeholder="/terms" />
+              <Field label="Copyright text" value={form.copyright_text ?? ""} onChange={(v) => set("copyright_text", v)} placeholder="© {year} Griffin Construction. All rights reserved." hint="Use {year} for the current year." />
+              <Field label="Privacy policy link" value={form.privacy_link ?? ""} onChange={(v) => set("privacy_link", v)} placeholder="/privacy-policy" />
+              <Field label="Terms link" value={form.terms_link ?? ""} onChange={(v) => set("terms_link", v)} placeholder="/terms-and-conditions" />
             </div>
           </div>
         </TabsContent>

@@ -1,15 +1,33 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { apiClient } from '../api/client';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function About({ onOpenQuote }) {
+export default function About({ pageData: initialPageData, onOpenQuote }) {
+  const navigate = useNavigate();
   const sectionRef = useRef(null);
   const mainPhotoRef = useRef(null);
   const insetPhotoRef = useRef(null);
   const copyRef = useRef(null);
   const listRef = useRef(null);
+  const [pageData, setPageData] = useState(initialPageData);
+
+  useEffect(() => {
+    if (initialPageData) {
+      setPageData(initialPageData);
+    } else {
+      let isMounted = true;
+      apiClient.getPage('home').then((data) => {
+        if (data && isMounted) setPageData(data);
+      });
+      return () => {
+        isMounted = false;
+      };
+    }
+  }, [initialPageData]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -79,6 +97,49 @@ export default function About({ onOpenQuote }) {
     return () => ctx.revert();
   }, []);
 
+  const aboutSection = pageData?.sections?.about_preview;
+
+  const kicker = aboutSection?.kicker ?? "About Griffin";
+  const heading = aboutSection?.heading ?? "A Construction Partner Built on Strength & Trust";
+  const description =
+    aboutSection?.description ??
+    "Griffin Construction is a modern construction and real estate company committed to delivering high-quality, sustainable, and value-driven projects. We combine industry expertise, advanced technology and a commitment to excellence to build spaces that last.";
+
+  const mainImage =
+    aboutSection?.main_image ||
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=85";
+  const insetImage =
+    aboutSection?.inset_image ||
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=85";
+
+  const badge1 = aboutSection?.badge_1 ?? "Quality First";
+  const badge2 = aboutSection?.badge_2 ?? "Expert Team";
+  const badge3 = aboutSection?.badge_3 ?? "Sustainable";
+  const badge4 = aboutSection?.badge_4 ?? "On-Time Delivery";
+
+  const ctaText = aboutSection?.cta_text ?? "Learn More";
+  const ctaLink = aboutSection?.cta_link ?? "#quote";
+
+  const stat1Val = aboutSection?.stat_1_val ?? "10+";
+  const stat1Label = aboutSection?.stat_1_label ?? "Years of Experience";
+  const stat2Val = aboutSection?.stat_2_val ?? "150+";
+  const stat2Label = aboutSection?.stat_2_label ?? "Projects Completed";
+  const stat3Val = aboutSection?.stat_3_val ?? "500+";
+  const stat3Label = aboutSection?.stat_3_label ?? "Happy Clients";
+
+  const handleCtaClick = () => {
+    if (ctaLink === "#quote" || ctaLink === "#contact") {
+      if (onOpenQuote) onOpenQuote();
+    } else if (ctaLink?.startsWith('/')) {
+      navigate(ctaLink);
+      window.scrollTo(0, 0);
+    } else if (ctaLink) {
+      window.location.href = ctaLink;
+    } else if (onOpenQuote) {
+      onOpenQuote();
+    }
+  };
+
   return (
     <section ref={sectionRef} id="about" className="bg-[#eaf0f2] text-[#142b45] py-16 sm:py-20 relative overflow-hidden">
       {/* Subtle radial ambient reflection */}
@@ -103,8 +164,8 @@ export default function About({ onOpenQuote }) {
               }}
             >
               <img
-                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=85"
-                alt="Contemporary commercial construction"
+                src={mainImage}
+                alt={heading || "Contemporary commercial construction"}
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 loading="lazy"
               />
@@ -119,7 +180,7 @@ export default function About({ onOpenQuote }) {
               }}
             >
               <img
-                src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=85"
+                src={insetImage}
                 alt="Architect reviewing construction plans"
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 loading="lazy"
@@ -130,53 +191,66 @@ export default function About({ onOpenQuote }) {
           {/* Column 2: Story & Copy (.about-copy) - 5 cols */}
           <div ref={copyRef} className="lg:col-span-5 xl:col-span-5 space-y-3">
             {/* Kicker */}
-            <div className="flex items-center gap-2 text-[9px] tracking-[0.28em] font-extrabold uppercase text-[#a9660d]">
-              <span>About Griffin</span>
-              <span className="w-12 h-[1px] bg-[#d88918]" />
-            </div>
+            {kicker ? (
+              <div className="flex items-center gap-2 text-[9px] tracking-[0.28em] font-extrabold uppercase text-[#a9660d]">
+                <span>{kicker}</span>
+                <span className="w-12 h-[1px] bg-[#d88918]" />
+              </div>
+            ) : null}
 
             {/* Headline */}
-            <h2 className="font-serif font-bold text-[28px] sm:text-[34px] lg:text-[38px] leading-[1.08] tracking-[-0.03em] text-[#142b45] my-2.5">
-              A Construction Partner<br />
-              Built on Strength & <span className="text-[#d88918]">Trust</span>
+            <h2 className="font-serif font-bold text-[28px] sm:text-[34px] lg:text-[38px] leading-[1.08] tracking-[-0.03em] text-[#142b45] my-2.5 whitespace-pre-line">
+              {heading}
             </h2>
 
             {/* Paragraph */}
-            <p className="text-[11px] leading-[1.8] text-[#52677b] max-w-[440px] m-0 font-normal">
-              Griffin Construction is a modern construction and real estate company committed to delivering high-quality, sustainable, and value-driven projects. We combine industry expertise, advanced technology and a commitment to excellence to build spaces that last.
-            </p>
+            {description ? (
+              <p className="text-[11px] leading-[1.8] text-[#52677b] max-w-[440px] m-0 font-normal whitespace-pre-line">
+                {description}
+              </p>
+            ) : null}
 
             {/* 4 Feature Points */}
             <div className="flex items-center gap-3.5 sm:gap-4 my-4 flex-wrap text-[9px] font-semibold text-[#29445e]">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#bd7412] text-[10px]">✦</span>
-                <span>Quality First</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#bd7412] text-[10px]">♧</span>
-                <span>Expert Team</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#bd7412] text-[10px]">◈</span>
-                <span>Sustainable</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#bd7412] text-[10px]">⬡</span>
-                <span>On-Time Delivery</span>
-              </div>
+              {badge1 ? (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#bd7412] text-[10px]">✦</span>
+                  <span>{badge1}</span>
+                </div>
+              ) : null}
+              {badge2 ? (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#bd7412] text-[10px]">♧</span>
+                  <span>{badge2}</span>
+                </div>
+              ) : null}
+              {badge3 ? (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#bd7412] text-[10px]">◈</span>
+                  <span>{badge3}</span>
+                </div>
+              ) : null}
+              {badge4 ? (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#bd7412] text-[10px]">⬡</span>
+                  <span>{badge4}</span>
+                </div>
+              ) : null}
             </div>
 
             {/* Button */}
-            <div className="pt-1">
-              <button
-                onClick={onOpenQuote}
-                type="button"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-[5px] bg-[#f2ae38] hover:bg-[#ffc15a] text-[#182b40] font-extrabold text-xs shadow-sm hover:shadow-md transition-all cursor-pointer"
-              >
-                <span>Learn More</span>
-                <span className="text-sm font-bold">→</span>
-              </button>
-            </div>
+            {ctaText ? (
+              <div className="pt-1">
+                <button
+                  onClick={handleCtaClick}
+                  type="button"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-[5px] bg-[#f2ae38] hover:bg-[#ffc15a] text-[#182b40] font-extrabold text-xs shadow-sm hover:shadow-md transition-all cursor-pointer"
+                >
+                  <span>{ctaText}</span>
+                  <span className="text-sm font-bold">→</span>
+                </button>
+              </div>
+            ) : null}
           </div>
 
           {/* Column 3: Stats (.about-stats) - 3 cols */}
@@ -189,10 +263,10 @@ export default function About({ onOpenQuote }) {
               </svg>
               <div>
                 <strong className="block font-serif font-bold text-2xl text-[#bd7412] leading-none">
-                  10+
+                  {stat1Val}
                 </strong>
                 <span className="text-[9px] text-[#52677b] mt-0.5 block font-medium">
-                  Years of Experience
+                  {stat1Label}
                 </span>
               </div>
             </div>
@@ -205,10 +279,10 @@ export default function About({ onOpenQuote }) {
               </svg>
               <div>
                 <strong className="block font-serif font-bold text-2xl text-[#bd7412] leading-none">
-                  150+
+                  {stat2Val}
                 </strong>
                 <span className="text-[9px] text-[#52677b] mt-0.5 block font-medium">
-                  Projects Completed
+                  {stat2Label}
                 </span>
               </div>
             </div>
@@ -220,10 +294,10 @@ export default function About({ onOpenQuote }) {
               </svg>
               <div>
                 <strong className="block font-serif font-bold text-2xl text-[#bd7412] leading-none">
-                  500+
+                  {stat3Val}
                 </strong>
                 <span className="text-[9px] text-[#52677b] mt-0.5 block font-medium">
-                  Happy Clients
+                  {stat3Label}
                 </span>
               </div>
             </div>

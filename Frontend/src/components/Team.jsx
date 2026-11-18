@@ -33,7 +33,7 @@ const DEFAULT_TEAM = [
   },
 ];
 
-export default function Team({ onOpenQuote }) {
+export default function Team({ pageData, onOpenQuote }) {
   const navigate = useNavigate();
   const [teamMembers, setTeamMembers] = useState([]);
   const sectionRef = useRef(null);
@@ -153,7 +153,7 @@ export default function Team({ onOpenQuote }) {
               className="w-full sm:w-[220px] lg:w-[260px] xl:w-[290px] h-[200px] sm:h-[260px] lg:h-[280px] shrink-0 relative overflow-hidden [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] sm:[mask-image:linear-gradient(to_right,black_72%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] sm:[-webkit-mask-image:linear-gradient(to_right,black_72%,transparent_100%)]"
             >
               <img
-                src="/griffin-team-eagle.jpg"
+                src={pageData?.sections?.team_preview?.image || "/griffin-team-eagle.jpg"}
                 alt="Gryfno Eagle Mascot"
                 className="w-full h-full object-cover object-left-top select-none"
               />
@@ -164,34 +164,45 @@ export default function Team({ onOpenQuote }) {
               ref={introRef}
               className="py-4 sm:py-6 px-5 sm:px-4 lg:py-6 lg:pl-2 lg:pr-6 max-w-sm shrink-0 flex flex-col justify-center text-center sm:text-left items-center sm:items-start"
             >
-              <div className="inline-flex items-center gap-2 mb-1.5">
-                <span className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#142338]">
-                  OUR TEAM
-                </span>
-                <span className="w-8 h-[2px] bg-[#d97706]" />
-              </div>
+              {(pageData?.sections?.team_preview?.kicker ?? "OUR TEAM") ? (
+                <div className="inline-flex items-center gap-2 mb-1.5">
+                  <span className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#142338]">
+                    {pageData?.sections?.team_preview?.kicker ?? "OUR TEAM"}
+                  </span>
+                  <span className="w-8 h-[2px] bg-[#d97706]" />
+                </div>
+              ) : null}
 
-              <h2 className="font-serif font-bold text-2xl sm:text-[26px] lg:text-[29px] leading-[1.14] text-[#142338] tracking-tight mb-2">
-                The People Behind
-                <br />
-                Gryfno Szajka
-              </h2>
+              {(pageData?.sections?.team_preview?.heading ?? "The People Behind Griffin") ? (
+                <h2 className="font-serif font-bold text-2xl sm:text-[26px] lg:text-[29px] leading-[1.14] text-[#142338] tracking-tight mb-2 whitespace-pre-line">
+                  {pageData?.sections?.team_preview?.heading ?? "The People Behind Griffin"}
+                </h2>
+              ) : null}
 
-              <p className="text-xs text-[#52637a] leading-[1.65] mb-4 max-w-[260px]">
-                A team of experienced professionals, engineers, and project
-                managers who turn vision into reality.
-              </p>
+              {(pageData?.sections?.team_preview?.description ?? "A team of experienced professionals, engineers, and project managers who turn vision into reality.") ? (
+                <p className="text-xs text-[#52637a] leading-[1.65] mb-4 max-w-[260px] whitespace-pre-line">
+                  {pageData?.sections?.team_preview?.description ?? "A team of experienced professionals, engineers, and project managers who turn vision into reality."}
+                </p>
+              ) : null}
 
               <div>
                 <button
                   onClick={() => {
-                    navigate('/team');
-                    window.scrollTo(0, 0);
+                    const targetLink = pageData?.sections?.team_preview?.cta_link ?? '/team';
+                    if (targetLink?.startsWith('/')) {
+                      navigate(targetLink);
+                      window.scrollTo(0, 0);
+                    } else if (targetLink) {
+                      window.location.href = targetLink;
+                    } else {
+                      navigate('/team');
+                      window.scrollTo(0, 0);
+                    }
                   }}
                   type="button"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-[#142338] bg-[#f0a528] hover:bg-[#e29618] active:scale-95 shadow-sm hover:shadow transition-all cursor-pointer group"
                 >
-                  <span>Meet Our Team</span>
+                  <span>{pageData?.sections?.team_preview?.cta_text ?? "Meet Our Team"}</span>
                   <span className="transition-transform duration-300 group-hover:translate-x-1">
                     →
                   </span>

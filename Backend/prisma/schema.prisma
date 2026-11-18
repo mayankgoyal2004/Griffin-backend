@@ -193,28 +193,38 @@ model WebsitePage {
 }
 
 model SiteSettings {
-  id                String   @id @default("settings_global")
-  companyName       String   @default("Griffin Construction")
-  tagline           String?  @default("Building Tomorrow, Together.")
-  phone             String?  @default("+91 123 456 7890")
-  phoneDisplay      String?  @default("+91 123 456 7890")
-  email             String?  @default("contact@griffinconstruction.in")
-  address           String?  @default("Mohali, Punjab – 160055, India")
-  mapsLink          String?  @db.Text
-  mapEmbedUrl       String?  @db.Text
-  workingHours      String?  @default("Mon - Sat: 9:00 AM - 7:00 PM")
-  websiteUrl        String?  @default("https://griffinconstruction.in")
-  headerCtaText     String?  @default("Get a Quote")
-  headerCtaLink     String?  @default("/contact")
-  facebook          String?
-  instagram         String?
-  linkedin          String?
-  twitter           String?
-  footerDescription String?  @db.Text
-  copyrightText     String?  @default("© 2026 Griffin Construction. All rights reserved.")
-  showProjects      Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                 String   @id @default("settings_global")
+  companyName        String   @default("Griffin Construction")
+  tagline            String?  @default("Building Tomorrow, Together.")
+  companyDescription  String?  @db.Text
+  logo               String?  @db.Text
+  footerLogo         String?  @db.Text
+  favicon            String?  @db.Text
+  phone              String?  @default("+91 123 456 7890")
+  phoneDisplay       String?  @default("+91 123 456 7890")
+  email              String?  @default("contact@griffinconstruction.in")
+  address            String?  @default("Mohali, Punjab – 160055, India")
+  mapsLink           String?  @db.Text
+  mapEmbedUrl        String?  @db.Text
+  workingHours       String?  @default("Mon - Sat: 9:00 AM - 7:00 PM")
+  websiteUrl         String?  @default("https://griffinconstruction.in")
+  headerCtaText      String?  @default("Get a Quote")
+  headerCtaLink      String?  @default("/contact")
+  facebook           String?
+  instagram          String?
+  linkedin           String?
+  twitter            String?
+  youtube            String?
+  navItems           Json?    @default("[]")
+  footerDescription  String?  @db.Text
+  footerQuickLinks   Json?    @default("[]")
+  footerServiceLinks Json?    @default("[]")
+  copyrightText      String?  @default("© 2026 Griffin Construction. All rights reserved.")
+  privacyLink        String?  @default("/privacy-policy")
+  termsLink          String?  @default("/terms-and-conditions")
+  showProjects       Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@map("site_settings")
 }

@@ -58,6 +58,14 @@ function parseSettingsData(body) {
     data.companyName = body.companyName ?? body.company_name;
   }
   if (body.tagline !== undefined) data.tagline = body.tagline;
+  if (body.companyDescription !== undefined || body.company_description !== undefined) {
+    data.companyDescription = body.companyDescription ?? body.company_description;
+  }
+  if (body.logo !== undefined) data.logo = body.logo;
+  if (body.footerLogo !== undefined || body.footer_logo !== undefined) {
+    data.footerLogo = body.footerLogo ?? body.footer_logo;
+  }
+  if (body.favicon !== undefined) data.favicon = body.favicon;
   if (body.phone !== undefined) data.phone = body.phone;
   if (body.phoneDisplay !== undefined || body.phone_display !== undefined) {
     data.phoneDisplay = body.phoneDisplay ?? body.phone_display;
@@ -86,11 +94,27 @@ function parseSettingsData(body) {
   if (body.instagram !== undefined) data.instagram = body.instagram;
   if (body.linkedin !== undefined) data.linkedin = body.linkedin;
   if (body.twitter !== undefined) data.twitter = body.twitter;
+  if (body.youtube !== undefined) data.youtube = body.youtube;
+  if (body.navItems !== undefined || body.nav_items !== undefined) {
+    data.navItems = body.navItems ?? body.nav_items;
+  }
   if (body.footerDescription !== undefined || body.footer_description !== undefined) {
     data.footerDescription = body.footerDescription ?? body.footer_description;
   }
+  if (body.footerQuickLinks !== undefined || body.footer_quick_links !== undefined) {
+    data.footerQuickLinks = body.footerQuickLinks ?? body.footer_quick_links;
+  }
+  if (body.footerServiceLinks !== undefined || body.footer_service_links !== undefined) {
+    data.footerServiceLinks = body.footerServiceLinks ?? body.footer_service_links;
+  }
   if (body.copyrightText !== undefined || body.copyright_text !== undefined) {
     data.copyrightText = body.copyrightText ?? body.copyright_text;
+  }
+  if (body.privacyLink !== undefined || body.privacy_link !== undefined) {
+    data.privacyLink = body.privacyLink ?? body.privacy_link;
+  }
+  if (body.termsLink !== undefined || body.terms_link !== undefined) {
+    data.termsLink = body.termsLink ?? body.terms_link;
   }
   if (body.show_projects !== undefined) {
     data.showProjects = Boolean(body.show_projects);
