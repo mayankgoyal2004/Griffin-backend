@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/AuthContext";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSiteSettings, normalizeWebsiteUrl } from "@/lib/useSiteSettings";
 import { Image } from "@/components/ui/image";
 import { GRIFFIN_EMBLEM } from "@/lib/defaultContent";
 import {
@@ -66,6 +66,7 @@ export default function Sidebar({ open, onClose, isAdmin }) {
   const settings = useSiteSettings();
   const companyName = settings?.company_name || settings?.companyName || "Griffin";
   const logo = settings?.logo || settings?.footer_logo || settings?.footerLogo;
+  const websiteUrl = normalizeWebsiteUrl(settings?.website_url || settings?.websiteUrl);
 
   return (
     <>
@@ -116,15 +117,8 @@ export default function Sidebar({ open, onClose, isAdmin }) {
         </nav>
 
         <div className="border-t border-white/10 p-3 space-y-1">
-          <Link
-            to="/dashboard/api-docs"
-            onClick={onClose}
-            className="block rounded-md px-3 py-2 text-[13px] text-white/70 hover:bg-white/5 hover:text-white"
-          >
-            API &amp; Integration
-          </Link>
           <a
-            href="http://localhost:5173"
+            href={websiteUrl}
             target="_blank"
             rel="noreferrer"
             className="block rounded-md border border-white/15 px-3 py-2 text-center text-[13px] text-white/80 hover:border-accent hover:text-accent transition-colors"

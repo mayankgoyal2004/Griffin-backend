@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { loginWithMfa } from "@/lib/authMfa";
 import { safeReturnTo } from "@/lib/authReturnTo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSiteSettings, normalizeWebsiteUrl, resolveWebsiteLink } from "@/lib/useSiteSettings";
 
 export function LoginPage() {
   const returnTo = safeReturnTo();
@@ -24,12 +24,13 @@ export function LoginPage() {
 
   const companyName = settings?.company_name || settings?.companyName || "Griffin Construction";
   const logo = settings?.logo || settings?.footer_logo || settings?.footerLogo;
+  const websiteUrl = normalizeWebsiteUrl(settings?.website_url || settings?.websiteUrl);
   const currentYear = new Date().getFullYear();
   const copyrightText = settings?.copyright_text || settings?.copyrightText
     ? (settings.copyright_text || settings.copyrightText).replace("{year}", currentYear)
     : `© ${currentYear} ${companyName}. All rights reserved.`;
-  const privacyLink = settings?.privacy_link || settings?.privacyLink || "http://localhost:5173/privacy-policy";
-  const termsLink = settings?.terms_link || settings?.termsLink || "http://localhost:5173/terms-and-conditions";
+  const privacyLink = resolveWebsiteLink(settings?.privacy_link || settings?.privacyLink, "/privacy-policy", websiteUrl);
+  const termsLink = resolveWebsiteLink(settings?.terms_link || settings?.termsLink, "/terms-and-conditions", websiteUrl);
 
   const [email, setEmail] = useState("admin@gmail.com");
   const [password, setPassword] = useState("••••••••••••");

@@ -46,6 +46,22 @@ export function invalidateSiteSettings(newSettings = null) {
   }
 }
 
+export function normalizeWebsiteUrl(url, fallback = "http://localhost:5173") {
+  if (!url || typeof url !== "string" || !url.trim()) return fallback;
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
+export function resolveWebsiteLink(link, fallbackPath, websiteUrl = "http://localhost:5173") {
+  const target = link || fallbackPath;
+  if (!target) return websiteUrl;
+  if (/^https?:\/\//i.test(target)) return target;
+  const base = websiteUrl.replace(/\/$/, "");
+  const path = target.startsWith("/") ? target : `/${target}`;
+  return `${base}${path}`;
+}
+
 /** Loads the single global settings record, falling back to brand defaults. */
 export function useSiteSettings() {
   const [settings, setSettings] = useState(

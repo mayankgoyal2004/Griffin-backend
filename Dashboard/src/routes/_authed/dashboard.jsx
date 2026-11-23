@@ -3,7 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Topbar from "@/components/dashboard/Topbar";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSiteSettings, normalizeWebsiteUrl, resolveWebsiteLink } from "@/lib/useSiteSettings";
 import { Route as AuthedRoute } from "@/routes/_authed";
 
 export const Route = createFileRoute("/_authed/dashboard")({
@@ -18,12 +18,13 @@ function DashboardLayout() {
   const settings = useSiteSettings();
 
   const companyName = settings?.company_name || settings?.companyName || "Griffin Construction";
+  const websiteUrl = normalizeWebsiteUrl(settings?.website_url || settings?.websiteUrl);
   const currentYear = new Date().getFullYear();
   const copyrightText = settings?.copyright_text || settings?.copyrightText
     ? (settings.copyright_text || settings.copyrightText).replace("{year}", currentYear)
     : `© ${currentYear} ${companyName}. All rights reserved.`;
-  const privacyLink = settings?.privacy_link || settings?.privacyLink || "http://localhost:5173/privacy-policy";
-  const termsLink = settings?.terms_link || settings?.termsLink || "http://localhost:5173/terms-and-conditions";
+  const privacyLink = resolveWebsiteLink(settings?.privacy_link || settings?.privacyLink, "/privacy-policy", websiteUrl);
+  const termsLink = resolveWebsiteLink(settings?.terms_link || settings?.termsLink, "/terms-and-conditions", websiteUrl);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-cream">

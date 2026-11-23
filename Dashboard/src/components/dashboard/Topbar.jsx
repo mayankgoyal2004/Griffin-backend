@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/AuthContext";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSiteSettings, normalizeWebsiteUrl } from "@/lib/useSiteSettings";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +20,7 @@ export default function Topbar({ onMenu }) {
   const settings = useSiteSettings();
   const navigate = useNavigate();
   const companyName = settings?.company_name || settings?.companyName || "Griffin";
-  const websiteUrl = settings?.website_url || settings?.websiteUrl || "http://localhost:5173";
+  const websiteUrl = normalizeWebsiteUrl(settings?.website_url || settings?.websiteUrl);
   const displayName = user?.fullName || user?.full_name || user?.email || "Griffin Admin";
   const initials = displayName.slice(0, 2).toUpperCase();
   const roleName = ROLE_LABEL[user?.role?.toLowerCase()] || user?.role || "Administrator";

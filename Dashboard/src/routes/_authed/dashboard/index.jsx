@@ -7,9 +7,11 @@ import StatCard from "@/components/dashboard/StatCard";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatDateTime } from "@/lib/format";
+import { useSiteSettings, normalizeWebsiteUrl } from "@/lib/useSiteSettings";
 import {
   BookOpen,
   Building2,
+  ExternalLink,
   Inbox,
   Layers,
   Loader2,
@@ -60,6 +62,8 @@ function lastMonths(count) {
 }
 
 function DashboardOverview() {
+  const settings = useSiteSettings();
+  const websiteUrl = normalizeWebsiteUrl(settings?.website_url || settings?.websiteUrl);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -202,9 +206,9 @@ function DashboardOverview() {
     <div>
       <PageHeader title="Dashboard" description="Live overview of the Griffin Construction website content and client enquiries.">
         <Button asChild size="sm" variant="outline">
-          <Link to="/">
-            <Layers className="mr-2 h-4 w-4" /> View website
-          </Link>
+          <a href={websiteUrl} target="_blank" rel="noreferrer">
+            <ExternalLink className="mr-2 h-4 w-4" /> View website
+          </a>
         </Button>
         <Button asChild size="sm">
           <Link to="/dashboard/projects/new">
