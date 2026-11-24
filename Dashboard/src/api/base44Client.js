@@ -1065,9 +1065,14 @@ const authStore = {
   },
 
   async loginWithPassword({ email, password }) {
-    const cleanEmail = (email || "admin@gmail.com").trim();
-    const cleanPassword =
-      password && password !== "••••••••••••" ? password : "Admin@12345";
+    if (!email || !email.trim()) {
+      throw new Error("Email is required.");
+    }
+    if (!password) {
+      throw new Error("Password is required.");
+    }
+    const cleanEmail = email.trim();
+    const cleanPassword = password;
 
     const res = await apiFetch("/auth/login", {
       method: "POST",

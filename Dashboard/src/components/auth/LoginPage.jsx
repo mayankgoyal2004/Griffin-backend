@@ -32,28 +32,34 @@ export function LoginPage() {
   const privacyLink = resolveWebsiteLink(settings?.privacy_link || settings?.privacyLink, "/privacy-policy", websiteUrl);
   const termsLink = resolveWebsiteLink(settings?.terms_link || settings?.termsLink, "/terms-and-conditions", websiteUrl);
 
-  const [email, setEmail] = useState("admin@gmail.com");
-  const [password, setPassword] = useState("••••••••••••");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function submit(e) {
     e.preventDefault();
     setError("");
+
+    if (!email || !email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
     setBusy(true);
 
-    const actualPassword =
-      password === "••••••••••••" || !password ? "Admin@12345" : password;
-
     try {
-      const result = await loginWithMfa(email, actualPassword);
+      const result = await loginWithMfa(email.trim(), password);
       if (result?.user) {
-        // Successful login
-        window.location.href = "/dashboard";
+        window.location.href = returnTo || "/dashboard";
       } else {
-        window.location.href = "/dashboard";
+        throw new Error("Authentication failed. Please check your credentials.");
       }
     } catch (err) {
       setError(
